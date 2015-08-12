@@ -57,7 +57,7 @@ def root():
     )
 
 
-if __name__ == '__main__' or True:
+if __name__ == '__main__':
     app = Flask(__name__, template_folder='templates')
     app.add_url_rule('/sitemap', view_func=root)
 
