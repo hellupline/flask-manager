@@ -5,23 +5,7 @@ import le_crud
 import data
 
 
-def root():
-    routes = [
-        '{} -> {}'.format(rule, rule.endpoint)
-        for rule in app.url_map.iter_rules()
-    ]
-    return '<html><body><pre>\n{}\n</pre></body></html>\n'.format(
-        '\n'.join(sorted(routes)).
-        replace('<', '&lt;').
-        replace('>', '&gt;')
-    )
-
-
-if __name__ == '__main__' or True:
-    data.metadata.create_all()
-
-    app = Flask(__name__, template_folder='templates')
-
+def build_crud():
     le_crud_admin = le_crud.Group(name='Admin', url='/admin/', items=[
         le_crud.Group(name='Aperture', url='aperture/', items=[
             le_crud.Crud(
@@ -58,6 +42,26 @@ if __name__ == '__main__' or True:
             display=data.model1_display,
         ),
     ])
-    app.register_blueprint(le_crud_admin.get_blueprint())
+    return le_crud_admin
+
+
+def root():
+    routes = [
+        '{} -> {}'.format(rule, rule.endpoint)
+        for rule in app.url_map.iter_rules()
+    ]
+    return '<html><body><pre>\n{}\n</pre></body></html>\n'.format(
+        '\n'.join(sorted(routes)).
+        replace('<', '&lt;').
+        replace('>', '&gt;')
+    )
+
+
+if __name__ == '__main__' or True:
+    app = Flask(__name__, template_folder='templates')
     app.add_url_rule('/sitemap', view_func=root)
+
+    app.register_blueprint(build_crud().get_blueprint())
+
+    data.metadata.create_all()
     app.run(debug=True)
