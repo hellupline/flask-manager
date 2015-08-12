@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <table>
+    <thead>
+      <tr>
+        {% for column in display.columns_list %}
+          <td> {{ column }} </td>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          {% for column in display.columns_list %}
+            <td> {{ item[column] }} </td>
+          {% endfor %}
+        </tr>
+        {{ item }}
+      {% endfor %}
+    </tbody>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% import 'admin/utils.html' as utils %}
+
+{% if display.rules is not none %}
+  {% set __ = display.rules.store_context() %} {# hide None #}
+  {% for rule in display.rules %}
+    {{ rule(form) }}
+  {% endfor %}
+{% endif %}

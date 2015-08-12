@@ -1,0 +1,6 @@
+<form action="." method="POST">
+  {% for column in display.columns_delete %}
+    {{ item[column] }}
+  {% endfor %}
+  <input type="submit" value="confirm" />
+</form>

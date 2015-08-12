@@ -1,0 +1,17 @@
+{% macro render_header(obj, text) %}
+  {{ text }}
+{% endmacro %}
+
+{% macro render_field(obj, field) %}
+  {{ field }}
+{% endmacro %}
+
+{% macro form_tag(obj) %}
+<hello>
+  {{ caller() }}
+</hello>
+{% endmacro %}
+
+{% macro test_macro(obj) %}
+  Hello
+{% endmacro %}

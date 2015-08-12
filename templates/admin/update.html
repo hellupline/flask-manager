@@ -1,0 +1,19 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<form action="." method="POST">
+  <ul>
+    {% for field in form %}
+      <li>
+        {% if field.errors %}
+          {% for error in field.errors %}
+            {{ error }}
+          {% endfor %}
+        {% endif %}
+        {{field.label}}
+        {{field}}
+      </li>
+    {% endfor %}
+    <li> <input type="submit" value="confirm" /> </li>
+  </ul>
+</form>
+{% endblock %}
