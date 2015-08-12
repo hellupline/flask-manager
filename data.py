@@ -3,10 +3,10 @@ import sqlalchemy
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import as_declarative
 
-from le_new_admin import SQLAlchemyController, Display
-from le_new_admin.display import rules
+from le_crud import SQLAlchemyController, Display
+from le_crud.display import rules
 
-engine = sqlalchemy.create_engine('sqlite:////tmp/le_new_admin.db', echo=True)
+engine = sqlalchemy.create_engine('sqlite:////tmp/le_crud.db', echo=True)
 metadata = sqlalchemy.MetaData(bind=engine)
 Session = scoped_session(sessionmaker(bind=engine))
 

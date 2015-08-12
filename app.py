@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from flask import Flask
 
-import le_new_admin
+import le_crud
 import data
 
 
@@ -22,37 +22,37 @@ if __name__ == '__main__' or True:
 
     app = Flask(__name__, template_folder='templates')
 
-    le_crud_admin = le_new_admin.Group(name='Admin', url='/admin/', items=[
-        le_new_admin.Group(name='Aperture', url='aperture/', items=[
-            le_new_admin.Crud(
+    le_crud_admin = le_crud.Group(name='Admin', url='/admin/', items=[
+        le_crud.Group(name='Aperture', url='aperture/', items=[
+            le_crud.Crud(
                 name='Glados', url='glados/',
                 controller=data.model1_controller,
                 display=data.model1_display,
             ),
-            le_new_admin.Crud(
+            le_crud.Crud(
                 name='Wheatley', url='wheatley/',
                 controller=data.model1_controller,
                 display=data.model1_display,
             ),
-            le_new_admin.Crud(
+            le_crud.Crud(
                 name='Chell', url='chell/',
                 controller=data.model1_controller,
                 display=data.model1_display,
             ),
-            le_new_admin.Crud(
+            le_crud.Crud(
                 name='Cave Johnson', url='cave-johnson/',
                 controller=data.model1_controller,
                 display=data.model1_display,
             ),
         ]),
-        le_new_admin.Group(name='Black Mesa', url='black-mesa/', items=[
-            le_new_admin.Crud(
+        le_crud.Group(name='Black Mesa', url='black-mesa/', items=[
+            le_crud.Crud(
                 name='Gordon Freeman', url='gordon-freeman/',
                 controller=data.model1_controller,
                 display=data.model1_display,
             ),
         ]),
-        le_new_admin.Crud(
+        le_crud.Crud(
             name='Valve', url='valve/',
             controller=data.model1_controller,
             display=data.model1_display,
