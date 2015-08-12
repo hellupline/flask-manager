@@ -1,3 +1,4 @@
+from enum import Enum
 from flask import request
 
 from .base import Component
@@ -40,7 +41,16 @@ DELETE:
 """
 
 
+class Permissions(Enum):
+    list = 1
+    create = 2
+    read = 3
+    update = 4
+    delete = 5
+
+
 class List(Component):
+    permission = Permissions.list
     urls = ['list/', 'list/<int:page>/', '']
     name = 'List'
     template_name = 'admin/list.html'
@@ -56,6 +66,7 @@ class List(Component):
 
 
 class Create(Component):
+    permission = Permissions.create
     urls = ['create/']
     name = 'Create'
     template_name = 'admin/create.html'
@@ -76,6 +87,7 @@ class Create(Component):
 
 
 class Read(Component):
+    permission = Permissions.read
     urls = ['read/<int:pk>/']
     name = 'Read'
     template_name = 'admin/read.html'
@@ -87,6 +99,7 @@ class Read(Component):
 
 
 class Update(Component):
+    permission = Permissions.update
     urls = ['update/<int:pk>/']
     name = 'Update'
     template_name = 'admin/update.html'
@@ -109,6 +122,7 @@ class Update(Component):
 
 
 class Delete(Component):
+    permission = Permissions.delete
     urls = ['delete/<int:pk>/']
     name = 'Delete'
     template_name = 'admin/delete.html'
