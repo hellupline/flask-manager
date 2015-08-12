@@ -315,9 +315,7 @@ class Crud(Group):
         return component_factory(**kwargs)
 
     def component_name(self, component):
-        return '-'.join(
-            [self.absolute_name(), component.name]
-        ).lower().replace(' ', '_')
+        return '-'.join([self.absolute_name(), slugify(component.name)])
 
     def iter_items(self):
         for component_factory in self.components:
