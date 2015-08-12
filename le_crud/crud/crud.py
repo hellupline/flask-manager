@@ -36,7 +36,7 @@ class Crud(Group):
                 yield url, name, component.dispatch_request
 
     def iter_endpoints(self):
-        for component_factory in self.components:
-            if not issubclass(component_factory, List):
+        for component in self.components:
+            if not issubclass(component, List):
                 continue
-            yield self.name, self.component_name(component_factory)
+            yield self.name, self.component_name(component)
