@@ -51,7 +51,7 @@ class View:
         """
         raise MethodNotAllowed(['GET'])
 
-    def get_context(self, **kwargs):
+    def get_context(self, kwargs):
         """Format input to render.
 
         """
