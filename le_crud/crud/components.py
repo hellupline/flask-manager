@@ -1,7 +1,6 @@
-from enum import Enum
 from flask import request
 
-from .base import Component
+from .base import Component, Permissions
 
 
 """
@@ -17,36 +16,41 @@ CREATE:
         return a context ( form )
     POST:
         save obj
-        return a success_url and a context ( form )
+        return a success_url and a context ( form, errors )
 READ:
     GET:
+        receive a pk
+        fetch obj
         return a context ( item )
 UPDATE:
     GET:
         receive a pk
-        fetch obj to form
+        fetch obj
         return a context ( item, form )
     POST:
         receive a pk
-        save obj
-        return a success_url and a context ( item, form )
+        fetch obj
+        update obj
+        return a success_url and a context ( item, form, errors )
 DELETE:
     GET:
         receive a pk
+        fetch obj
         return a context ( item )
     POST:
         receive a pk
         delete obj
         return a success_url and a context
 """
+"""
+Each Component have:
+    Permission, Template_name
+    Urls, Name
 
-
-class Permissions(Enum):
-    list = 1
-    create = 2
-    read = 3
-    update = 4
-    delete = 5
+Each Component receive:
+    Controller, Display, Permissions, Success_url ( for POST Method )
+    and a possible a form class ( Overwrite Display form class )
+"""
 
 
 class List(Component):

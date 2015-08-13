@@ -1,3 +1,5 @@
+from enum import Enum
+
 from flask import Blueprint, request, abort, redirect, render_template
 from werkzeug.exceptions import MethodNotAllowed
 
@@ -64,28 +66,51 @@ class View:
         return render_template(self.get_template_name(), **context)
 
 
+class Permissions(Enum):
+    list = 1
+    create = 2
+    read = 3
+    update = 4
+    delete = 5
+
+
 class Component(View):
+    permission = None
     form_class = None
     urls = None
     name = None
 
-    def __init__(self, controller, display, success_url,
+    def __init__(self, controller, display, permissions, success_url,
                  urls=None, name=None, template_name=None,
                  form_class=None):
         # from crud
         self.controller = controller
         self.display = display
+        self.permissions = permissions
         self.form_class = form_class
+
         if urls is not None:
             self.urls = urls
         if name is not None:
             self.name = name
         super().__init__(success_url=success_url, template_name=template_name)
 
+    def is_allowed(self):
+        permissions = [
+            name for name, __ in self.permissions.get(self.permission.name, ())
+        ]
+        return self.name in permissions
+
+    def dispatch_request(self, *args, **kwargs):
+        if not self.is_allowed():
+            abort(401)
+        return super().dispatch_request(*args, **kwargs)
+
     def get_context(self, external_ctx):
         ctx = {
             'controller': self.controller,
             'display': self.display,
+            'permissions': self.permissions,
         }
         ctx.update(external_ctx)
         return super().get_context(ctx)

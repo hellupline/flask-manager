@@ -22,8 +22,10 @@ class Crud(Group):
             permission = component.permission
             if permission is Permissions.list:
                 continue
-            permissions[permission.name].append(
-                self.component_absolute_name(component))
+            permissions[permission.name].append([
+                component.name,
+                self.component_absolute_name(component)
+            ])
         return permissions
 
     def init_component(self, component_factory):
