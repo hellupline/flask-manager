@@ -19,11 +19,11 @@ def get_render_ctx():
 
 class Display:
     RULES_NAMES = (
-        'rules_list',
-        'rules_create',
-        'rules_read',
-        'rules_update',
-        'rules_delete',
+        'list',
+        'create',
+        'read',
+        'update',
+        'delete',
     )
     store_context = staticmethod(store_context)
 
