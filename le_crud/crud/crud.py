@@ -1,6 +1,6 @@
 from collections import defaultdict
 from .base import Group, concat_urls, slugify
-from .components import List, Create, Read, Update, Delete, Permissions
+from .components import List, Create, Read, Update, Delete, Roles
 
 
 class Crud(Group):
@@ -16,22 +16,22 @@ class Crud(Group):
         self.form_class = form_class
         super().__init__(name=name, url=url, *args, **kwargs)
 
-    def get_permissions(self):
-        permissions = defaultdict(list)
+    def get_roles(self):
+        roles = defaultdict(list)
         for component in self.components:
-            permission = component.permission
-            permissions[permission.name].append([
+            role = component.role
+            roles[role.name].append([
                 component.name,
                 self.component_absolute_name(component)
             ])
-        return permissions
+        return roles
 
     def init_component(self, component_factory):
         kwargs = {
             'controller': self.controller,
             'display': self.display,
             'form_class': self.form_class,
-            'permissions': self.get_permissions(),
+            'roles': self.get_roles(),
             'success_url': self.absolute_url(),
         }
         return component_factory(**kwargs)
@@ -46,7 +46,7 @@ class Crud(Group):
 
     def iter_endpoints(self):
         for component in self.components:
-            if component.permission is Permissions.list:
+            if component.role is Roles.list:
                 continue
             yield self.name, self.component_absolute_name(component)
 

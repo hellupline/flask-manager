@@ -66,7 +66,7 @@ class View:
         return render_template(self.get_template_name(), **context)
 
 
-class Permissions(Enum):
+class Roles(Enum):
     list = 1
     create = 2
     read = 3
@@ -75,18 +75,18 @@ class Permissions(Enum):
 
 
 class Component(View):
-    permission = None
     form_class = None
+    role = None
     urls = None
     name = None
 
-    def __init__(self, controller, display, permissions, success_url,
+    def __init__(self, controller, display, roles, success_url,
                  urls=None, name=None, template_name=None,
                  form_class=None):
         # from crud
         self.controller = controller
         self.display = display
-        self.permissions = permissions
+        self.roles = roles
         self.form_class = form_class
 
         if urls is not None:
@@ -96,10 +96,10 @@ class Component(View):
         super().__init__(success_url=success_url, template_name=template_name)
 
     def is_allowed(self):
-        permissions = [
-            name for name, __ in self.permissions.get(self.permission.name, ())
+        roles = [
+            name for name, __ in self.roles.get(self.role.name, ())
         ]
-        return self.name in permissions
+        return self.name in roles
 
     def dispatch_request(self, *args, **kwargs):
         if not self.is_allowed():
@@ -110,7 +110,7 @@ class Component(View):
         ctx = {
             'controller': self.controller,
             'display': self.display,
-            'permissions': self.permissions,
+            'roles': self.roles,
         }
         if external_ctx is not None:
             ctx.update(external_ctx)

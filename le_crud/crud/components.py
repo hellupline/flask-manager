@@ -1,6 +1,6 @@
 from flask import request
 
-from .base import Component, Permissions
+from .base import Component, Roles
 
 
 """
@@ -48,13 +48,13 @@ Each Component have:
     Urls, Name
 
 Each Component receive:
-    Controller, Display, Permissions, Success_url ( for POST Method )
+    Controller, Display, Roles, Success_url ( for POST Method )
     and a possible a form class ( Overwrite Display form class )
 """
 
 
 class List(Component):
-    permission = Permissions.list
+    role = Roles.list
     urls = ['list/', 'list/<int:page>/', '']
     name = 'List'
     template_name = 'admin/list.html'
@@ -70,7 +70,7 @@ class List(Component):
 
 
 class Create(Component):
-    permission = Permissions.create
+    role = Roles.create
     urls = ['create/']
     name = 'Create'
     template_name = 'admin/create.html'
@@ -91,7 +91,7 @@ class Create(Component):
 
 
 class Read(Component):
-    permission = Permissions.read
+    role = Roles.read
     urls = ['read/<int:pk>/']
     name = 'Read'
     template_name = 'admin/read.html'
@@ -103,7 +103,7 @@ class Read(Component):
 
 
 class Update(Component):
-    permission = Permissions.update
+    role = Roles.update
     urls = ['update/<int:pk>/']
     name = 'Update'
     template_name = 'admin/update.html'
@@ -126,7 +126,7 @@ class Update(Component):
 
 
 class Delete(Component):
-    permission = Permissions.delete
+    role = Roles.delete
     urls = ['delete/<int:pk>/']
     name = 'Delete'
     template_name = 'admin/delete.html'
