@@ -20,8 +20,6 @@ class Crud(Group):
         permissions = defaultdict(list)
         for component in self.components:
             permission = component.permission
-            if permission is Permissions.list:
-                continue
             permissions[permission.name].append([
                 component.name,
                 self.component_absolute_name(component)
