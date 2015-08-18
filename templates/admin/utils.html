@@ -1,17 +1,73 @@
+{# -HEADERS-------------------------------------- #}
 {% macro render_header(obj, text) %}
-  {{ text }}
+    <h3>{{ text }}</h3>
 {% endmacro %}
 
-{% macro render_field(obj, field) %}
-  {{ field }}
+{# -FORM----------------------------------------- #}
+{% macro render_form(obj, cancel_url, action=None) %}
+    {% call form_tag(action=action) %}
+        {{ render_form_fields(obj) }}
+        {{ render_form_buttons(cancel_url) }}
+    {% endcall %}
 {% endmacro %}
 
-{% macro form_tag(obj) %}
-<hello>
-  {{ caller() }}
-</hello>
+{% macro form_tag(obj, action=None) %}
+    <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
+      {{ caller() }}
+    </form>
 {% endmacro %}
 
-{% macro test_macro(obj) %}
-  Hello
+{% macro render_form_fields(obj, display) %}
+    {% if obj.hidden_tag is defined %}
+      {{ obj.hidden_tag() }}
+    {% else %}
+      {% if csrf_token %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      {% endif %}
+      {% for field in obj if field.widget.input_type == 'hidden' %}
+        {{ field }}
+      {% endfor %}
+    {% endif %}
+
+    {% if display %}
+      {% for rule in display %}
+        {{ rule(obj, form_opts=form_opts) }}
+      {% endfor %}
+    {% else %}
+      {% for field in obj if field.widget.input_type != 'hidden' %}
+        {{ render_field(obj, field) }}
+      {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro render_field(obj, field, caller=None) %}
+  <div class="form-group">
+    <label for="{{ field.id }}" class="col-md-2 control-label">
+      {{ field.label.text }}
+    </label>
+    <div class="col-md-10'">
+      {{ field }}
+      <p class="help-block">{{ field.description }}</p>
+      <ul class="help-block input-errors">
+        {% for error in field.errors if error is string %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% if caller %}
+      {{ caller(obj, field) }}
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{% macro render_form_buttons(cancel_url) %}
+    <hr>
+    <div class="form-group">
+      <div class="col-md-offset-2 col-md-10 submit-row">
+        <input type="submit" class="btn btn-primary" value="Save" />
+        {% if cancel_url %}
+          <a href="{{ cancel_url }}" class="btn btn-danger" role="button">Cancel</a>
+        {% endif %}
+      </div>
+    </div>
 {% endmacro %}

@@ -1,8 +1,15 @@
+{% extends "admin/base.html" %}
+
+{# Macros #}
 {% import 'admin/utils.html' as utils %}
 
-{% if display.rules is not none %}
-  {% set __ = display.rules.store_context() %} {# hide None #}
-  {% for rule in display.rules %}
-    {{ rule(form) }}
-  {% endfor %}
-{% endif %}
+{# Body #}
+{% block content %}
+  {% set __ = display.store_context() %} {# hide None #}
+  {% call utils.form_tag(action='') %}
+    {% for rule in display.get_rules('create') %}
+      {{ rule(form) }}
+    {% endfor %}
+    {{ utils.render_form_buttons(cancel_url='') }}
+  {% endcall %}
+{% endblock %}

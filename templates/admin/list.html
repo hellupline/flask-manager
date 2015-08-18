@@ -1,21 +1,24 @@
 {% extends "admin/base.html" %}
+
+{# Macros #}
+{% import 'admin/utils.html' as utils %}
+
+{# Body #}
 {% block content %}
+  {% set __ = display.store_context() %} {# hide None #}
   <table>
     <thead>
       <tr>
-        {% for column in display.columns_list %}
-          <td> {{ column }} </td>
-        {% endfor %}
       </tr>
     </thead>
     <tbody>
       {% for item in items %}
         <tr>
-          {% for column in display.columns_list %}
-            <td> {{ item[column] }} </td>
+          {% for rule in display.get_rules('list') %}
+            {{ rule(item) }}
           {% endfor %}
         </tr>
-        {{ item }}
       {% endfor %}
-    </tbody>
+    <tbody>
+  </table>
 {% endblock %}

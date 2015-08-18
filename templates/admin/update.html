@@ -1,19 +1,15 @@
 {% extends "admin/base.html" %}
+
+{# Macros #}
+{% import 'admin/utils.html' as utils %}
+
+{# Body #}
 {% block content %}
-<form action="." method="POST">
-  <ul>
-    {% for field in form %}
-      <li>
-        {% if field.errors %}
-          {% for error in field.errors %}
-            {{ error }}
-          {% endfor %}
-        {% endif %}
-        {{field.label}}
-        {{field}}
-      </li>
+  {% set __ = display.store_context() %} {# hide None #}
+  {% call utils.form_tag(action='') %}
+    {% for rule in display.get_rules('update') %}
+      {{ rule(form) }}
     {% endfor %}
-    <li> <input type="submit" value="confirm" /> </li>
-  </ul>
-</form>
+    {{ utils.render_form_buttons(cancel_url='') }}
+  {% endcall %}
 {% endblock %}

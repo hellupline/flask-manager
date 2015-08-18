@@ -3,29 +3,29 @@
   <head>
     <style>
       {% block css %}
-      body {
-        font-size: 12px;
-        font-family: Arial;
-      }
-      table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-      }
-      table {
-        width: 20%;
-        float: left;
-        margin: 15px .5%;
-      }
-      th, td {
-        padding: 5px;
-      }
+        body {
+          font-size: 12px;
+          font-family: Arial;
+        }
+        table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+        }
+        table {
+          width: 20%;
+          float: left;
+          margin: 15px .5%;
+        }
+        th, td {
+          padding: 5px;
+        }
       {% endblock %}
     </style>
-    {% block js %} {% endblock %}
+    {% block js %}{% endblock %}
   </head>
   <body>
-    <div> {% block header %} {% endblock %} </div>
-    <div> {% block content %} {% endblock %} </div>
-    <div> {% block footer %} {% endblock %} </div>
+    <div>{% block header %}{% endblock %}</div>
+    <div>{% block content %}{% endblock %}</div>
+    <div>{% block footer %}{% endblock %}</div>
   </body>
 </html>
