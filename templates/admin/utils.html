@@ -4,43 +4,13 @@
 {% endmacro %}
 
 {# -FORM----------------------------------------- #}
-{% macro render_form(obj, cancel_url, action=None) %}
-    {% call form_tag(action=action) %}
-        {{ render_form_fields(obj) }}
-        {{ render_form_buttons(cancel_url) }}
-    {% endcall %}
-{% endmacro %}
-
 {% macro form_tag(obj, action=None) %}
     <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
       {{ caller() }}
     </form>
 {% endmacro %}
 
-{% macro render_form_fields(obj, display) %}
-    {% if obj.hidden_tag is defined %}
-      {{ obj.hidden_tag() }}
-    {% else %}
-      {% if csrf_token %}
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-      {% endif %}
-      {% for field in obj if field.widget.input_type == 'hidden' %}
-        {{ field }}
-      {% endfor %}
-    {% endif %}
-
-    {% if display %}
-      {% for rule in display %}
-        {{ rule(obj, form_opts=form_opts) }}
-      {% endfor %}
-    {% else %}
-      {% for field in obj if field.widget.input_type != 'hidden' %}
-        {{ render_field(obj, field) }}
-      {% endfor %}
-    {% endif %}
-{% endmacro %}
-
-{% macro render_field(obj, field, caller=None) %}
+{% macro render_form_field(obj, field, caller=None) %}
   <div class="form-group">
     <label for="{{ field.id }}" class="col-md-2 control-label">
       {{ field.label.text }}
