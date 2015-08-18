@@ -1,25 +1,8 @@
-from jinja2 import Markup, contextfunction
-from flask import g
-
-
-@contextfunction
-def store_context(context):
-    """
-        Resolve current Jinja2 context and store it for general consumption.
-    """
-    g.le_admin_render_ctx = context
-
-
-def get_render_ctx():
-    """
-        Get view template context.
-    """
-    return g.le_admin_render_ctx
+from jinja2 import Markup
+from .base import get_render_ctx
 
 
 class RuleMixin:
-    store_context = staticmethod(store_context)
-
     def __call__(self, obj, extra_kwargs=None):
         raise NotImplementedError
 
@@ -112,8 +95,8 @@ class NestedRule(RuleMixin):
 
 
 class FieldSet(NestedRule):
-    def __init__(self, fields, header=None, separator=''):
-        rules = [Field(field) for field in fields]
+    def __init__(self, fields, header=None, separator='', field_class=Field):
+        rules = [field_class(field) for field in fields]
         if header is not None:
             rules.insert(0, Header(header))
         super().__init__(rules, separator)
