@@ -47,6 +47,18 @@ class Macro(RuleMixin):
         return macro(**opts)
 
 
+class Container(Macro):
+    def __init__(self, macro_name, child_rule, **kwargs):
+        self.child_rule = child_rule
+        super().__init__(macro_name, **kwargs)
+
+    def __call__(self, obj, macro_kwargs=None):
+        def caller():
+            return get_render_ctx().call(self.child_rule, obj)
+
+        return super().__call__(obj, {'caller': caller})
+
+
 class Header(Macro):
     def __init__(self, text, macro_name='utils.render_header'):
         self.text = text
@@ -66,37 +78,32 @@ class Field(Macro):
         return super().__call__(obj, {'field': field})
 
 
-class Container(Macro):
-    def __init__(self, macro_name, child_rule, **kwargs):
-        self.child_rule = child_rule
-        super().__init__(macro_name, **kwargs)
-
-    def __call__(self, obj, macro_kwargs=None):
-        def caller():
-            return get_render_ctx().call(self.child_rule, obj)
-
-        return super().__call__(obj, {'caller': caller})
+class FormField(Field):
+    def __init__(self, field_name, macro_name='utils.render_form_field'):
+        super().__init__(field_name=field_name, macro_name=macro_name)
 
 
 # nested
 class NestedRule(RuleMixin):
-    def __init__(self, rules, separator=''):
+    def __init__(self, rules):
         # avoid generator consumption
         self.rules = list(rules)
-        self.separator = separator
 
     def __iter__(self):
         return iter(self.rules)
 
     def __call__(self, obj, macro_kwargs=None):
-        return Markup(self.separator.join(
-            rule(obj) for rule in self.rules
-        ))
+        return Markup(''.join(rule(obj) for rule in self.rules))
 
 
 class FieldSet(NestedRule):
-    def __init__(self, fields, header=None, separator='', field_class=Field):
+    def __init__(self, fields, header=None, field_class=Field):
         rules = [field_class(field) for field in fields]
         if header is not None:
             rules.insert(0, Header(header))
-        super().__init__(rules, separator)
+        super().__init__(rules=rules)
+
+
+class FormFieldSet(FieldSet):
+    def __init__(self, fields, header=None, field_class=FormField):
+        super().__init__(fields=fields, header=header, field_class=field_class)
