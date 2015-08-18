@@ -1,4 +1,4 @@
-from wtforms import fields, validators, Form, FormField  # , FieldList
+from wtforms import fields, validators, Form  # , FormField, FieldList
 import sqlalchemy
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import as_declarative
@@ -31,7 +31,6 @@ class Model1Form(Form):
         'field1', validators=[validators.input_required()])
     field2 = fields.StringField('field2', validators=[validators.optional()])
     field3 = fields.StringField('field3', validators=[validators.optional()])
-    pass
 
 
 model1_controller = SQLAlchemyController(
@@ -39,17 +38,8 @@ model1_controller = SQLAlchemyController(
 )
 model1_display = Display(
     form_class=Model1Form,
-    rules=rules.NestedRule([
-        rules.Text('Hello Nurse'),
-        rules.HTML('<h1>Hello Nurse</h1>'),
-        rules.Macro('utils.test_macro'),
-        rules.Header('Hello Nurse'),
-        rules.Field('field1'),
-        rules.Container('utils.form_tag', rules.Text('Hello Nurse')),
-        rules.NestedRule([
-            rules.Text('Hello Nurse'),
-            rules.Text('Hello Nurse'),
-        ], separator='\n'),
-        rules.FieldSet(['field1', 'field2'], header='Hello Nurse'),
-    ])
+    rules=rules.FieldSet(['field1', 'field2', 'field3'], header='Form'),
+    create=rules.FormFieldSet(['field1', 'field2', 'field3'], header='Form'),
+    update=rules.FormFieldSet(['field1', 'field2', 'field3'], header='Form'),
+    delete=rules.FormFieldSet(['field1', 'field2', 'field3'], header='Form'),
 )
