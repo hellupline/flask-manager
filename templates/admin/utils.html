@@ -1,43 +1,68 @@
 {# -HEADERS-------------------------------------- #}
 {% macro render_header(obj, text) %}
-    <h3>{{ text }}</h3>
+  <h3>{{ text }}</h3>
+{% endmacro %}
+
+{% macro render_field(obj, field_name, field_value) %}
+  <span> {{ field_value }} </span>
+{% endmacro %}
+
+{# -LIST----------------------------------------- #}
+{% macro render_table(columns) %}
+  <table border="1">
+    <thead>
+      <tr>
+        {% for column in columns %}
+          <td>{{ column }}</td>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {{ caller() }}
+    </tbody>
+  </table>
+{% endmacro %}
+
+{% macro render_table_field(obj, field_name, field_value) %}
+  <td> {{ field_value }} </td>
 {% endmacro %}
 
 {# -FORM----------------------------------------- #}
 {% macro form_tag(obj, action=None) %}
-    <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
-      {{ caller() }}
-    </form>
+  <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
+    {{ caller() }}
+  </form>
 {% endmacro %}
 
-{% macro render_form_field(obj, field, caller=None) %}
+{% macro render_form_field(obj, field_name, field_value) %}
   <div class="form-group">
-    <label for="{{ field.id }}" class="col-md-2 control-label">
-      {{ field.label.text }}
+    <label for="{{ field_value.id }}" class="col-md-2 control-label">
+      {{ field_value.label.text }}
     </label>
     <div class="col-md-10'">
-      {{ field }}
-      <p class="help-block">{{ field.description }}</p>
+      {{ field_value }}
+      <p class="help-block">
+        {{ field_value.description }}
+      </p>
       <ul class="help-block input-errors">
-        {% for error in field.errors if error is string %}
-        <li>{{ error }}</li>
+        {% for error in field_value.errors if error is string %}
+          <li>
+            {{ error }}
+          </li>
         {% endfor %}
       </ul>
     </div>
-    {% if caller %}
-      {{ caller(obj, field) }}
-    {% endif %}
   </div>
 {% endmacro %}
 
 {% macro render_form_buttons(cancel_url) %}
-    <hr>
-    <div class="form-group">
-      <div class="col-md-offset-2 col-md-10 submit-row">
-        <input type="submit" class="btn btn-primary" value="Save" />
-        {% if cancel_url %}
-          <a href="{{ cancel_url }}" class="btn btn-danger" role="button">Cancel</a>
-        {% endif %}
-      </div>
+  <hr>
+  <div class="form-group">
+    <div class="col-md-offset-2 col-md-10 submit-row">
+      <input type="submit" class="btn btn-primary" value="Save" />
+      {% if cancel_url %}
+        <a href="{{ cancel_url }}" class="btn btn-danger" role="button">Cancel</a>
+      {% endif %}
     </div>
+  </div>
 {% endmacro %}

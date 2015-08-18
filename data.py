@@ -39,7 +39,7 @@ model1_controller = SQLAlchemyController(
 model1_display = Display(
     form_class=Model1Form,
     rules=rules.FieldSet(['field1', 'field2', 'field3'], header='Form'),
+    list=rules.ColumnSet(['id', 'field1', 'field2', 'field3']),
     create=rules.FormFieldSet(['field1', 'field2', 'field3'], header='Form'),
     update=rules.FormFieldSet(['field1', 'field2', 'field3'], header='Form'),
-    delete=rules.FormFieldSet(['field1', 'field2', 'field3'], header='Form'),
 )

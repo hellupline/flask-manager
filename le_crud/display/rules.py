@@ -74,12 +74,20 @@ class Field(Macro):
         super().__init__(macro_name=macro_name)
 
     def __call__(self, obj, macro_kwargs=None):
-        field = getattr(obj, self.field_name)
-        return super().__call__(obj, {'field': field})
+        field_value = getattr(obj, self.field_name)
+        return super().__call__(obj, {
+            'field_name': self.field_name,
+            'field_value': field_value,
+        })
 
 
 class FormField(Field):
     def __init__(self, field_name, macro_name='utils.render_form_field'):
+        super().__init__(field_name=field_name, macro_name=macro_name)
+
+
+class CellField(Field):
+    def __init__(self, field_name, macro_name='utils.render_table_field'):
         super().__init__(field_name=field_name, macro_name=macro_name)
 
 
@@ -107,3 +115,8 @@ class FieldSet(NestedRule):
 class FormFieldSet(FieldSet):
     def __init__(self, fields, header=None, field_class=FormField):
         super().__init__(fields=fields, header=header, field_class=field_class)
+
+
+class ColumnSet(FieldSet):
+    def __init__(self, fields, field_class=CellField):
+        super().__init__(fields=fields, field_class=field_class)

@@ -8,7 +8,7 @@
   {% set __ = display.store_context() %} {# hide None #}
   {% call utils.form_tag(action='') %}
     {% for rule in display.get_rules('delete') %}
-      {{ rule(form) }}
+      {{ rule(item) }}
     {% endfor %}
     {{ utils.render_form_buttons(cancel_url='') }}
   {% endcall %}

@@ -6,19 +6,13 @@
 {# Body #}
 {% block content %}
   {% set __ = display.store_context() %} {# hide None #}
-  <table>
-    <thead>
+  {% call utils.render_table([]) %}
+    {% for item in items %}
       <tr>
+        {% for rule in display.get_rules('list') %}
+          {{ rule(item) }}
+        {% endfor %}
       </tr>
-    </thead>
-    <tbody>
-      {% for item in items %}
-        <tr>
-          {% for rule in display.get_rules('list') %}
-            {{ rule(item) }}
-          {% endfor %}
-        </tr>
-      {% endfor %}
-    <tbody>
-  </table>
+    {% endfor %}
+  {% endcall %}
 {% endblock %}
