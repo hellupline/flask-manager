@@ -53,11 +53,11 @@ class View:
         """
         raise MethodNotAllowed(['GET'])
 
-    def get_context(self, kwargs):
+    def get_context(self, external_ctx):
         """Format input to render.
 
         """
-        return kwargs
+        return external_ctx
 
     def get_template_name(self):
         return self.template_name
@@ -106,13 +106,14 @@ class Component(View):
             abort(401)
         return super().dispatch_request(*args, **kwargs)
 
-    def get_context(self, external_ctx):
+    def get_context(self, external_ctx=None):
         ctx = {
             'controller': self.controller,
             'display': self.display,
             'permissions': self.permissions,
         }
-        ctx.update(external_ctx)
+        if external_ctx is not None:
+            ctx.update(external_ctx)
         return super().get_context(ctx)
 
     # Form
