@@ -27,6 +27,19 @@
   <td> {{ field_value }} </td>
 {% endmacro %}
 
+{% macro render_roles_buttons(roles, roles_keys, item=none) %}
+  {% for type in roles_keys %}
+    {% set components = roles[type] %}
+    {% for role, endpoint in components %}
+      {% if item is not none %}
+        <a href="{{ url_for(endpoint, pk=item.id) }}">{{ role }}</a>
+      {% else %}
+        <a href="{{ url_for(endpoint) }}">{{ role }}</a>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+{% endmacro %}
+
 {# -FORM----------------------------------------- #}
 {% macro form_tag(obj, action=None) %}
   <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
