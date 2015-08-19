@@ -1,30 +1,88 @@
 from collections import defaultdict
-from .base import Group, concat_urls, slugify
+from flask import Blueprint
+
+from .base import Tree, View, concat_urls, slugify
 from .components import List, Create, Read, Update, Delete, Roles
 
 
-class Crud(Group):
+class LandingView(View):
+    def __init__(self, tree, *args, **kwargs):
+        self.tree = tree
+        super().__init__(*args, **kwargs)
+
+    def get(self):
+        return self.tree
+
+
+class Group(Tree):
+    template_name = 'admin/landing.html'
+
+    def __init__(self, name, url, items=None,
+                 template_name=None, view_class=LandingView):
+        if template_name is not None:
+            self.template_name = template_name
+        self.view_class = view_class
+        super().__init__(name=name, url=url, items=items)
+
+    def iter_endpoints(self):
+        yield (self.name, self._get_view_endpoint()), [
+            list(item.iter_endpoints()) for item in self.items
+        ]
+
+    def iter_items(self):
+        yield from super().iter_items()
+
+        view = self.init_view(self.view_class)
+        name = self._get_view_endpoint()
+        url = concat_urls(self.absolute_url(), '')
+        yield url, name, view.dispatch_request
+
+    def init_view(self, view_factory):
+        view_args = {
+            'template_name': self.template_name,
+            'tree': list(self.iter_endpoints()),
+        }
+        return view_factory(**view_args)
+
+    def _get_view_endpoint(self):
+        if self.is_root():
+            return 'home'
+        return '-'.join([self.absolute_name(), 'home'])
+
+    def get_blueprint(self):
+        bp = Blueprint(self.name.lower(), __name__)
+        for url, name, view in self.iter_items():
+            bp.add_url_rule(url, name.lower(), view, methods=['GET', 'POST'])
+        return bp
+
+
+class Crud(Tree):
+    COMPONENTS = [List, Read, Create, Update, Delete]
+
     def __init__(self, controller, display, name, url,
-                 form_class=None, components=None,
-                 *args, **kwargs):
+                 form_class=None, components=None):
         if components is None:
-            self.components = [List, Read, Create, Update, Delete]
+            self.components = self.COMPONENTS.copy()
         else:
             self.components = components
         self.controller = controller
         self.display = display
         self.form_class = form_class
-        super().__init__(name=name, url=url, *args, **kwargs)
+        super().__init__(name=name, url=url, items=None)
 
-    def get_roles(self):
-        roles = defaultdict(list)
+    def iter_endpoints(self):
         for component in self.components:
-            role = component.role
-            roles[role.name].append([
-                component.name,
-                '.{}'.format(self.component_absolute_name(component))
-            ])
-        return roles
+            if component.role is Roles.list:
+                continue
+            yield self.name, self._get_component_endpoint(component)
+
+    def iter_items(self):
+        for component_factory in self.components:
+            component = self.init_component(component_factory)
+            name = self._get_component_endpoint(component)
+            for url in component.urls:
+                url = concat_urls(self.absolute_url(), url)
+                yield url, name, component.dispatch_request
 
     def init_component(self, component_factory):
         kwargs = {
@@ -36,19 +94,15 @@ class Crud(Group):
         }
         return component_factory(**kwargs)
 
-    def iter_items(self):
-        for component_factory in self.components:
-            component = self.init_component(component_factory)
-            name = self.component_absolute_name(component)
-            for url in component.urls:
-                url = concat_urls(self.absolute_url(), url)
-                yield url, name, component.dispatch_request
-
-    def iter_endpoints(self):
+    def get_roles(self):
+        roles = defaultdict(list)
         for component in self.components:
-            if component.role is Roles.list:
-                continue
-            yield self.name, self.component_absolute_name(component)
+            role = component.role
+            roles[role.name].append([
+                component.name,
+                '.{}'.format(self._get_component_endpoint(component))
+            ])
+        return roles
 
-    def component_absolute_name(self, component):
+    def _get_component_endpoint(self, component):
         return '-'.join([self.absolute_name(), slugify(component.name)])

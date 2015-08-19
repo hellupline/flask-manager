@@ -1,2 +1,1 @@
-from .base import Group  # noqa
-from .crud import Crud  # noqa
+from .crud import Group, Crud  # noqa

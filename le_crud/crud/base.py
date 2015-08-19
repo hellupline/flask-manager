@@ -1,6 +1,6 @@
 from enum import Enum
 
-from flask import Blueprint, request, abort, redirect, render_template
+from flask import request, abort, redirect, render_template
 from werkzeug.exceptions import MethodNotAllowed
 
 
@@ -10,6 +10,53 @@ def concat_urls(url_a, url_b):
 
 def slugify(value):
     return value.lower().replace(' ', '_')
+
+
+class Tree:
+    parent = None
+    items = None
+
+    def __init__(self, name, url, items=None):
+        self.name = name
+        self.url = url
+        self.register_items(items)
+
+    def register_item(self, item):
+        item.register_parent(self)
+        self.items.append(item)
+
+    def register_parent(self, parent):
+        if parent is not None:
+            self.parent = parent
+
+    def register_items(self, items):
+        if items is None:
+            return
+        if self.items is None:
+            self.items = []
+        for item in items:
+            item.register_parent(self)
+        self.items.extend(item for item in items)
+
+    def is_root(self):
+        return self.parent is None
+
+    def absolute_url(self):
+        if self.is_root():
+            return self.url
+        return concat_urls(self.parent.absolute_url(), self.url)
+
+    def absolute_name(self):
+        if self.is_root() or self.parent.is_root():
+            return slugify(self.name)
+        return '-'.join([self.parent.absolute_name(), slugify(self.name)])
+
+    def iter_endpoints(self):
+        raise NotImplementedError
+
+    def iter_items(self):
+        for item in self.items:
+            yield from item.iter_items()
 
 
 class View:
@@ -95,12 +142,14 @@ class Component(View):
             self.name = name
         super().__init__(success_url=success_url, template_name=template_name)
 
+    # Permissions
     def is_allowed(self):
         roles = [
             name for name, __ in self.roles.get(self.role.name, ())
         ]
         return self.name in roles
 
+    # View
     def dispatch_request(self, *args, **kwargs):
         if not self.is_allowed():
             abort(401)
@@ -131,75 +180,3 @@ class Component(View):
         if item is None:
             abort(404)
         return item
-
-
-class Tree:
-    items = None
-    parent = None
-
-    def register_item(self, item):
-        item.register_parent(self)
-        self.items.append(item)
-
-    def register_parent(self, parent):
-        if parent is not None:
-            self.parent = parent
-
-    def register_items(self, items):
-        if items is None:
-            return
-        if self.items is None:
-            self.items = []
-        for item in items:
-            item.register_parent(self)
-        self.items.extend(item for item in items)
-
-    def is_root(self):
-        return self.parent is None
-
-
-class Group(Tree, View):
-    def __init__(self, name, url, items=None, template_name=None):
-        self.name = name
-        self.url = url
-        self.register_items(items)
-        super().__init__(template_name=template_name)
-
-    def get_blueprint(self):
-        bp = Blueprint(self.name.lower(), __name__)
-        for url, name, view in self.iter_items():
-            bp.add_url_rule(url, name.lower(), view, methods=['GET', 'POST'])
-        return bp
-
-    def get(self):
-        return {'items': list(self.iter_endpoints())}
-
-    def iter_items(self):
-        for item in self.items:
-            yield from item.iter_items()
-        yield self.landing_endpoint()
-
-    def iter_endpoints(self):
-        yield (self.name, self._endpoint_name()), [
-            list(item.iter_endpoints()) for item in self.items
-        ]
-
-    def landing_endpoint(self):
-        name = self._endpoint_name()
-        url = concat_urls(self.absolute_url(), '')
-        return url, name, self.dispatch_request
-
-    def _endpoint_name(self):
-        if self.is_root():
-            return 'home'
-        return '-'.join([self.absolute_name(), 'home'])
-
-    def absolute_url(self):
-        if self.is_root():
-            return self.url
-        return concat_urls(self.parent.absolute_url(), self.url)
-
-    def absolute_name(self):
-        if self.is_root() or self.parent.is_root():
-            return slugify(self.name)
-        return '-'.join([self.parent.absolute_name(), slugify(self.name)])
