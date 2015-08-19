@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+
+{# Macros #}
+{% import 'admin/utils.html' as utils %}
+
+{% macro tree_stuff(t) %}
+  <ul>
+    {% for name, endpoint, childrens in t %}
+      <li>
+        <a href="{{ url_for(endpoint) }}">{{ name }}</a>
+      </li>
+      {{ tree_stuff(childrens) }}
+    {% endfor %}
+  </ul>
+{% endmacro %}
+
+{% block content %} {{ tree_stuff(tree) }} {% endblock %}

@@ -51,7 +51,7 @@ class Tree:
             return slugify(self.name)
         return '-'.join([self.parent.absolute_name(), slugify(self.name)])
 
-    def iter_endpoints(self):
+    def endpoints(self):
         raise NotImplementedError
 
     def iter_items(self):

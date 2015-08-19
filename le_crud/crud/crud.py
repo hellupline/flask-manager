@@ -11,7 +11,7 @@ class LandingView(View):
         super().__init__(*args, **kwargs)
 
     def get(self):
-        return self.tree
+        return {'tree': self.tree}
 
 
 class Group(Tree):
@@ -24,10 +24,12 @@ class Group(Tree):
         self.view_class = view_class
         super().__init__(name=name, url=url, items=items)
 
-    def iter_endpoints(self):
-        yield (self.name, self._get_view_endpoint()), [
-            list(item.iter_endpoints()) for item in self.items
-        ]
+    def endpoints(self):
+        endpoint = '.{}'.format(self._get_view_endpoint())
+        return [(self.name, endpoint, [
+            endpoint
+            for item in self.items for endpoint in item.endpoints()
+        ])]
 
     def iter_items(self):
         yield from super().iter_items()
@@ -40,7 +42,7 @@ class Group(Tree):
     def init_view(self, view_factory):
         view_args = {
             'template_name': self.template_name,
-            'tree': list(self.iter_endpoints()),
+            'tree': self.endpoints(),
         }
         return view_factory(**view_args)
 
@@ -70,11 +72,12 @@ class Crud(Tree):
         self.form_class = form_class
         super().__init__(name=name, url=url, items=None)
 
-    def iter_endpoints(self):
+    def endpoints(self):
         for component in self.components:
-            if component.role is Roles.list:
+            if component.role is not Roles.list:
                 continue
-            yield self.name, self._get_component_endpoint(component)
+            endpoint = '.{}'.format(self._get_component_endpoint(component))
+            yield self.name, endpoint, ()
 
     def iter_items(self):
         for component_factory in self.components:
