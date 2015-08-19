@@ -201,5 +201,5 @@ class Group(Tree, View):
 
     def absolute_name(self):
         if self.is_root() or self.parent.is_root():
-            return self.name
+            return slugify(self.name)
         return '-'.join([self.parent.absolute_name(), slugify(self.name)])
