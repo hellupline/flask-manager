@@ -22,7 +22,7 @@ class Crud(Group):
             role = component.role
             roles[role.name].append([
                 component.name,
-                self.component_absolute_name(component)
+                '.{}'.format(self.component_absolute_name(component))
             ])
         return roles
 
