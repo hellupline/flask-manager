@@ -33,7 +33,6 @@ orm.mapper(Tag, metadata.tables['tag'])
 tag_controller = SQLAlchemyController(model_class=Tag, db_session=Session)
 tag_display = Display(
     form_class=TagForm,
-    rules=rules.FieldSet(['name', 'rules'], header='Form'),
     list=rules.ColumnSet(['id', 'name', 'rules']),
     create=rules.FormFieldSet(['name', 'rules'], header='Form'),
     read=rules.FieldSet(['name', 'rules'], header='Form'),

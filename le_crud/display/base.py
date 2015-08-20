@@ -27,12 +27,10 @@ class Display:
     )
     store_context = staticmethod(store_context)
 
-    def __init__(self, form_class, rules, **kwargs):
-        self.rules = {'rules': rules}
-        for key in self.RULES_NAMES:
-            if key in kwargs:
-                self.rules[key] = kwargs[key]
+    def __init__(self, form_class, **kwargs):
+        self.rules = {
+            key: kwargs[key] for key in self.RULES_NAMES if key in kwargs}
         self.form_class = form_class
 
-    def get_rules(self, name='rules'):
-        return self.rules.get(name, self.rules['rules'])
+    def get_rules(self, name):
+        return self.rules.get(name)
