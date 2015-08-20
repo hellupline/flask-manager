@@ -10,36 +10,36 @@ def build_crud():
         le_crud.Group(name='Aperture', url='aperture/', items=[
             le_crud.Crud(
                 name='Glados', url='glados/',
-                controller=data.model1_controller,
-                display=data.model1_display,
+                controller=data.tag_controller,
+                display=data.tag_display,
             ),
             le_crud.Crud(
                 name='Wheatley', url='wheatley/',
-                controller=data.model1_controller,
-                display=data.model1_display,
+                controller=data.tag_controller,
+                display=data.tag_display,
             ),
             le_crud.Crud(
                 name='Chell', url='chell/',
-                controller=data.model1_controller,
-                display=data.model1_display,
+                controller=data.tag_controller,
+                display=data.tag_display,
             ),
             le_crud.Crud(
                 name='Cave Johnson', url='cave-johnson/',
-                controller=data.model1_controller,
-                display=data.model1_display,
+                controller=data.tag_controller,
+                display=data.tag_display,
             ),
         ]),
         le_crud.Group(name='Black Mesa', url='black-mesa/', items=[
             le_crud.Crud(
                 name='Gordon Freeman', url='gordon-freeman/',
-                controller=data.model1_controller,
-                display=data.model1_display,
+                controller=data.tag_controller,
+                display=data.tag_display,
             ),
         ]),
         le_crud.Crud(
             name='Valve', url='valve/',
-            controller=data.model1_controller,
-            display=data.model1_display,
+            controller=data.tag_controller,
+            display=data.tag_display,
         ),
     ])
     return le_crud_admin
@@ -63,5 +63,5 @@ if __name__ == '__main__':
 
     app.register_blueprint(build_crud().get_blueprint())
 
-    data.metadata.create_all()
+    # data.metadata.create_all()
     app.run(debug=True)
