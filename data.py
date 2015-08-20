@@ -25,10 +25,11 @@ class Tag:
 
 class TagForm(Form):
     name = fields.StringField('name', validators=[validators.input_required()])
-    rules = fields.StringField('rules', validators=[validators.optional()])
+    rules = fields.TextAreaField('rules', validators=[validators.optional()])
 
 
 orm.mapper(Tag, metadata.tables['tag'])
+
 tag_controller = SQLAlchemyController(model_class=Tag, db_session=Session)
 tag_display = Display(
     form_class=TagForm,
