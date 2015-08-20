@@ -10,6 +10,9 @@ class SQLAlchemyController(Controller):
             self.db_session = db_session
         super().__init__(*args, **kwargs)
 
+    def get_query(self):
+        return self.db_session.query(self.model_class)
+
     def new(self):
         return self.model_class()
 
@@ -34,7 +37,7 @@ class SQLAlchemyController(Controller):
         search is similar with filters, but use a OR condition instead.
         """
         start, end = (page-1)*self.per_page, (page)*self.per_page
-        query = self.model_class.query
+        query = self.get_query()
         if None not in (search, self.search_fields):
             query = query.filter(self.filter_by([
                 (field == search) for field in self.search_fields
@@ -48,7 +51,7 @@ class SQLAlchemyController(Controller):
         return query.offset(start).limit(end)
 
     def get_item(self, pk):
-        return self.model_class.query.get(pk)
+        return self.get_query().get(pk)
 
     def create_item(self, form):
         model = self.new()
