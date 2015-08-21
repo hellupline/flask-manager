@@ -123,5 +123,6 @@ class FormFieldSet(FieldSet):
 
 
 class ColumnSet(FieldSet):
-    def __init__(self, fields, field_class=CellField):
-        super().__init__(fields=fields, field_class=field_class)
+    def __init__(self, columns, field_class=CellField):
+        self.columns = columns
+        super().__init__(fields=columns, field_class=field_class)
