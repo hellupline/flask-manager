@@ -10,9 +10,11 @@
   {% call utils.render_table(rules.columns) %}
     {% for item in items %}
       <tr>
-        <td> {{ utils.render_roles_buttons(roles, ['read', 'update', 'delete'], item) }} </td>
-        {% for rule in display.get_rules('list') %}
-          {{ rule(item) }}
+        <td>
+          {{ utils.render_roles_buttons(roles, item=item) }}
+        </td>
+        {% for rule in rules %}
+          {{ rule(form) }}
         {% endfor %}
       </tr>
     {% endfor %}

@@ -30,10 +30,9 @@
   <td> {{ field_value }} </td>
 {% endmacro %}
 
-{% macro render_roles_buttons(roles, roles_keys, item=none) %}
+{% macro render_roles_buttons(roles, item=none, roles_keys=('read', 'update', 'delete')) %}
   {% for type in roles_keys %}
-    {% set components = roles[type] %}
-    {% for role, endpoint in components %}
+    {% for role, endpoint in roles[type] %}
       {% if item is not none %}
         <a href="{{ url_for(endpoint, pk=item.id) }}">{{ role }}</a>
       {% else %}
