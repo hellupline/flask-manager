@@ -2,9 +2,11 @@
 
 {# Macros #}
 {% import 'admin/utils.html' as utils %}
+{% import 'admin/pager.html' as pager %}
 
 {# Body #}
 {% block content %}
+{{ url_generator(page=1) }}
   {% set __ = display.store_context() %} {# hide None #}
   {{ utils.render_roles_buttons(roles, role_types=['create']) }}
   {% call utils.render_table(rules.columns) %}
@@ -19,4 +21,9 @@
       </tr>
     {% endfor %}
   {% endcall %}
+  <div>
+    <ul>
+      {{ pager.pager(page, pages, url_generator) }}
+    </ul>
+  </div>
 {% endblock %}

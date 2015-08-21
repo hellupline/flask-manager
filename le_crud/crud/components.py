@@ -1,4 +1,6 @@
-from flask import request
+from functools import partial
+from math import ceil
+from flask import request, url_for
 
 from .base import Component, Roles
 
@@ -60,8 +62,18 @@ class List(Component):
     template_name = 'admin/list.html'
 
     def get(self, page=1):
-        items = self.controller.get_items(page)
-        return self.get_context({'items': items})
+        url_generator = partial(
+            url_for,
+            request.url_rule.endpoint,
+        )
+        items, total = self.controller.get_items(page)
+        return self.get_context({
+            'items': items,
+            'total': total,
+            'page': page,
+            'pages': ceil(total/self.controller.per_page),
+            'url_generator': url_generator,
+        })
 
     def post(self):
         # XXX

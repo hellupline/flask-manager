@@ -48,7 +48,7 @@ class SQLAlchemyController(Controller):
             ]))
         if order_by is not None:
             query = query.order_by(order_by)
-        return query.offset(start).limit(end)
+        return query.offset(start).limit(end), query.count()
 
     def get_item(self, pk):
         return self.get_query().get(pk)
