@@ -3,8 +3,9 @@
   <h3>{{ text }}</h3>
 {% endmacro %}
 
+{# -DATA----------------------------------------- #}
 {% macro render_field(obj, field_name, field_value) %}
-  <span> {{ field_value }} </span>
+  <div> {{ field_name }} {{ field_value }} </div>
 {% endmacro %}
 
 {# -LIST----------------------------------------- #}
@@ -43,19 +44,19 @@
 {% endmacro %}
 
 {# -FORM----------------------------------------- #}
-{% macro render_form(obj) %}
-  {% for field in obj %}
-    {{ render_form_field(none, none, field) }}
+{% macro render_form(form) %}
+  {% for field in form %}
+    {{ render_form_field(form, none, field) }}
   {% endfor %}
 {% endmacro %}
 
-{% macro form_tag(obj, action=none) %}
+{% macro form_tag(form, action=none) %}
   <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
     {{ caller() }}
   </form>
 {% endmacro %}
 
-{% macro render_form_field(obj, field_name, field_value) %}
+{% macro render_form_field(form, field_name, field_value) %}
   <div class="form-group">
     <label for="{{ field_value.id }}" class="col-md-2 control-label">
       {{ field_value.label.text }}
