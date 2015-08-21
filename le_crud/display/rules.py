@@ -13,7 +13,7 @@ class Text(RuleMixin):
         self.text = text
         self.escape = escape
 
-    def __call__(self, obj, extra_kwargs=None):
+    def __call__(self, obj, **kwargs):
         if self.escape:
             return self.text
         return Markup(self.text)
@@ -39,12 +39,11 @@ class Macro(RuleMixin):
             macro = getattr(macro, part)
         return macro
 
-    def __call__(self, obj, macro_kwargs=None):
+    def __call__(self, obj, **kwargs):
         macro = self._resolve()
-        opts = dict(self.default_kwargs, obj=obj)
-        if macro_kwargs is not None:
-            opts.update(macro_kwargs)
-        return macro(**opts)
+        opts = self.default_kwargs.copy()
+        opts.update(kwargs)
+        return macro(obj, **opts)
 
 
 class Container(Macro):
@@ -52,20 +51,11 @@ class Container(Macro):
         self.child_rule = child_rule
         super().__init__(macro_name, **kwargs)
 
-    def __call__(self, obj, macro_kwargs=None):
+    def __call__(self, obj, **kwargs):
         def caller():
             return get_render_ctx().call(self.child_rule, obj)
 
-        return super().__call__(obj, {'caller': caller})
-
-
-class Header(Macro):
-    def __init__(self, text, macro_name='utils.render_header'):
-        self.text = text
-        super().__init__(macro_name=macro_name)
-
-    def __call__(self, obj, macro_kwargs=None):
-        return super().__call__(obj, {'text': self.text})
+        return super().__call__(obj, caller=caller)
 
 
 class Form(Macro):
@@ -73,26 +63,28 @@ class Form(Macro):
         super().__init__(macro_name=macro_name)
 
 
+class Header(Macro):
+    def __init__(self, text, macro_name='utils.render_header'):
+        super().__init__(macro_name=macro_name, text=text)
+
+
 class Field(Macro):
     def __init__(self, field_name, macro_name='utils.render_field'):
         self.field_name = field_name
-        super().__init__(macro_name=macro_name)
+        super().__init__(macro_name=macro_name, field_name=field_name)
 
-    def __call__(self, obj, macro_kwargs=None):
+    def __call__(self, obj, **kwargs):
         field_value = getattr(obj, self.field_name)
-        return super().__call__(obj, {
-            'field_name': self.field_name,
-            'field_value': field_value,
-        })
-
-
-class FormField(Field):
-    def __init__(self, field_name, macro_name='utils.render_form_field'):
-        super().__init__(field_name=field_name, macro_name=macro_name)
+        return super().__call__(obj, field_value=field_value)
 
 
 class CellField(Field):
     def __init__(self, field_name, macro_name='utils.render_table_field'):
+        super().__init__(field_name=field_name, macro_name=macro_name)
+
+
+class FormField(Field):
+    def __init__(self, field_name, macro_name='utils.render_form_field'):
         super().__init__(field_name=field_name, macro_name=macro_name)
 
 
@@ -105,7 +97,7 @@ class NestedRule(RuleMixin):
     def __iter__(self):
         return iter(self.rules)
 
-    def __call__(self, obj, macro_kwargs=None):
+    def __call__(self, obj, **kwargs):
         return Markup(''.join(rule(obj) for rule in self.rules))
 
 
@@ -117,12 +109,12 @@ class FieldSet(NestedRule):
         super().__init__(rules=rules)
 
 
-class FormFieldSet(FieldSet):
-    def __init__(self, fields, header=None, field_class=FormField):
-        super().__init__(fields=fields, header=header, field_class=field_class)
-
-
 class ColumnSet(FieldSet):
     def __init__(self, columns, field_class=CellField):
         self.columns = columns
         super().__init__(fields=columns, field_class=field_class)
+
+
+class FormFieldSet(FieldSet):
+    def __init__(self, fields, header=None, field_class=FormField):
+        super().__init__(fields=fields, header=header, field_class=field_class)
