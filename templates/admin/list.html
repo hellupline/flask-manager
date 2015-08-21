@@ -6,7 +6,7 @@
 {# Body #}
 {% block content %}
   {% set __ = display.store_context() %} {# hide None #}
-  {{ utils.render_roles_buttons(roles, ['create']) }}
+  {{ utils.render_roles_buttons(roles, role_types=['create']) }}
   {% call utils.render_table(rules.columns) %}
     {% for item in items %}
       <tr>
@@ -14,7 +14,7 @@
           {{ utils.render_roles_buttons(roles, item=item) }}
         </td>
         {% for rule in rules %}
-          {{ rule(form) }}
+          {{ rule(item) }}
         {% endfor %}
       </tr>
     {% endfor %}
