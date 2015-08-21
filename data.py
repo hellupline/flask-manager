@@ -1,3 +1,5 @@
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+# , QuerySelectMultipleField
 from wtforms_alchemy import ModelForm
 
 import sqlalchemy as sa
@@ -31,6 +33,9 @@ class TagKind(Base):
     id = sa.Column(sa.Integer(), primary_key=True)
     name = sa.Column(sa.String(255), nullable=False, index=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Tag(Base):
     __tablename__ = 'tag'
@@ -48,6 +53,9 @@ class KindForm(SessionModelForm):
 
 
 class TagForm(SessionModelForm):
+    kind = QuerySelectField(
+        'Kind', query_factory=lambda: TagKind.query, allow_blank=True)
+
     class Meta:
         model = Tag
 
@@ -57,9 +65,9 @@ tagkind_controller = SQLAlchemyController(
 tagkind_display = Display(
     form_class=KindForm,
     list=rules.ColumnSet(['id', 'name']),
-    create=rules.Form(),
+    create=[rules.Form()],
     read=rules.FieldSet(['name']),
-    update=rules.Form(),
+    update=[rules.Form()],
     delete=rules.FieldSet(['name']),
 )
 
