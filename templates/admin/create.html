@@ -7,7 +7,7 @@
 {% block content %}
   {% set __ = display.store_context() %} {# hide None #}
   {% call utils.form_tag(action='') %}
-    {% for rule in display.get_rules('create') %}
+    {% for rule in rules %}
       {{ rule(form) }}
     {% endfor %}
     {{ utils.render_form_buttons(cancel_url='') }}

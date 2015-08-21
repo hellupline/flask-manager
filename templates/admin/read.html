@@ -6,7 +6,7 @@
 {# Body #}
 {% block content %}
   {% set __ = display.store_context() %} {# hide None #}
-  {% for rule in display.get_rules('read') %}
+  {% for rule in rules %}
     {{ rule(item) }}
   {% endfor %}
 {% endblock %}

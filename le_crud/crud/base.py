@@ -160,6 +160,7 @@ class Component(View):
             'controller': self.controller,
             'display': self.display,
             'roles': self.roles,
+            'rules': self.display.get_rules(self.role.name),
         }
         if external_ctx is not None:
             ctx.update(external_ctx)

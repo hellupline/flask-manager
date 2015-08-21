@@ -7,7 +7,7 @@
 {% block content %}
   {% set __ = display.store_context() %} {# hide None #}
   {{ utils.render_roles_buttons(roles, ['create']) }}
-  {% call utils.render_table(display.get_rules('list').columns) %}
+  {% call utils.render_table(rules.columns) %}
     {% for item in items %}
       <tr>
         <td> {{ utils.render_roles_buttons(roles, ['read', 'update', 'delete'], item) }} </td>
