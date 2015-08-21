@@ -41,7 +41,13 @@
 {% endmacro %}
 
 {# -FORM----------------------------------------- #}
-{% macro form_tag(obj, action=None) %}
+{% macro render_form(obj) %}
+  {% for field in obj %}
+    {{ render_form_field(none, none, field) }}
+  {% endfor %}
+{% endmacro %}
+
+{% macro form_tag(obj, action=none) %}
   <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
     {{ caller() }}
   </form>

@@ -68,6 +68,11 @@ class Header(Macro):
         return super().__call__(obj, {'text': self.text})
 
 
+class Form(Macro):
+    def __init__(self, macro_name='utils.render_form'):
+        super().__init__(macro_name=macro_name)
+
+
 class Field(Macro):
     def __init__(self, field_name, macro_name='utils.render_field'):
         self.field_name = field_name
