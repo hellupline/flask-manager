@@ -7,40 +7,18 @@ import data
 
 def build_crud():
     le_crud_admin = le_crud.Group(name='Admin', url='/admin/', items=[
-        le_crud.Group(name='Aperture', url='aperture/', items=[
+        le_crud.Group(name='Tags', url='tagging/', items=[
             le_crud.Crud(
-                name='Glados', url='glados/',
-                controller=data.tag_controller,
-                display=data.tag_display,
+                name='Tag Kinds', url='tag-kinds/',
+                controller=data.tagkind_controller,
+                display=data.tagkind_display,
             ),
             le_crud.Crud(
-                name='Wheatley', url='wheatley/',
-                controller=data.tag_controller,
-                display=data.tag_display,
-            ),
-            le_crud.Crud(
-                name='Chell', url='chell/',
-                controller=data.tag_controller,
-                display=data.tag_display,
-            ),
-            le_crud.Crud(
-                name='Cave Johnson', url='cave-johnson/',
+                name='Tag', url='tag/',
                 controller=data.tag_controller,
                 display=data.tag_display,
             ),
         ]),
-        le_crud.Group(name='Black Mesa', url='black-mesa/', items=[
-            le_crud.Crud(
-                name='Gordon Freeman', url='gordon-freeman/',
-                controller=data.tag_controller,
-                display=data.tag_display,
-            ),
-        ]),
-        le_crud.Crud(
-            name='Valve', url='valve/',
-            controller=data.tag_controller,
-            display=data.tag_display,
-        ),
     ])
     return le_crud_admin
 
