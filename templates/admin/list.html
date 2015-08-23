@@ -6,7 +6,6 @@
 
 {# Body #}
 {% block content %}
-{{ url_generator(page=1) }}
   {% set __ = display.store_context() %} {# hide None #}
   {{ utils.render_roles_buttons(roles, role_types=['create']) }}
   {% call utils.render_table(rules.columns) %}
@@ -25,5 +24,6 @@
     <ul>
       {{ pager.pager(page, pages, url_generator) }}
     </ul>
+    total: {{ total }}
   </div>
 {% endblock %}
