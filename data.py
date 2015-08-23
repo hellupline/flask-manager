@@ -72,7 +72,11 @@ tagkind_display = Display(
 )
 
 
-tag_controller = SQLAlchemyController(model_class=Tag, db_session=Session)
+tag_controller = SQLAlchemyController(
+    model_class=Tag,
+    search_fields=[Tag.name],
+    db_session=Session,
+)
 tag_display = Display(
     form_class=TagForm,
     list=rules.ColumnSet(['id', 'name', 'rules']),
