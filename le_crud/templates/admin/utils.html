@@ -44,14 +44,17 @@
 {% endmacro %}
 
 {# -FORM----------------------------------------- #}
-{% macro render_form(form) %}
-  {% for field in form %}
-    {{ render_form_field(form, none, field) }}
-  {% endfor %}
+{% macro render_form(form, action='', method='POST') %}
+  {% call form_tag(action=action, method=method) %}
+    {% for field in form %}
+      {{ render_form_field(form, field.name, field) }}
+    {% endfor %}
+    {{ render_form_buttons(cancel_url='') }}
+  {% endcall %}
 {% endmacro %}
 
-{% macro form_tag(form, action=none) %}
-  <form action="{{ action or '' }}" method="POST" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
+{% macro form_tag(form, action=none, method='POST') %}
+  <form action="{{ action or '' }}" method="{{ method }}" role="form" class="admin-form form-horizontal" enctype="multipart/form-data">
     {{ caller() }}
   </form>
 {% endmacro %}
