@@ -7,9 +7,9 @@ from sqlalchemy import create_engine, orm, MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import as_declarative
 
-from le_crud import SQLAlchemyController, Display
-from le_crud.controller.sqlalchemy import ColumnFilter, JoinColumnFilter
-from le_crud.display import rules
+from le_crud.ext.sqlalchemy import (
+    controller as sa_controller, filters as sa_filters)
+from le_crud import display, rules
 
 # engine = create_engine('postgresql://mucca:oiuy0987@localhost/shop')
 engine = create_engine('sqlite:////tmp/le_crud.db')
@@ -61,9 +61,9 @@ class TagForm(SessionModelForm):
         model = Tag
 
 
-tagkind_controller = SQLAlchemyController(
+tagkind_controller = sa_controller.SQLAlchemyController(
     model_class=TagKind, db_session=Session)
-tagkind_display = Display(
+tagkind_display = display.Display(
     form_class=KindForm,
     list=rules.ColumnSet(['id', 'name']),
     create=[rules.Form()],
@@ -73,16 +73,17 @@ tagkind_display = Display(
 )
 
 
-tag_controller = SQLAlchemyController(
+tag_controller = sa_controller.SQLAlchemyController(
     db_session=Session,
     model_class=Tag,
     search_fields=[Tag.name, Tag.rules, Tag.rules_expr],
     filters={
-        'name': ColumnFilter(Tag.name),
-        'kind': JoinColumnFilter(TagKind.name, TagKind),
+        'kind': sa_filters.JoinColumnFilter(
+            TagKind.name, TagKind),
+        'name': sa_filters.ColumnFilter(Tag.name),
     },
 )
-tag_display = Display(
+tag_display = display.Display(
     form_class=TagForm,
     list=rules.ColumnSet(['id', 'name', 'rules']),
     create=[rules.Form()],

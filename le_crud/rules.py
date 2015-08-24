@@ -1,5 +1,5 @@
 from jinja2 import Markup
-from .base import get_render_ctx
+from .display import get_render_ctx
 
 
 class RuleMixin:

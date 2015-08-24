@@ -1,24 +1,24 @@
 #!/usr/bin/env python
 from flask import Flask
 
-import le_crud
+from le_crud import crud
 import data
 
 
 def build_crud():
-    tag_kind_crud = le_crud.Crud(
+    tag_kind_crud = crud.Crud(
         name='Tag Kinds',
         controller=data.tagkind_controller,
         display=data.tagkind_display,
     )
-    tag_crud = le_crud.Crud(
+    tag_crud = crud.Crud(
         name='Tag',
         controller=data.tag_controller,
         display=data.tag_display,
     )
-    tagging = le_crud.Group(
+    tagging = crud.Group(
         name='Tags', items=[tag_kind_crud, tag_crud])
-    le_crud_admin = le_crud.Group(
+    le_crud_admin = crud.Group(
         name='Admin', items=[tagging])
     return le_crud_admin
 
