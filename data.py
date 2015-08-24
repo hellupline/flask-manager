@@ -8,6 +8,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import as_declarative
 
 from le_crud import SQLAlchemyController, Display
+from le_crud.controller.sqlalchemy import ColumnFilter, JoinColumnFilter
 from le_crud.display import rules
 
 # engine = create_engine('postgresql://mucca:oiuy0987@localhost/shop')
@@ -73,9 +74,13 @@ tagkind_display = Display(
 
 
 tag_controller = SQLAlchemyController(
+    db_session=Session,
     model_class=Tag,
     search_fields=[Tag.name, Tag.rules, Tag.rules_expr],
-    db_session=Session,
+    filters={
+        'name': ColumnFilter(Tag.name),
+        'kind': JoinColumnFilter(TagKind.name, TagKind),
+    },
 )
 tag_display = Display(
     form_class=TagForm,

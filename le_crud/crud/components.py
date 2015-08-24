@@ -62,19 +62,17 @@ class List(Component):
     template_name = 'admin/list.html'
 
     def get(self, page=1):
-        url_generator = partial(
-            url_for,
-            request.url_rule.endpoint,
-        )
+        filter_form = self.controller.get_filter_form()(request.args)
+
         order_by = request.args.get('order_by')
-        items, total = self.controller.get_items(
-            page, order_by)
+        items, total = self.controller.get_items(page, order_by, request.args)
         return self.get_context({
             'items': items,
             'total': total,
             'page': page,
             'pages': ceil(total/self.controller.per_page),
-            'url_generator': url_generator,
+            'filter_form': filter_form,
+            'url_generator': partial(url_for, request.url_rule.endpoint),
         })
 
     def post(self):
