@@ -66,7 +66,9 @@ class List(Component):
             url_for,
             request.url_rule.endpoint,
         )
-        items, total = self.controller.get_items(page)
+        order_by = request.args.get('order_by')
+        items, total = self.controller.get_items(
+            page, order_by)
         return self.get_context({
             'items': items,
             'total': total,
