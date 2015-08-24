@@ -17,7 +17,7 @@ class LandingView(View):
 class Group(Tree):
     template_name = 'admin/landing.html'
 
-    def __init__(self, name, url, items=None,
+    def __init__(self, name, url=None, items=None,
                  template_name=None, view_class=LandingView):
         if template_name is not None:
             self.template_name = template_name
@@ -61,7 +61,7 @@ class Group(Tree):
 class Crud(Tree):
     COMPONENTS = [List, Read, Create, Update, Delete]
 
-    def __init__(self, controller, display, name, url,
+    def __init__(self, controller, display, name, url=None,
                  form_class=None, components=None):
         if components is None:
             self.components = self.COMPONENTS.copy()

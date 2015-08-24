@@ -19,9 +19,9 @@ class Tree:
     parent = None
     items = None
 
-    def __init__(self, name, url, items=None):
+    def __init__(self, name, url=None, items=None):
         self.name = name
-        self.url = url
+        self.url = url or slugify(name)
         self.register_items(items)
 
     def register_item(self, item):
