@@ -55,6 +55,7 @@ class Group(Tree):
         bp = Blueprint(
             self.name.lower(), __name__,
             url_prefix=concat_urls(self.url),
+            template_folder='../templates',  # XXX
         )
 
         # remove parent url
