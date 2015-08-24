@@ -74,7 +74,7 @@ tagkind_display = Display(
 
 tag_controller = SQLAlchemyController(
     model_class=Tag,
-    search_fields=[Tag.name],
+    search_fields=[Tag.name, Tag.rules, Tag.rules_expr],
     db_session=Session,
 )
 tag_display = Display(
