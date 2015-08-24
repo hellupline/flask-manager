@@ -4,8 +4,11 @@ from flask import request, abort, redirect, render_template
 from werkzeug.exceptions import MethodNotAllowed
 
 
-def concat_urls(url_a, url_b):
-    return '/'.join([url_a.rstrip('/'), url_b.lstrip('/')])
+def concat_urls(*urls):
+    normalized_urls = [url.strip('/') for url in urls]
+    joined_urls = '/'.join(normalized_urls)
+    normalized_joined_urls = joined_urls.strip('/')
+    return '/{}/'.format(normalized_joined_urls)
 
 
 def slugify(value):
