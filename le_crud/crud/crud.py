@@ -52,8 +52,15 @@ class Group(Tree):
         return '-'.join([self.absolute_name(), 'home'])
 
     def get_blueprint(self):
-        bp = Blueprint(self.name.lower(), __name__)
+        bp = Blueprint(
+            self.name.lower(), __name__,
+            url_prefix=concat_urls(self.url),
+        )
+
+        # remove parent url
+        absolute_url_len = len(concat_urls(self.absolute_url()))
         for url, name, view in self.iter_items():
+            url = url[absolute_url_len:]
             bp.add_url_rule(url, name.lower(), view, methods=['GET', 'POST'])
         return bp
 
