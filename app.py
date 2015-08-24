@@ -25,13 +25,11 @@ def build_crud():
 
 def root():
     routes = [
-        '{} -> {}'.format(rule, rule.endpoint)
+        '<a href="{}">{}</a>'.format(rule, rule.endpoint)
         for rule in app.url_map.iter_rules()
     ]
     return '<html><body><pre>\n{}\n</pre></body></html>\n'.format(
-        '\n'.join(sorted(routes)).
-        replace('<', '&lt;').
-        replace('>', '&gt;')
+        '\n'.join(sorted(routes))
     )
 
 
