@@ -23,6 +23,11 @@ class SQLAlchemyController(Controller):
         self.db_session.delete(model)
         self.db_session.commit()
 
+    def _get_field(self, name):
+        if name[0] == '-':
+            return -getattr(self.model_class, name[1:])
+        return getattr(self.model_class, name)
+
     def get_items(self,
                   page=1, order_by=None, filters=None, search=None):
         """
@@ -49,7 +54,7 @@ class SQLAlchemyController(Controller):
         start, end = (page-1)*self.per_page, (page)*self.per_page
         query = self.get_query()
         if order_by is not None:
-            query = query.order_by(order_by)
+            query = query.order_by(self._get_field(order_by))
         if filters is not None:
             query = query.filter(and_(*filters))
         if search is not None:
