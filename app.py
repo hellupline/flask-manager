@@ -6,20 +6,20 @@ import data
 
 
 def build_crud():
-    le_crud_admin = le_crud.Group(name='Admin', url='/admin/', items=[
-        le_crud.Group(name='Tags', url='tagging/', items=[
-            le_crud.Crud(
-                name='Tag Kinds', url='tag-kinds/',
-                controller=data.tagkind_controller,
-                display=data.tagkind_display,
-            ),
-            le_crud.Crud(
-                name='Tag', url='tag/',
-                controller=data.tag_controller,
-                display=data.tag_display,
-            ),
-        ]),
-    ])
+    tag_kind_crud = le_crud.Crud(
+        name='Tag Kinds',
+        controller=data.tagkind_controller,
+        display=data.tagkind_display,
+    )
+    tag_crud = le_crud.Crud(
+        name='Tag',
+        controller=data.tag_controller,
+        display=data.tag_display,
+    )
+    tagging = le_crud.Group(
+        name='Tags', items=[tag_kind_crud, tag_crud])
+    le_crud_admin = le_crud.Group(
+        name='Admin', items=[tagging])
     return le_crud_admin
 
 
