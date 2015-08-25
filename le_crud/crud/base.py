@@ -69,8 +69,9 @@ class Tree:
 
 
 class View:
-    def __init__(self, template_name, success_url=None):
-        self.template_name = template_name
+    def __init__(self, template_name=None, success_url=None):
+        if template_name is not None:
+            self.template_name = template_name
         self.success_url = success_url
 
     def dispatch_request(self, *args, **kwargs):
