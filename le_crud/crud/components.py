@@ -63,16 +63,18 @@ class List(Component):
 
     def get(self, page=1):
         filter_form = self.controller.get_filter_form()(request.args)
-
         order_by = request.args.get('order_by')
+        url_generator = partial(
+            url_for, request.url_rule.endpoint, **request.args)
         items, total = self.controller.get_items(page, order_by, request.args)
         return self.get_context({
+            'filter_form': filter_form,
+            'order_by': order_by,
+            'url_generator': url_generator,
             'items': items,
             'total': total,
             'page': page,
             'pages': ceil(total/self.controller.per_page),
-            'filter_form': filter_form,
-            'url_generator': partial(url_for, request.url_rule.endpoint),
         })
 
     def post(self):
