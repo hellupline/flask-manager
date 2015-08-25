@@ -12,8 +12,10 @@ class SQLAlchemyController(Controller):
     def get_filter_form(self):
         class FilterForm(wtforms.Form):
             pass
-        for key, filter_ in self.filters.items():
-            setattr(FilterForm, key, filter_.get_form_field(key, self.get_query()))
+        if self.filters is not None:
+            for key, filter_ in self.filters.items():
+                field = filter_.get_form_field(key, self.get_query())
+                setattr(FilterForm, key, field)
         return FilterForm
 
     def get_filters(self, params):

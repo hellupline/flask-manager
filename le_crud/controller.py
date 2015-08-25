@@ -7,19 +7,21 @@ class Filter:
 
 
 class Controller:
+    model_class = None
+    form_class = None
+    filters = None
     per_page = 10
 
-    def __init__(self,
-                 model_class=None, form_class=None,
-                 per_page=None, filters=None):
+    def __init__(self, model_class=None, form_class=None, filters=None,
+                 per_page=None):
         if model_class is not None:
             self.model_class = model_class
         if form_class is not None:
             self.form_class = form_class
-        if per_page is not None:
-            self.per_page = per_page
         if filters is not None:
             self.filters = filters
+        if per_page is not None:
+            self.per_page = per_page
 
     def get_filter_form(self):
         raise NotImplementedError
