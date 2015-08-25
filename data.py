@@ -80,6 +80,9 @@ tag_controller = sa_controller.SQLAlchemyController(
         ('search', sa_filters.SearchFilter([Tag.name, Tag.rules])),
         ('name', sa_filters.ColumnFilter(Tag.name)),
         ('kind', sa_filters.JoinColumnFilter(TagKind.name, TagKind)),
+    ]),
+    actions=OrderedDict([
+        ('print ids', print),
     ])
 )
 tag_display = display.Display(

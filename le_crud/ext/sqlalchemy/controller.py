@@ -25,6 +25,17 @@ class SQLAlchemyController(Controller):
             if value and key in self.filters
         ]
 
+    def get_actions_form(self):
+        class ActionsForm(wtforms.Form):
+            ids = wtforms.fields.SelectField('ids', choices=[])
+        if self.actions is not None:
+            choices = [(key, key.title()) for key, action in self.actions.items()]
+            ActionsForm.action = wtforms.fields.SelectField(choices=choices)
+        return ActionsForm
+
+    def execute_action(self, action_key, ids):
+        self.actions[action_key](ids)
+
     def get_query(self):
         return self.db_session.query(self.model_class)
 
