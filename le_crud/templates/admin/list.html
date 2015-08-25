@@ -7,20 +7,27 @@
 {# Body #}
 {% block content %}
   {% set __ = display.store_context() %} {# hide None #}
+  {{ utils.menu_tree(tree) }}
   {{ utils.render_roles_buttons(roles, role_types=['create']) }}
   <hr>
   {{ utils.render_form(filter_form, method='GET') }}
-  {% call utils.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
-    {% for item in items %}
-      <tr>
-        <td>
-          {{ utils.render_roles_buttons(roles, item=item) }}
-        </td>
-        {% for rule in rules %}
-          {{ rule(item) }}
-        {% endfor %}
-      </tr>
-    {% endfor %}
+  {% call utils.form_tag() %}
+    {% call utils.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
+      {% for item in items %}
+        <tr>
+          <td>
+            {{ utils.render_roles_buttons(roles, item=item) }}
+          </td>
+          <td>
+            <input type="checkbox" name="ids" value="{{ item.id }}" />
+          </td>
+          {% for rule in rules %}
+            {{ rule(item) }}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    {% endcall %}
+    {{ utils.render_form_buttons() }}
   {% endcall %}
   <div>
     <ul>

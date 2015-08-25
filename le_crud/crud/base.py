@@ -57,6 +57,12 @@ class Tree:
     def endpoints(self):
         raise NotImplementedError
 
+    def get_tree_endpoints(self):
+        if self.is_root():
+            return self.endpoints()
+        else:
+            return self.parent.endpoints()
+
     def iter_items(self):
         for item in self.items:
             yield from item.iter_items()
@@ -130,13 +136,13 @@ class Component(View):
     urls = None
     name = None
 
-    def __init__(self, controller, display, roles, success_url,
-                 urls=None, name=None, template_name=None,
-                 form_class=None):
+    def __init__(self, controller, display, roles, tree, success_url,
+                 urls=None, name=None, template_name=None, form_class=None):
         # from crud
         self.controller = controller
         self.display = display
         self.roles = roles
+        self.tree = tree
         self.form_class = form_class
 
         if urls is not None:
@@ -163,6 +169,7 @@ class Component(View):
             'controller': self.controller,
             'display': self.display,
             'roles': self.roles,
+            'tree': self.tree,
             'rules': self.display.get_rules(self.role.name),
         }
         if external_ctx is not None:

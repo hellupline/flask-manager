@@ -42,7 +42,7 @@ class Group(Tree):
     def init_view(self, view_factory):
         view_args = {
             'template_name': self.template_name,
-            'tree': self.endpoints(),
+            'tree': self.get_tree_endpoints(),
         }
         return view_factory(**view_args)
 
@@ -99,9 +99,10 @@ class Crud(Tree):
         kwargs = {
             'controller': self.controller,
             'display': self.display,
-            'form_class': self.form_class,
             'roles': self.get_roles(),
             'success_url': self.absolute_url(),
+            'tree': self.get_tree_endpoints(),
+            'form_class': self.form_class,
         }
         return component_factory(**kwargs)
 

@@ -1,11 +1,13 @@
-{# -HEADERS-------------------------------------- #}
-{% macro render_header(obj, text) %}
-  <h3>{{ text }}</h3>
-{% endmacro %}
-
-{# -DATA----------------------------------------- #}
-{% macro render_field(obj, field_name, field_value) %}
-  <div> {{ field_name }} {{ field_value }} </div>
+{# -MENU----------------------------------------- #}
+{% macro menu_tree(tree) %}
+  <ul>
+    {% for name, endpoint, childrens in tree %}
+      <li>
+        <a href="{{ url_for(endpoint) }}">{{ name }}</a>
+      </li>
+      {{ menu_tree(childrens) }}
+    {% endfor %}
+  </ul>
 {% endmacro %}
 
 {# -LIST----------------------------------------- #}
@@ -14,6 +16,7 @@
     <thead>
       <tr>
         <td>Actions</td>
+        <td>Markers</td>
         {% for column in columns %}
           {% if current == column %}
             {% set _column = '-' + column %}
@@ -46,6 +49,16 @@
       {% endif %}
     {% endfor %}
   {% endfor %}
+{% endmacro %}
+
+{# -HEADERS-------------------------------------- #}
+{% macro render_header(obj, text) %}
+  <h3>{{ text }}</h3>
+{% endmacro %}
+
+{# -DATA----------------------------------------- #}
+{% macro render_field(obj, field_name, field_value) %}
+  <div> {{ field_name }} {{ field_value }} </div>
 {% endmacro %}
 
 {# -FORM----------------------------------------- #}
