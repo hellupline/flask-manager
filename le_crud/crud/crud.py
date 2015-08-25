@@ -100,9 +100,8 @@ class Crud(Tree):
             'controller': self.controller,
             'display': self.display,
             'roles': self.get_roles(),
-            'success_url': self.absolute_url(),
             'tree': self.get_tree_endpoints(),
-            'form_class': self.form_class,
+            'success_url': self.absolute_url(),
         }
         return component_factory(**kwargs)
 

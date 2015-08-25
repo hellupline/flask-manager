@@ -137,13 +137,12 @@ class Component(View):
     name = None
 
     def __init__(self, controller, display, roles, tree, success_url,
-                 urls=None, name=None, template_name=None, form_class=None):
+                 urls=None, name=None, template_name=None):
         # from crud
         self.controller = controller
         self.display = display
         self.roles = roles
         self.tree = tree
-        self.form_class = form_class
 
         if urls is not None:
             self.urls = urls
@@ -177,14 +176,8 @@ class Component(View):
         return super().get_context(ctx)
 
     # Form
-    def get_form_class(self):
-        if self.form_class is not None:
-            return self.form_class
-        return self.display.form_class
-
     def get_form(self, *args, **kwargs):
-        form_class = self.get_form_class()
-        return form_class(*args, **kwargs)
+        return self.controller.form_class(*args, **kwargs)
 
     def get_item(self, pk):
         item = self.controller.get_item(pk)

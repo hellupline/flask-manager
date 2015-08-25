@@ -63,11 +63,9 @@ class TagForm(SessionModelForm):
 
 
 tagkind_controller = sa_controller.SQLAlchemyController(
-    db_session=Session,
-    model_class=TagKind,
+    db_session=Session, model_class=TagKind, form_class=KindForm,
 )
 tagkind_display = display.Display(
-    form_class=KindForm,
     list=rules.ColumnSet(['id', 'name']),
     create=[rules.Form()],
     read=rules.FieldSet(['name']),
@@ -77,8 +75,7 @@ tagkind_display = display.Display(
 
 
 tag_controller = sa_controller.SQLAlchemyController(
-    db_session=Session,
-    model_class=Tag,
+    db_session=Session, model_class=Tag, form_class=TagForm,
     filters=OrderedDict([
         ('search', sa_filters.SearchFilter([Tag.name, Tag.rules])),
         ('name', sa_filters.ColumnFilter(Tag.name)),
@@ -86,7 +83,6 @@ tag_controller = sa_controller.SQLAlchemyController(
     ])
 )
 tag_display = display.Display(
-    form_class=TagForm,
     list=rules.ColumnSet(['id', 'name', 'rules']),
     create=[rules.Form()],
     read=rules.FieldSet(['name', 'rules']),
