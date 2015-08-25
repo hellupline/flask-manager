@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 # , QuerySelectMultipleField
 from wtforms_alchemy import ModelForm
@@ -62,7 +63,9 @@ class TagForm(SessionModelForm):
 
 
 tagkind_controller = sa_controller.SQLAlchemyController(
-    model_class=TagKind, db_session=Session)
+    db_session=Session,
+    model_class=TagKind,
+)
 tagkind_display = display.Display(
     form_class=KindForm,
     list=rules.ColumnSet(['id', 'name']),
@@ -76,12 +79,11 @@ tagkind_display = display.Display(
 tag_controller = sa_controller.SQLAlchemyController(
     db_session=Session,
     model_class=Tag,
-    filters={
-        'search': sa_filters.SearchFilter([Tag.name, Tag.rules]),
-        'kind': sa_filters.JoinColumnFilter(
-            TagKind.name, TagKind),
-        'name': sa_filters.ColumnFilter(Tag.name),
-    },
+    filters=OrderedDict([
+        ('search', sa_filters.SearchFilter([Tag.name, Tag.rules])),
+        ('name', sa_filters.ColumnFilter(Tag.name)),
+        ('kind', sa_filters.JoinColumnFilter(TagKind.name, TagKind)),
+    ])
 )
 tag_display = display.Display(
     form_class=TagForm,
