@@ -69,14 +69,9 @@ class Tree:
 
 
 class View:
-    template_name = None
-    success_url = None
-
-    def __init__(self, success_url=None, template_name=None):
-        if success_url is not None:
-            self.success_url = success_url
-        if template_name is not None:
-            self.template_name = template_name
+    def __init__(self, template_name, success_url=None):
+        self.template_name = template_name
+        self.success_url = success_url
 
     def dispatch_request(self, *args, **kwargs):
         if request.method in ('POST', 'PUT'):
@@ -110,9 +105,7 @@ class View:
         raise MethodNotAllowed(['GET'])
 
     def get_context(self, external_ctx):
-        """Format input to render.
-
-        """
+        """Format input to render."""
         return external_ctx
 
     def get_template_name(self):
@@ -131,7 +124,6 @@ class Roles(Enum):
 
 
 class Component(View):
-    form_class = None
     role = None
     urls = None
     name = None
