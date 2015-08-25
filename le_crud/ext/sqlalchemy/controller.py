@@ -1,5 +1,4 @@
 import wtforms
-from sqlalchemy import or_
 
 from le_crud.controller import Controller
 
@@ -44,8 +43,7 @@ class SQLAlchemyController(Controller):
             return -getattr(self.model_class, name[1:])
         return getattr(self.model_class, name)
 
-    def get_items(self,
-                  page=1, order_by=None, filters=None, search=None):
+    def get_items(self, page=1, order_by=None, filters=None):
         """
         Fetch database for items matching.
 
@@ -57,9 +55,6 @@ class SQLAlchemyController(Controller):
                 a field name to order query by.
             filters (dict):
                 a ``filter name``: ``value`` dict.
-            search (Iterable):
-                a iterable with sqlalchemy Expressions
-                will be merged with ``sqlalchemy.or_``.
 
         Returns:
             tuple with:
@@ -73,8 +68,6 @@ class SQLAlchemyController(Controller):
         if filters is not None:
             for filter_, value in self.get_filters(filters):
                 query = filter_.filter(query, value)
-        if search is not None:
-            query = query.filter(or_(*search))
         return query.offset(start).limit(end), query.count()
 
     def get_item(self, pk):

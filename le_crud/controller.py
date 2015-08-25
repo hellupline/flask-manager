@@ -2,20 +2,16 @@ class Filter:
     def filter(self, query, value):
         raise NotImplementedError
 
-    def get_values(self, query):
-        raise NotImplementedError
-
     def get_form_field(self, key, query):
         raise NotImplementedError
 
 
 class Controller:
-    search_fields = None
     per_page = 10
 
     def __init__(self,
                  model_class=None, form_class=None,
-                 per_page=None, filters=None, search_fields=None):
+                 per_page=None, filters=None):
         if model_class is not None:
             self.model_class = model_class
         if form_class is not None:
@@ -24,8 +20,6 @@ class Controller:
             self.per_page = per_page
         if filters is not None:
             self.filters = filters
-        if search_fields is not None:
-            self.search_fields = search_fields
 
     def get_filter_form(self):
         raise NotImplementedError
@@ -33,8 +27,7 @@ class Controller:
     def get_filters(self, params):
         raise NotImplementedError
 
-    def get_items(self,
-                  page=1, order_by=None, filters=None, search=None):
+    def get_items(self, page=1, order_by=None, filters=None):
         """
         Return a paginated list of columns.
         """

@@ -1,8 +1,22 @@
 from itertools import chain
 
 import wtforms
+from sqlalchemy import or_
 
 from le_crud.controller import Filter
+
+
+class SearchFilter(Filter):
+    def __init__(self, columns):
+        self.columns = columns
+
+    def filter(self, query, value):
+        return query.filter(or_(*[
+            column.contains(value) for column in self.columns
+        ]))
+
+    def get_form_field(self, key, query):
+        return wtforms.TextField()
 
 
 class ColumnFilter(Filter):

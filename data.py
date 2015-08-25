@@ -76,8 +76,8 @@ tagkind_display = display.Display(
 tag_controller = sa_controller.SQLAlchemyController(
     db_session=Session,
     model_class=Tag,
-    search_fields=[Tag.name, Tag.rules, Tag.rules_expr],
     filters={
+        'search': sa_filters.SearchFilter([Tag.name, Tag.rules]),
         'kind': sa_filters.JoinColumnFilter(
             TagKind.name, TagKind),
         'name': sa_filters.ColumnFilter(Tag.name),
