@@ -9,14 +9,19 @@
 {% endmacro %}
 
 {# -LIST----------------------------------------- #}
-{% macro render_table(columns) %}
+{% macro render_table(columns, url_generator, current) %}
   <table border="1">
     <thead>
       <tr>
         <td>Actions</td>
         {% for column in columns %}
+          {% if current == column %}
+            {% set _column = '-' + column %}
+          {% else %}
+            {% set _column = column %}
+          {% endif %}
           <td>
-            {{ column }}
+            <a href="{{ url_generator(order_by=_column) }}"> {{ column }} </a>
           </td>
         {% endfor %}
       </tr>

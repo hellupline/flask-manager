@@ -10,7 +10,7 @@
   {{ utils.render_roles_buttons(roles, role_types=['create']) }}
   <hr>
   {{ utils.render_form(filter_form, method='GET') }}
-  {% call utils.render_table(rules.columns) %}
+  {% call utils.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
     {% for item in items %}
       <tr>
         <td>
