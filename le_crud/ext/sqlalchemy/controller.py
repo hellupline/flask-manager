@@ -38,7 +38,7 @@ class SQLAlchemyController(Controller):
         return ActionsForm
 
     def execute_action(self, params):
-        form = self.get_actions_form()(params)
+        form = self.get_action_form()(params)
         if form.validate():
             self.actions[form.action.data](form.ids.data)
 
