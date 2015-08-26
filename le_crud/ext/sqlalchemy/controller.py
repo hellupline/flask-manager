@@ -32,9 +32,10 @@ class SQLAlchemyController(Controller):
     def get_action_form(self):
         class ActionsForm(wtforms.Form):
             ids = FakeSelectMultipleField('ids', coerce=int, choices=[])
+            action = wtforms.fields.SelectField(choices=[])
         if self.actions is not None:
-            choices = [(key, key.title()) for key, action in self.actions.items()]
-            ActionsForm.action = wtforms.fields.SelectField(choices=choices)
+            ActionsForm.action.choices = [
+                (key, key.title()) for key, action in self.actions.items()]
         return ActionsForm
 
     def execute_action(self, params):
