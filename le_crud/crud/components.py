@@ -63,7 +63,7 @@ class List(Component):
 
     def get(self, page=1):
         filter_form = self.controller.get_filter_form()(request.args)
-        action_form = self.controller.get_actions_form()()
+        action_form = self.controller.get_action_form()()
         order_by = request.args.get('order_by')
         url_generator = partial(
             url_for, request.url_rule.endpoint, **request.args)
@@ -80,13 +80,8 @@ class List(Component):
         })
 
     def post(self):
-        action_key = request.form.get('action')
-        ids = request.form.getlist('ids')
-        self.controller.execute_action(action_key, ids)
-        return self.success_url, self.get_context({
-            'action': action_key,
-            'ids': ids,
-        })
+        self.controller.execute_action(request.form)
+        return self.success_url, self.get_context({})
 
 
 class Create(Component):

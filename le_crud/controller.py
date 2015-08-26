@@ -24,10 +24,10 @@ class Controller:
     def get_filters(self, params):
         raise NotImplementedError
 
-    def get_actions_form(self):
+    def get_action_form(self):
         raise NotImplementedError
 
-    def execute_action(self, action_key, ids):
+    def execute_action(self, params):
         raise NotImplementedError
 
     def get_items(self, page=1, order_by=None, filters=None):

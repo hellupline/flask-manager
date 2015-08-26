@@ -2,6 +2,10 @@ import wtforms
 
 from le_crud.controller import Controller
 
+class FakeSelectMultipleField(wtforms.fields.SelectMultipleField):
+    # prevent validation for if value in choices
+    pre_validate = lambda *args: None
+
 
 class SQLAlchemyController(Controller):
     def __init__(self, db_session=None, *args, **kwargs):
@@ -25,16 +29,18 @@ class SQLAlchemyController(Controller):
             if value and key in self.filters
         ]
 
-    def get_actions_form(self):
+    def get_action_form(self):
         class ActionsForm(wtforms.Form):
-            ids = wtforms.fields.SelectField('ids', choices=[])
+            ids = FakeSelectMultipleField('ids', coerce=int, choices=[])
         if self.actions is not None:
             choices = [(key, key.title()) for key, action in self.actions.items()]
             ActionsForm.action = wtforms.fields.SelectField(choices=choices)
         return ActionsForm
 
-    def execute_action(self, action_key, ids):
-        self.actions[action_key](ids)
+    def execute_action(self, params):
+        form = self.get_actions_form()(params)
+        if form.validate():
+            self.actions[form.action.data](form.ids.data)
 
     def get_query(self):
         return self.db_session.query(self.model_class)
