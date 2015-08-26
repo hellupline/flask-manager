@@ -59,17 +59,20 @@ def build_controller(model_class, db_session, filters=None, actions=None):
 
 
 def build_form(model_class, db_session, form_base_class=wtforms_alchemy.ModelForm):
-    class RelationshipForm(form_base_class):
-        pass
-    for key, relationship in get_relationships(model_class):
-        field = convert_relationship(relationship, db_session)
-        setattr(RelationshipForm, key, field)
-
-    class Form(RelationshipForm):
-        class Meta:
-            model = model_class
-
-    return Form
+    """
+        The code below does something like this:
+        Class Form(form_base_class):
+            for key, relationship in get_relationships(model_class):
+                __dict__[key] = convert_relationship(relationship, db_session)
+            class Meta:
+                model = model_class
+    """
+    body = {
+        key: convert_relationship(relationship, db_session)
+        for key, relationship in get_relationships(model_class)
+    }
+    body['Meta'] = type('Meta', (), {'model': model_class})
+    return type('Form', (form_base_class,), body)
 
 
 def get_relationships(model_class):
