@@ -63,8 +63,9 @@ class List(Component):
 
     def get(self, page=1):
         order_by = request.args.get('order_by')
-        items, total = self.controller.get_items(page, order_by, request.args)
-        return self.get_context({
+        items, total = self.controller.get_items(
+            page, order_by, filters=request.args)
+        context = {
             'filter_form': self.controller.get_filter_form()(request.args),
             'action_form': self.controller.get_action_form()(),
             'order_by': order_by,
@@ -74,7 +75,8 @@ class List(Component):
             'total': total,
             'page': page,
             'pages': ceil(total/self.controller.per_page),
-        })
+        }
+        return self.get_context(context)
 
     def post(self):
         self.controller.execute_action(request.form)
