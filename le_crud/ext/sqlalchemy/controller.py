@@ -2,10 +2,6 @@ import wtforms
 
 from le_crud.controller import Controller
 
-class FakeSelectMultipleField(wtforms.fields.SelectMultipleField):
-    # prevent validation for if value in choices
-    pre_validate = lambda *args: None
-
 
 class SQLAlchemyController(Controller):
     def __init__(self, db_session=None, *args, **kwargs):
@@ -14,34 +10,11 @@ class SQLAlchemyController(Controller):
         super().__init__(*args, **kwargs)
 
     def get_filter_form(self):
-        class FilterForm(wtforms.Form):
-            pass
-        if self.filters is not None:
-            for key, filter_ in self.filters.items():
-                field = filter_.get_form_field(key, self.get_query())
-                setattr(FilterForm, key, field)
-        return FilterForm
-
-    def get_filters(self, params):
-        return [
-            (self.filters[key], value)
-            for key, value in params.items()
-            if value and key in self.filters
-        ]
-
-    def get_action_form(self):
-        class ActionsForm(wtforms.Form):
-            ids = FakeSelectMultipleField('ids', coerce=int, choices=[])
-            action = wtforms.fields.SelectField(choices=[])
-        if self.actions is not None:
-            ActionsForm.action.choices = [
-                (key, key.title()) for key, action in self.actions.items()]
-        return ActionsForm
-
-    def execute_action(self, params):
-        form = self.get_action_form()(params)
-        if form.validate():
-            self.actions[form.action.data](form.ids.data)
+        body = {
+            key: filter_.get_form_field(key, self.get_query())
+            for key, filter_ in self.filters.items()
+        }
+        return type('FilterForm', (wtforms.Form,), body)
 
     def get_query(self):
         return self.db_session.query(self.model_class)
