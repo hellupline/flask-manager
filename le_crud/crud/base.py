@@ -1,6 +1,6 @@
 from enum import Enum
 
-from flask import request, abort, redirect, render_template, views
+from flask import request, abort, redirect, url_for, render_template, views
 from werkzeug.exceptions import MethodNotAllowed
 
 
@@ -78,7 +78,7 @@ class TemplateView(views.View):
         if request.method in ('POST', 'PUT'):
             return_url, context = self.post(*args, **kwargs)
             if return_url is not None:
-                return redirect(return_url)
+                return redirect(url_for(return_url))
         elif request.method == 'GET':
             context = self.get(*args, **kwargs)
         return self.render_response(context)

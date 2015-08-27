@@ -94,12 +94,13 @@ class Crud(Tree):
                 yield concat_urls(self.absolute_url(), url), name, view
 
     def init_view(self, view_factory):
+        endpoint = self._get_component_endpoint(self.components[0])
         kwargs = {
             'controller': self.controller,
             'display': self.display,
             'roles': self.get_roles(),
             'tree': self.get_tree_endpoints(),
-            'success_url': self.absolute_url(),
+            'success_url': '.{}'.format(endpoint),
         }
         return view_factory(**kwargs)
 
