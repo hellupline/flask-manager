@@ -47,8 +47,8 @@ class Tag(Base):
 
 
 tagkind_crud = sa_scaffold.build_crud(TagKind, db_session=Session)
-tag_controller = sa_scaffold.build_controller(
-    Tag, db_session=Session,
+tag_crud = sa_scaffold.build_crud(
+    Tag, db_session=Session, inlines=['kind'],
     filters=OrderedDict([
         ('search', sa_filters.SearchFilter([Tag.name, Tag.rules])),
         ('name', sa_filters.ColumnFilter(Tag.name)),
@@ -56,4 +56,3 @@ tag_controller = sa_scaffold.build_controller(
     ]),
     actions=OrderedDict([('print ids', print)])
 )
-tag_display = sa_scaffold.build_display(Tag)

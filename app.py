@@ -6,14 +6,8 @@ import data
 
 
 def build_crud():
-    tag_crud = crud.Crud(
-        name='Tag',
-        controller=data.tag_controller,
-        display=data.tag_display,
-    )
-    tagging = crud.Group(name='Tags', items=[data.tagkind_crud, tag_crud])
-    le_crud_admin = crud.Group(name='Admin', items=[tagging])
-    return le_crud_admin
+    tagging = crud.Group(name='Tags', items=[data.tagkind_crud, data.tag_crud])
+    return crud.Group(name='Admin', items=[tagging])
 
 
 def root():
