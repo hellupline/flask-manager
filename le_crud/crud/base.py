@@ -1,6 +1,6 @@
 from enum import Enum
 
-from flask import request, abort, redirect, render_template
+from flask import request, abort, redirect, render_template, views
 from werkzeug.exceptions import MethodNotAllowed
 
 
@@ -68,7 +68,7 @@ class Tree:
             yield from item.iter_items()
 
 
-class View:
+class TemplateView(views.View):
     def __init__(self, template_name=None, success_url=None):
         if template_name is not None:
             self.template_name = template_name
@@ -123,7 +123,7 @@ class Roles(Enum):
     delete = 5
 
 
-class Component(View):
+class Component(TemplateView):
     role = None
     urls = None
     name = None
