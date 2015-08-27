@@ -2,7 +2,7 @@ from functools import partial
 from math import ceil
 from flask import request, url_for
 
-from .base import Component, Roles
+from le_crud.base import Component, Roles
 
 
 """

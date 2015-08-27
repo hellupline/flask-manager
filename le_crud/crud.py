@@ -1,9 +1,10 @@
-from functools import partial
 from collections import defaultdict
+from functools import partial
+
 from flask import Blueprint
 
-from .base import Tree, TemplateView, concat_urls, slugify
-from .components import List, Create, Read, Update, Delete, Roles
+from le_crud.base import TemplateView, Tree, Roles, concat_urls, slugify
+from le_crud.components import List, Create, Read, Update, Delete
 
 
 class LandingView(TemplateView):
@@ -54,7 +55,7 @@ class Group(Tree):
         bp = Blueprint(
             self.name.lower(), __name__,
             url_prefix=concat_urls(self.url),
-            template_folder='../templates',  # XXX
+            template_folder='templates',
         )
 
         # remove parent url

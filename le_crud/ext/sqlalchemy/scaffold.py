@@ -4,8 +4,7 @@ import wtforms_alchemy
 import sqlalchemy as sa
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 
-from le_crud import display, rules
-from le_crud.crud import crud
+from le_crud import display, rules, crud
 from . import controller
 
 
