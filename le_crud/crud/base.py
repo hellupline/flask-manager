@@ -77,7 +77,7 @@ class View:
     def dispatch_request(self, *args, **kwargs):
         if request.method in ('POST', 'PUT'):
             return_url, context = self.post(*args, **kwargs)
-            if return_url:
+            if return_url is not None:
                 return redirect(return_url)
         elif request.method == 'GET':
             context = self.get(*args, **kwargs)
@@ -88,11 +88,8 @@ class View:
 
         Returns:
             dict: The context.
-                {
-                    'display': Display(),
-                    'item': item,
-                    'form': Form(),
-                }
+            eg:
+                {'form': Form()}
         """
         raise NotImplementedError
 
@@ -100,8 +97,10 @@ class View:
         """Handle the processing of data.
 
         Returns:
-            tuple: The return url (str) and the context (dict).
-                ('/', {'item': item})
+            tuple:
+                The return url (str or None),
+                the context (dict).
+            ('/', {'item': item})
         """
         raise MethodNotAllowed(['GET'])
 
@@ -131,7 +130,6 @@ class Component(View):
 
     def __init__(self, controller, display, roles, tree, success_url,
                  urls=None, name=None, template_name=None):
-        # from crud
         self.controller = controller
         self.display = display
         self.roles = roles
@@ -145,9 +143,7 @@ class Component(View):
 
     # Permissions
     def is_allowed(self):
-        roles = [
-            name for name, __ in self.roles.get(self.role.name, ())
-        ]
+        roles = [name for name, __ in self.roles.get(self.role.name, ())]
         return self.name in roles
 
     # View
