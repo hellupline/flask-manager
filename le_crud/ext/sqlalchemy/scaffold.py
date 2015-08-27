@@ -10,14 +10,13 @@ from le_crud.ext.sqlalchemy import controller
 
 
 RELATIONSHIP_TYPES_TO_FIELD = {
-    # 'ONETOMANY': QuerySelectMultipleField,
     'MANYTOMANY': QuerySelectMultipleField,
     'MANYTOONE': QuerySelectField,
 }
 
 
 def build_crud(model_class, db_session,
-               filters=None, actions=None, inlines=None):
+               inlines=None, filters=None, actions=None):
     name = get_model_name(model_class)
     form_class = build_form(
         model_class=model_class, db_session=db_session, inlines=inlines)
