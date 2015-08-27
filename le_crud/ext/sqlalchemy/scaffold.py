@@ -27,25 +27,6 @@ def build_crud(model_class, db_session):
     )
 
 
-def build_display(model_class):
-    columns = get_columns(model_class)
-    return display.Display(
-        list=rules.ColumnSet(columns),
-        create=[rules.Form()],
-        read=rules.FieldSet(columns),
-        update=[rules.Form()],
-        delete=rules.FieldSet(columns),
-    )
-
-
-def get_columns(model_class):
-    def is_data_column(column):
-        return not (column.primary_key or column.foreign_keys)
-
-    columns = sa.inspect(model_class).columns
-    return [key for key, column in columns.items() if is_data_column(column)]
-
-
 def build_controller(model_class, db_session, filters=None, actions=None):
     form_class = build_form(model_class=model_class, db_session=db_session)
     return controller.SQLAlchemyController(
@@ -91,3 +72,22 @@ def convert_relationship(relationship, db_session):
         query_factory=partial(db_session.query, remote_model),
         allow_blank=column.nullable
     )
+
+
+def build_display(model_class):
+    columns = get_columns(model_class)
+    return display.Display(
+        list=rules.ColumnSet(columns),
+        create=[rules.Form()],
+        read=rules.FieldSet(columns),
+        update=[rules.Form()],
+        delete=rules.FieldSet(columns),
+    )
+
+
+def get_columns(model_class):
+    def is_data_column(column):
+        return not (column.primary_key or column.foreign_keys)
+
+    columns = sa.inspect(model_class).columns
+    return [key for key, column in columns.items() if is_data_column(column)]
