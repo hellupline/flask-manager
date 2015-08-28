@@ -45,7 +45,8 @@ class Tree:
         self.register_items(items)
 
     def __repr__(self):
-        return '<Tree: name="{}", url="{}"'.format(self.name, self.url)
+        return '<{}: name="{}", url="{}">'.format(
+            self.__class__.__name__, self.name, self.url)
 
     def __str__(self):
         return self.name
