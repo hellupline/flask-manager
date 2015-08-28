@@ -6,10 +6,7 @@
 {% import 'admin/macros/forms.html' as forms %}
 
 {# Body #}
-{% block menu %} {{ head_menu.menu_tree(tree) }} {% endblock %}
-
 {% block content %}
-  {% set __ = display.store_context() %} {# hide None #}
   {% for rule in rules %}
     {{ rule(form) }}
   {% endfor %}

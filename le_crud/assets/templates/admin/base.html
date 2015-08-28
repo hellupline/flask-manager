@@ -1,3 +1,8 @@
+{% block save_template_context %}
+  {% if display is defined %}
+    {% set __ = display.store_context() %} {# hide None #}
+  {% endif %}
+{% endblock %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,11 +21,13 @@
     <link href="{{ url_for('.static', filename='css/custom.css') }}" rel="stylesheet">
   </head>
   <body>
-    {% block menu %} {% endblock %}
+    {% block menu %}
+      {{ head_menu.menu_tree(tree) }} {# require child template to import macros/head_menu.html #}
+    {% endblock %}
     <div class="container">
-      {% block header %} {% endblock %}
-      {% block content  %} {% endblock %}
+      {% block header %}{% endblock %}
+      {% block content %}{% endblock %}
     </div>
-    {% block footer %} {% endblock %}
+    {% block footer %}{% endblock %}
   </body>
 </html>
