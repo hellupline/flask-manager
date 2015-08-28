@@ -2,8 +2,8 @@
   <table class="table table-striped table-bordered table-hover model-list">
     <thead>
       <tr>
-        <td>Actions</td>
         <td>#</td>
+        <td>Actions</td>
         {% for column in columns %}
           {% if current == column %}
             {% set _column = '-' + column %}
@@ -15,8 +15,10 @@
           </td>
         {% endfor %}
     </thead>
-    <tbody>
-      {{ caller() }}
-    </tbody>
+    <tbody> {{ caller() }} </tbody>
   </table>
+{% endmacro %}
+
+{% macro field(obj, field_name, field_value) %}
+  <td> {{ field_value }} </td>
 {% endmacro %}

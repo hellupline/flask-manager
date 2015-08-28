@@ -79,7 +79,7 @@ class Field(Macro):
 
 
 class CellField(Field):
-    def __init__(self, field_name, macro_name='utils.render_table_field'):
+    def __init__(self, field_name, macro_name='table.field'):
         super().__init__(field_name=field_name, macro_name=macro_name)
 
 
