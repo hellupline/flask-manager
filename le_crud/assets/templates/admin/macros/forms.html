@@ -1,9 +1,18 @@
-{% macro render(form, action='', method='POST') %}
+{% macro render(form, action='', method='POST', cancel_url='') %}
   {% call form_tag(action=action, method=method) %}
     {% for field in form %}
       {{ render_field(form, field.name, field) }}
     {% endfor %}
-    {{ buttons(cancel_url='') }}
+    {{ buttons(cancel_url=cancel_url) }}
+  {% endcall %}
+{% endmacro %}
+
+{% macro render_micro(form, action='', method='POST', cancel_url='', save_name='Save', skip=()) %}
+  {% call form_tag(action=action, method=method) %}
+    {% for field in form if field.id not in skip %}
+      {{ render_field(form, field.name, field, use_label=false) }}
+    {% endfor %}
+    {{ buttons(cancel_url='', add_another=false, continue_editing=false, save_name=save_name, use_hr=false) }}
   {% endcall %}
 {% endmacro %}
 
@@ -16,9 +25,11 @@
   </form>
 {% endmacro %}
 
-{% macro render_field(form, name, field) %}
+{% macro render_field(form, name, field, use_label=true) %}
   <div class="form-group">
-    {{ field.label(class="col-md-2 control-label") }}
+    {% if use_label %}
+      {{ field.label(class="col-md-2 control-label") }}
+    {% endif %}
     <div class="col-md-10">
       {{ field(class="form-control input-md", placeholder=name) }}
       <span class="help-block"> {{ field.description }} </span>
@@ -31,13 +42,19 @@
   </div>
 {% endmacro %}
 
-{% macro buttons(cancel_url) %}
-  <hr>
+{% macro buttons(cancel_url, add_another=True, continue_editing=True, save_name='Save', use_hr=true) %}
+  {% if use_hr %}
+    <hr>
+  {% endif %}
   <div class="col-md-8">
     <div class="col-md-offset-2 col-md-10 submit-row">
-      <input type="submit" value="Save" class="btn btn-primary" />
-      <input type="submit" value="Save and Add Another" name="_add_another" class="btn btn-default" />
-      <input type="submit" value="Save and Continue Editing" name="_continue_editing" class="btn btn-default" />
+      <input type="submit" value="{{ save_name }}" class="btn btn-primary" />
+      {% if add_another %}
+        <input type="submit" value="Save and Add Another" name="_add_another" class="btn btn-default" />
+      {% endif %}
+      {% if continue_editing %}
+        <input type="submit" value="Save and Continue Editing" name="_continue_editing" class="btn btn-default" />
+      {% endif %}
       {% if cancel_url %}
         <a href="{{ url_for(cancel_url) }}" role="button" class="btn btn-danger">Cancel</a>
       {% endif %}

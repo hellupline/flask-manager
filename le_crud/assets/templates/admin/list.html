@@ -4,6 +4,7 @@
 {% import 'admin/macros/head_menu.html' as head_menu %}
 {% import 'admin/macros/utils.html' as utils %}
 {% import 'admin/macros/table.html' as table %}
+{% import 'admin/macros/forms.html' as forms %}
 {% import 'admin/macros/pagination.html' as pagination %}
 
 {# Body #}
@@ -21,7 +22,9 @@
               aria-expanded="false">
         With selected <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu"></ul>
+      <ul class="dropdown-menu">
+        {{ forms.render_micro(action_form, save_name='Do it', skip=['ids']) }}
+      </ul>
     </div><!-- Actions !-->
 
     <div class="btn-group pull-right"><!-- Filters !-->
@@ -32,7 +35,9 @@
               aria-expanded="false">
         Filter by <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu"></ul>
+      <ul class="dropdown-menu">
+        {{ forms.render_micro(filter_form, save_name='Filter', method='GET') }}
+      </ul>
     </div><!-- Filters !-->
   </div>
 {% endblock %}
