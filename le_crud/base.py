@@ -122,7 +122,7 @@ class Tree:
         if self.is_root():
             return self.endpoints()
         else:
-            return self.parent.endpoints()
+            return self.parent.get_tree_endpoints()
 
     def iter_items(self):
         """Iterate over all items under ``self``."""
