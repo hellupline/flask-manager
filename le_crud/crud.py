@@ -8,6 +8,8 @@ from le_crud.components import List, Create, Read, Update, Delete
 
 
 class LandingView(TemplateView):
+    template_name = 'admin/landing.html'
+
     def __init__(self, tree, *args, **kwargs):
         self.tree = tree
         super().__init__(*args, **kwargs)
@@ -17,12 +19,7 @@ class LandingView(TemplateView):
 
 
 class Group(Tree):
-    template_name = 'admin/landing.html'
-
-    def __init__(self, name, url=None, items=None,
-                 template_name=None, view_class=LandingView):
-        if template_name is not None:
-            self.template_name = template_name
+    def __init__(self, name, url=None, items=None, view_class=LandingView):
         self.view_class = view_class
         super().__init__(name=name, url=url, items=items)
 
@@ -40,11 +37,7 @@ class Group(Tree):
         yield concat_urls(self.absolute_url(), ''), name, view
 
     def init_view(self, view_factory):
-        view_args = {
-            'template_name': self.template_name,
-            'tree': self.get_tree_endpoints(),
-        }
-        return view_factory(**view_args)
+        return view_factory(tree=self.get_tree_endpoints())
 
     def _get_view_endpoint(self):
         if self.is_root():
