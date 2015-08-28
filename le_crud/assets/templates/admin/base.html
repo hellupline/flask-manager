@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <title>{{ NAME }}</title>
     <!-- Bootstrap core JavaScript -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{{ url_for('.static', filename='js/jquery-2.1.4.min.js') }}"></script>
     <script src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
