@@ -1,5 +1,6 @@
 {# -MENU----------------------------------------- #}
 {% macro menu_tree(tree) %}
+  {% set name, endpoint, tree = tree[0] %} {# first node is root alone #}
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
@@ -13,7 +14,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#XXX">TODO NAME</a>
+        <a class="navbar-brand" href="{{ url_for(endpoint) }}">{{ name }}</a>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
@@ -24,7 +25,8 @@
                                               data-toggle="dropdown"
                                               aria-haspopup="true"
                                               aria-expanded="false">
-              Navigation <span class="caret"></span>
+              {{ name }}
+              <span class="caret"></span>
             </a>
             {{ _menu_tree(childrens) }}
           </li>
