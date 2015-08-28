@@ -16,7 +16,8 @@ RELATIONSHIP_TYPES_TO_FIELD = {
 
 
 def build_crud(model_class, db_session,
-               inlines=None, filters=None, actions=None):
+               inlines=None, filters=None, actions=None,
+               crud_class=crud.Crud):
     name = get_model_name(model_class)
     form_class = build_form(
         model_class=model_class, db_session=db_session, inlines=inlines)
@@ -28,7 +29,7 @@ def build_crud(model_class, db_session,
         actions=actions,
     )
     crud_display = build_display(model_class=model_class)
-    return crud.Crud(
+    return crud_class(
         name=name, controller=crud_controller, display=crud_display,
     )
 
