@@ -48,7 +48,7 @@ class Tag(Base):
 
 tagkind_crud = sa_scaffold.build_crud(TagKind, db_session=Session)
 tag_crud = sa_scaffold.build_crud(
-    Tag, db_session=Session, inlines=['kind'],
+    Tag, db_session=Session,  # inlines=['kind'],
     filters=OrderedDict([
         ('search', sa_filters.SearchFilter([Tag.name, Tag.rules])),
         ('name', sa_filters.ColumnFilter(Tag.name)),
