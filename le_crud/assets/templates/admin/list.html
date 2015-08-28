@@ -1,30 +1,81 @@
 {% extends "admin/base.html" %}
 
 {# Macros #}
-{% import 'admin/utils.html' as utils %}
-{% import 'admin/pager.html' as pager %}
+{% import 'admin/macros/head_menu.html' as head_menu %}
+{% import 'admin/macros/table.html' as table %}
+{% import 'admin/macros/pagination.html' as pagination %}
 
-{# Body #}
+{% block menu %}
+  {{ head_menu.menu_tree(tree) }}
+{% endblock %}
+
+{% block header %}
+  <div class="container">
+    <div class="btn-group"><!-- Create !-->
+      <button class="btn btn-default btn-default btn-sm btn-info"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false">
+        Create
+      </button>
+    </div><!-- Create !-->
+
+    <div class="btn-group"><!-- Actions !-->
+      <button class="btn btn-default btn-sm dropdown-toggle"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
+        With selected <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu"></ul>
+    </div><!-- Actions !-->
+
+    <div class="btn-group pull-right"><!-- Filters !-->
+      <button class="btn btn-default btn-sm dropdown-toggle"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
+        Filter by <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu"></ul>
+    </div><!-- Filters !-->
+  </div>
+{% endblock %}
+
 {% block content %}
   {% set __ = display.store_context() %} {# hide None #}
-  {{ utils.menu_tree(tree) }}
+  {% call table.render(rules.columns, url_generator=url_generator, current=order_by) %}
+    {% for item in items %}
+    <tr>
+      <td>
+        {{ utils.render_roles_buttons(roles, item=item) }}
+      </td>
+      <td>
+        <input type="checkbox" name="ids" value="{{ item.id }}" />
+      </td>
+      {% for rule in rules %}
+        {{ rule(item) }}
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  {% endcall %}
+{% endblock %}
+
+{% block footer %}
+  {{ pagination.render(page, pages, url_generator) }}
+{% endblock %}
+
+
+
+{# Body #}
+{% block content2 %}
   {{ utils.render_roles_buttons(roles, role_types=['create']) }}
-  <hr>
   {{ utils.render_form(filter_form, method='GET') }}
   {% call utils.form_tag() %}
     {% call utils.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
       {% for item in items %}
-        <tr>
-          <td>
-            {{ utils.render_roles_buttons(roles, item=item) }}
-          </td>
-          <td>
-            <input type="checkbox" name="ids" value="{{ item.id }}" />
-          </td>
-          {% for rule in rules %}
-            {{ rule(item) }}
-          {% endfor %}
-        </tr>
       {% endfor %}
     {% endcall %}
     {{ action_form.action() }}

@@ -1,0 +1,22 @@
+{% macro render(columns, url_generator, current) %}
+  <table class="table table-striped table-bordered table-hover model-list">
+    <thead>
+      <tr>
+        <td>Actions</td>
+        <td>#</td>
+        {% for column in columns %}
+          {% if current == column %}
+            {% set _column = '-' + column %}
+          {% else %}
+            {% set _column = column %}
+          {% endif %}
+          <td>
+            <a href="{{ url_generator(order_by=_column) }}"> {{ column }} </a>
+          </td>
+        {% endfor %}
+    </thead>
+    <tbody>
+      {{ caller() }}
+    </tbody>
+  </table>
+{% endmacro %}

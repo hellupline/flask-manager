@@ -1,4 +1,12 @@
-{% macro pager(page, pages, url_generator) %}
+{% macro render(page, pages, url_generator) %}
+  <nav>
+    <ul class="pagination">
+      {{ _pager(page, pages, url_generator) }}
+    </ul>
+  </nav>
+{% endmacro %}
+
+{% macro _pager(page, pages, url_generator) %}
   {% if pages > 1 %}
     {% set min = page - 3 %}
     {% set max = page + 4 %}

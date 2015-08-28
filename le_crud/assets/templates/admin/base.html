@@ -1,29 +1,26 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <style>
-      {% block css %}
-        body {
-          font-size: 12px;
-          font-family: Arial;
-        }
-        table, th, td {
-          border: 1px solid black;
-          border-collapse: collapse;
-        }
-        table {
-          margin: 15px .5%;
-        }
-        th, td {
-          padding: 5px;
-        }
-      {% endblock %}
-    </style>
-    {% block js %}{% endblock %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>{{ NAME }}</title>
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Custom styles for  template -->
+    <link href="{{ url_for('.static', filename='css/custom.css') }}" rel="stylesheet">
   </head>
   <body>
-    <div>{% block header %}{% endblock %}</div>
-    <div>{% block content %}{% endblock %}</div>
-    <div>{% block footer %}{% endblock %}</div>
+    {% block menu %} {% endblock %}
+    <div class="container">
+      {% block header %} {% endblock %}
+      {% block content  %} {% endblock %}
+    </div>
+    {% block footer %} {% endblock %}
   </body>
 </html>
