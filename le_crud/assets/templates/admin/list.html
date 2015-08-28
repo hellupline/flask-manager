@@ -11,36 +11,18 @@
 {% block header %}
   <div class="container">
     {{ utils.roles_buttons_create(roles) }}
-    <div class="btn-group"><!-- Actions !-->
-      <button class="btn btn-default btn-sm dropdown-toggle"
-              type="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false">
-        With selected <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        {{ forms.render_micro(action_form, save_name='Do it', skip=['ids']) }}
-      </ul>
-    </div><!-- Actions !-->
 
-    <div class="btn-group pull-right"><!-- Filters !-->
-      <button class="btn btn-default btn-sm dropdown-toggle"
-              type="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false">
-        Filter by <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        {{ forms.render_micro(filter_form, save_name='Filter', method='GET') }}
-      </ul>
-    </div><!-- Filters !-->
+    {% call utils.dropmenu('With selected') %}
+      {# forms.render_micro(action_form, save_name='Do it', skip=['ids']) #}
+    {% endcall %}
+
+    {% call utils.dropmenu('Filter by', right=true) %}
+      {# forms.render_micro(filter_form, save_name='Filter', method='GET') #}
+    {% endcall %}
   </div>
 {% endblock %}
 
 {% block content %}
-  {% set __ = display.store_context() %} {# hide None #}
   {% call table.render(rules.columns, url_generator=url_generator, current=order_by) %}
     {% for item in items %}
     <tr>
