@@ -1,0 +1,46 @@
+{% macro render(form, action='', method='POST') %}
+  {% call form_tag(action=action, method=method) %}
+    {% for field in form %}
+      {{ render_field(form, field.name, field) }}
+    {% endfor %}
+    {{ buttons(cancel_url='') }}
+  {% endcall %}
+{% endmacro %}
+
+{% macro form_tag(form, action=none, method='POST') %}
+  <form role="form" action="{{ action or '' }}"
+                    method="{{ method }}"
+                    class="form-horizontal"
+                    enctype="multipart/form-data">
+    <fieldset> {{ caller() }} </fieldset>
+  </form>
+{% endmacro %}
+
+{% macro render_field(form, name, field) %}
+  <div class="form-group">
+    {{ field.label(class="col-md-2 control-label") }}
+    <div class="col-md-10">
+      {{ field(class="form-control input-md", placeholder=name) }}
+      <span class="help-block"> {{ field.description }} </span>
+      <ul class="help-block input-errors">
+        {% for error in field.errors if error is string %}
+          <li> {{ error }} </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro buttons(cancel_url) %}
+  <hr>
+  <div class="col-md-8">
+    <div class="col-md-offset-2 col-md-10 submit-row">
+      <input type="submit" value="Save" class="btn btn-primary" />
+      <input type="submit" value="Save and Add Another" name="_add_another" class="btn btn-default" />
+      <input type="submit" value="Save and Continue Editing" name="_continue_editing" class="btn btn-default" />
+      {% if cancel_url %}
+        <a href="{{ url_for(cancel_url) }}" role="button" class="btn btn-danger">Cancel</a>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}

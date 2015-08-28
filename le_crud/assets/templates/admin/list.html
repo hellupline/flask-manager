@@ -1,14 +1,13 @@
 {% extends "admin/base.html" %}
 
 {# Macros #}
-{% import 'admin/macros/utils.html' as utils %}
 {% import 'admin/macros/head_menu.html' as head_menu %}
+{% import 'admin/macros/utils.html' as utils %}
 {% import 'admin/macros/table.html' as table %}
 {% import 'admin/macros/pagination.html' as pagination %}
 
-{% block menu %}
-  {{ head_menu.menu_tree(tree) }}
-{% endblock %}
+{# Body #}
+{% block menu %} {{ head_menu.menu_tree(tree) }} {% endblock %}
 
 {% block header %}
   <div class="container">

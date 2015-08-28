@@ -1,8 +1,9 @@
 {% extends "admin/base.html" %}
 
 {# Macros #}
-{% import 'admin/utils.html' as utils %}
+{% import 'admin/macros/head_menu.html' as head_menu %}
+{% import 'admin/macros/utils.html' as utils %}
+{% import 'admin/macros/forms.html' as forms %}
 
-{% block content %}
-  {{ utils.menu_tree(tree) }}
-{% endblock %}
+{# Body #}
+{% block menu %} {{ head_menu.menu_tree(tree) }} {% endblock %}
