@@ -10,7 +10,6 @@
 {# Body #}
 {% block header %}
   <div class="container">
-    Total: {{ total }}
     {{ utils.roles_buttons_create(roles) }}
     <div class="btn-group"><!-- Actions !-->
       <button class="btn btn-default btn-sm dropdown-toggle"
@@ -54,5 +53,5 @@
     {% endfor %}
   {% endcall %}
 
-  {{ pagination.render(page, pages, url_generator) }}
+  {{ pagination.render(page, pages, total, url_generator) }}
 {% endblock %}

@@ -1,7 +1,8 @@
-{% macro render(page, pages, url_generator) %}
+{% macro render(page, pages, total, url_generator) %}
   <nav>
     <ul class="pagination">
       {{ _pager(page, pages, url_generator) }}
+      <li> <span> Total: {{ total }} </span> </li>
     </ul>
   </nav>
 {% endmacro %}
