@@ -143,7 +143,7 @@ class TemplateView(views.View):
         if request.method in ('POST', 'PUT'):
             return_url, context = self.post(*args, **kwargs)
             if return_url is not None:
-                return redirect(url_for(return_url))
+                return redirect(return_url)
         elif request.method in ('GET', 'HEAD'):
             context = self.get(*args, **kwargs)
         return self.render_response(context)
@@ -174,13 +174,9 @@ class TemplateView(views.View):
         """Format input to render."""
         return external_ctx
 
-    def get_template_name(self):
-        """Get the template name."""
-        return self.template_name
-
     def render_response(self, context):
         """Render the context to a response."""
-        return render_template(self.get_template_name(), **context)
+        return render_template(self.template_name, **context)
 
 
 class Roles(Enum):
@@ -208,6 +204,13 @@ class Component(TemplateView):
         if name is not None:
             self.name = name
         super().__init__(success_url=success_url, template_name=template_name)
+
+    def get_success_url(self, params, item=None):
+        if '_add_another' in params:
+            return url_for(self.roles[Roles.create.name][0][1])
+        elif '_continue_editing' in params and item is not None:
+            return url_for(self.roles[Roles.update.name][0][1], pk=item.id)
+        return url_for(self.success_url)
 
     # Permissions
     def is_allowed(self):

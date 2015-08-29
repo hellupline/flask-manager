@@ -65,7 +65,7 @@ class List(Component):
         order_by = request.args.get('order_by')
         items, total = self.controller.get_items(
             page, order_by, filters=request.args)
-        context = {
+        return self.get_context({
             'filter_form': self.controller.get_filter_form()(request.args),
             'action_form': self.controller.get_action_form()(),
             'order_by': order_by,
@@ -75,8 +75,7 @@ class List(Component):
             'total': total,
             'page': page,
             'pages': ceil(total/self.controller.per_page),
-        }
-        return self.get_context(context)
+        })
 
     def post(self):
         self.controller.execute_action(request.form)
@@ -90,18 +89,16 @@ class Create(Component):
     template_name = 'admin/create.html'
 
     def get(self):
-        form = self.get_form()
-        context = {'form': form}
-        return self.get_context(context)
+        form = self.get_form(request.form)
+        return self.get_context({'form': form})
 
     def post(self):
         form = self.get_form(request.form)
-        success_url = ''
+        success_url = None
         if form.validate():
-            self.controller.create_item(form)
-            success_url = self.success_url
-        context = {'form': form}
-        return success_url, self.get_context(context)
+            item = self.controller.create_item(form)
+            success_url = self.get_success_url(request.form, item)
+        return success_url, self.get_context({'form': form})
 
 
 class Read(Component):
@@ -112,8 +109,7 @@ class Read(Component):
 
     def get(self, pk):
         item = self.get_item(pk)
-        context = {'item': item}
-        return self.get_context(context)
+        return self.get_context({'item': item})
 
 
 class Update(Component):
@@ -124,19 +120,17 @@ class Update(Component):
 
     def get(self, pk):
         item = self.get_item(pk)
-        form = self.get_form(obj=item)
-        context = {'item': item, 'form': form}
-        return self.get_context(context)
+        form = self.get_form(request.form, obj=item)
+        return self.get_context({'item': item, 'form': form})
 
     def post(self, pk):
         item = self.get_item(pk)
         form = self.get_form(request.form)
-        success_url = ''
+        success_url = None
         if form.validate():
             self.controller.update_item(item, form)
-            success_url = self.success_url
-        context = {'item': item, 'form': form}
-        return success_url, self.get_context(context)
+            success_url = self.get_success_url(request.form)
+        return success_url, self.get_context({'item': item, 'form': form})
 
 
 class Delete(Component):
@@ -147,10 +141,9 @@ class Delete(Component):
 
     def get(self, pk):
         item = self.get_item(pk)
-        context = {'item': item}
-        return self.get_context(context)
+        return self.get_context({'item': item})
 
     def post(self, pk):
         item = self.get_item(pk)
         self.controller.delete_item(item)
-        return self.success_url, self.get_context()
+        return url_for(self.success_url), self.get_context()
