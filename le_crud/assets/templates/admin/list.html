@@ -13,11 +13,11 @@
     {{ utils.roles_buttons_create(roles) }}
 
     {% call utils.dropmenu('With selected') %}
-      {{ forms.render_micro(action_form, save_name='Do it', skip=['ids']) }}
+      {{ forms.render_micro(action_form, submit_text='Do it', skip=['ids']) }}
     {% endcall %}
 
     {% call utils.dropmenu('Filter by', right=true) %}
-      {{ forms.render_micro(filter_form, save_name='Filter', method='GET') }}
+      {{ forms.render_micro(filter_form, submit_text='Filter', method='GET') }}
     {% endcall %}
   </div>
 {% endblock %}

@@ -13,6 +13,6 @@
   {% endfor %}
 
   {% call forms.form_tag(action='') %}
-    {{ forms.buttons(cancel_url='') }}
+    {{ forms.buttons(cancel_url='', add_another=false, continue_editing=false, submit_text="Confirm", type='danger') }}
   {% endcall %}
 {% endblock %}

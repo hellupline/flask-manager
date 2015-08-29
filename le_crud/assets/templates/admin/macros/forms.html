@@ -7,12 +7,12 @@
   {% endcall %}
 {% endmacro %}
 
-{% macro render_micro(form, action='', method='POST', cancel_url='', save_name='Save', skip=()) %}
+{% macro render_micro(form, action='', method='POST', cancel_url='', submit_text='Save', skip=()) %}
   {% call form_tag(action=action, method=method) %}
     {% for field in form if field.id not in skip %}
       {{ render_field(form, field.name, field, use_label=false) }}
     {% endfor %}
-    {{ buttons(cancel_url='', add_another=false, continue_editing=false, save_name=save_name, use_hr=false) }}
+    {{ buttons(cancel_url='', add_another=false, continue_editing=false, submit_text=submit_text, use_hr=false) }}
   {% endcall %}
 {% endmacro %}
 
@@ -42,13 +42,13 @@
   </div>
 {% endmacro %}
 
-{% macro buttons(cancel_url, add_another=True, continue_editing=True, save_name='Save', use_hr=true) %}
+{% macro buttons(cancel_url, add_another=true, continue_editing=true, submit_text='Save', type='primary', use_hr=true) %}
   {% if use_hr %}
     <hr>
   {% endif %}
   <div class="col-md-8">
     <div class="col-md-offset-2 col-md-10 submit-row">
-      <input type="submit" value="{{ save_name }}" class="btn btn-primary" />
+      <input type="submit" value="{{ submit_text }}" class="btn btn-{{ type }}" />
       {% if add_another %}
         <input type="submit" value="Save and Add Another" name="_add_another" class="btn btn-default" />
       {% endif %}
