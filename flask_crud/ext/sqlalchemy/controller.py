@@ -1,6 +1,6 @@
 import wtforms
 
-from le_crud.controller import Controller
+from flask_crud.controller import Controller
 
 
 class SQLAlchemyController(Controller):

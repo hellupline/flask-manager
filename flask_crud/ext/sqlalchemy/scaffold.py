@@ -5,8 +5,8 @@ import sqlalchemy as sa
 from wtforms import FormField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 
-from le_crud import crud, display, rules
-from le_crud.ext.sqlalchemy import controller
+from flask_crud import crud, display, rules
+from flask_crud.ext.sqlalchemy import controller
 
 
 RELATIONSHIP_TYPES_TO_FIELD = {

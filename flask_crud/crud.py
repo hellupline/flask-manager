@@ -3,8 +3,8 @@ from functools import partial
 
 from flask import Blueprint
 
-from le_crud.base import TemplateView, Tree, Roles, concat_urls, slugify
-from le_crud.components import List, Create, Read, Update, Delete
+from flask_crud.base import TemplateView, Tree, Roles, concat_urls, slugify
+from flask_crud.components import List, Create, Read, Update, Delete
 
 
 class LandingView(TemplateView):
@@ -48,9 +48,9 @@ class Group(Tree):
         bp = Blueprint(
             self.name.lower(), __name__,
             url_prefix=concat_urls(self.url),
-            static_folder='assets/static',
+            static_folder='static',
             static_url_path='static',
-            template_folder='assets/templates',
+            template_folder='templates',
         )
 
         # remove parent url

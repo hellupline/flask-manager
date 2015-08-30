@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from flask import Flask
 
-from le_crud import crud
+from flask_crud import crud
 import data
 
 

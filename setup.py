@@ -8,7 +8,7 @@ with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='flask-le_crud',
+    name='flask_crud',
     version='0.1.0',
     description='A Generic CRUD for Flask',
     long_description=long_description,

@@ -5,13 +5,13 @@ from sqlalchemy import create_engine, orm, MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import as_declarative
 
-from le_crud.ext.sqlalchemy import (
+from flask_crud.ext.sqlalchemy import (
     filters as sa_filters,
     scaffold as sa_scaffold,
 )
 
 # engine = create_engine('postgresql://mucca:oiuy0987@localhost/shop')
-engine = create_engine('sqlite:////tmp/le_crud.db')
+engine = create_engine('sqlite:////tmp/flask_crud.db')
 metadata = MetaData(bind=engine)
 Session = scoped_session(sessionmaker(bind=engine))
 
