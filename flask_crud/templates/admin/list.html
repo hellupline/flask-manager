@@ -9,17 +9,15 @@
 
 {# Body #}
 {% block header %}
-  <div class="container">
-    {{ utils.roles_buttons_create(roles) }}
+  {{ utils.roles_buttons_create(roles) }}
 
-    {% call utils.dropmenu('With selected') %}
-      {{ forms.render_micro(action_form, submit_text='Do it', skip=['ids']) }}
-    {% endcall %}
+  {% call utils.dropmenu('With selected') %}
+    {{ forms.render_micro(action_form, submit_text='Do it', skip=['ids']) }}
+  {% endcall %}
 
-    {% call utils.dropmenu('Filter by', right=true) %}
-      {{ forms.render_micro(filter_form, submit_text='Filter', method='GET') }}
-    {% endcall %}
-  </div>
+  {% call utils.dropmenu('Filter by', right=true) %}
+    {{ forms.render_micro(filter_form, submit_text='Filter', method='GET') }}
+  {% endcall %}
 {% endblock %}
 
 {% block content %}
