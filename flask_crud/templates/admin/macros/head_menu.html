@@ -20,15 +20,7 @@
         <ul class="nav navbar-nav">
           {% for name, endpoint, childrens in tree %}
           <li class="dropdown">
-            <a href="{{ url_for(endpoint) }}" class="dropdown-toggle"
-                                              role="button"
-                                              data-toggle="dropdown"
-                                              aria-haspopup="true"
-                                              aria-expanded="false">
-              {{ name }}
-              <span class="caret"></span>
-            </a>
-            {{ _menu_tree(childrens) }}
+            {{ _menu_item(name, endpoint, childrens) }}
           </li>
           {% endfor %}
         </ul>
@@ -37,7 +29,23 @@
   </nav>
 {% endmacro %}
 
-{% macro _menu_tree(tree) %}
+{% macro _menu_item(name, endpoint, childrens) %}
+  {% if not childrens %}
+    <a href="{{ url_for(endpoint) }}">{{ name }}</a>
+  {% else %}
+    <a href="{{ url_for(endpoint) }}" class="dropdown-toggle"
+                                      role="button"
+                                      data-toggle="dropdown"
+                                      aria-haspopup="true"
+                                      aria-expanded="false">
+      {{ name }}
+      <span class="caret"></span>
+    </a>
+    {{ _submenu_tree(childrens) }}
+  {% endif %}
+{% endmacro %}
+
+{% macro _submenu_tree(tree) %}
   {% if tree %}
     <ul class="dropdown-menu">
       {% for name, endpoint, childrens in tree %}
@@ -46,7 +54,7 @@
         {% endif %}
         <li class="{{ class }}">
           <a href="{{ url_for(endpoint) }}">{{ name }}</a>
-          {{ _menu_tree(childrens) }}
+          {{ _submenu_tree(childrens) }}
         </li>
       {% endfor %}
     </ul>
