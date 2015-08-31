@@ -79,7 +79,7 @@ class List(Component):
 
     def post(self):
         self.controller.execute_action(request.form)
-        return self.success_url, self.get_context({})
+        return self.get_success_url(), self.get_context({})
 
 
 class Create(Component):

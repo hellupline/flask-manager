@@ -224,7 +224,9 @@ class Component(TemplateView):
             self.name = name
         super().__init__(success_url=success_url, template_name=template_name)
 
-    def get_success_url(self, params, item=None):
+    def get_success_url(self, params=None, item=None):
+        if params is None:
+            return url_for(self.success_url)
         if '_add_another' in params:
             return url_for(self.roles[Roles.create.name][0][1])
         elif '_continue_editing' in params and item is not None:
