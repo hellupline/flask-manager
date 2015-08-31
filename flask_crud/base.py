@@ -1,6 +1,7 @@
 from enum import Enum
 
-from flask import request, abort, redirect, url_for, render_template, views
+from flask import (
+    Blueprint, request, abort, redirect, url_for, render_template, views)
 from werkzeug.exceptions import MethodNotAllowed
 
 
@@ -120,7 +121,7 @@ class Tree:
     def get_tree_endpoints(self):
         """Get the entire tree endpoints."""
         if self.is_root():
-            return self.endpoints()
+            return list(self.endpoints())
         else:
             return self.parent.get_tree_endpoints()
 
@@ -128,6 +129,24 @@ class Tree:
         """Iterate over all items under ``self``."""
         for item in self.items:
             yield from item.iter_items()
+
+    def get_blueprint(self, template_folder='templates',
+                      static_folder='static',
+                      static_url_path='static'):
+        bp = Blueprint(
+            self.name.lower(), __name__,
+            url_prefix=concat_urls(self.url),
+            template_folder=template_folder,
+            static_folder=static_folder,
+            static_url_path=static_url_path,
+        )
+
+        # remove parent url
+        absolute_url_len = len(concat_urls(self.absolute_url()))
+        for url, name, view in self.iter_items():
+            url = url[absolute_url_len:]
+            bp.add_url_rule(url, name.lower(), view, methods=['GET', 'POST'])
+        return bp
 
 
 class TemplateView(views.View):

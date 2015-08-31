@@ -1,8 +1,6 @@
 from collections import defaultdict
 from functools import partial
 
-from flask import Blueprint
-
 from flask_crud.base import TemplateView, Tree, Roles, concat_urls, slugify
 from flask_crud.components import List, Create, Read, Update, Delete
 
@@ -31,7 +29,6 @@ class Group(Tree):
 
     def iter_items(self):
         yield from super().iter_items()
-
         name = self._get_view_endpoint()
         view = self.init_view(partial(self.view_class.as_view, name))
         yield concat_urls(self.absolute_url(), ''), name, view
@@ -43,22 +40,6 @@ class Group(Tree):
         if self.is_root():
             return 'home'
         return '-'.join([self.absolute_name(), 'home'])
-
-    def get_blueprint(self):
-        bp = Blueprint(
-            self.name.lower(), __name__,
-            url_prefix=concat_urls(self.url),
-            static_folder='static',
-            static_url_path='static',
-            template_folder='templates',
-        )
-
-        # remove parent url
-        absolute_url_len = len(concat_urls(self.absolute_url()))
-        for url, name, view in self.iter_items():
-            url = url[absolute_url_len:]
-            bp.add_url_rule(url, name.lower(), view, methods=['GET', 'POST'])
-        return bp
 
 
 class Crud(Tree):
