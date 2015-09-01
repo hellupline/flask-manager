@@ -2,23 +2,24 @@
   <table class="table table-striped table-bordered table-hover model-list">
     <thead>
       <tr>
-        <td>#</td>
-        <td>Actions</td>
+        <th headers="select" width="1"></th>
+        <th headers="actions" width="120">Actions</th>
         {% for column in columns %}
           {% if current == column %}
             {% set _column = '-' + column %}
           {% else %}
             {% set _column = column %}
           {% endif %}
-          <td>
+          <th headers="{{ column }}">
             <a href="{{ url_generator(order_by=_column) }}"> {{ column }} </a>
-          </td>
+          </th>
         {% endfor %}
+      </tr>
     </thead>
     <tbody> {{ caller() }} </tbody>
   </table>
 {% endmacro %}
 
 {% macro field(item, name, value) %}
-  <td> {{ value }} </td>
+  <td headers="{{ name }}"> {{ value }} </td>
 {% endmacro %}

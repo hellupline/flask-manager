@@ -8,7 +8,9 @@
 
 {# Body #}
 {% block content %}
-  {% for rule in rules %}
-    {{ rule(item) }}
-  {% endfor %}
+  {% call data.render() %}
+    {% for rule in rules %}
+      {{ rule(item) }}
+    {% endfor %}
+  {% endcall %}
 {% endblock %}

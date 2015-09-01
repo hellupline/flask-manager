@@ -69,7 +69,7 @@ class Header(Macro):
 
 
 class Field(Macro):
-    def __init__(self, field_name, macro_name='data.render_field'):
+    def __init__(self, field_name, macro_name='data.field'):
         self.field_name = field_name
         super().__init__(macro_name=macro_name)
 
