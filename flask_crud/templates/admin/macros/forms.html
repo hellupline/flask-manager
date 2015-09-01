@@ -7,31 +7,26 @@
   {% endcall %}
 {% endmacro %}
 
-{% macro render_micro(form, action='', method='POST', cancel_url='', submit_text='Save', skip=()) %}
-  {% call form_tag(action=action, method=method) %}
-    {% for field in form if field.id not in skip %}
-      {{ render_field(form, field.name, field, use_label=false) }}
-    {% endfor %}
-    {{ buttons(cancel_url='', add_another=false, continue_editing=false, submit_text=submit_text, use_hr=false) }}
-  {% endcall %}
-{% endmacro %}
-
-{% macro form_tag(form, action=none, method='POST') %}
+{% macro form_tag(form, action=none, method='POST', use_field_set=true) %}
   <form role="form" action="{{ action or '' }}"
                     method="{{ method }}"
                     class="form-horizontal"
                     enctype="multipart/form-data">
-    <fieldset> {{ caller() }} </fieldset>
+    {% if use_field_set %}
+      <fieldset> {{ caller() }} </fieldset>
+    {% else %}
+       {{ caller() }}
+    {% endif %}
   </form>
 {% endmacro %}
 
 {% macro render_field(form, name, field, use_label=true) %}
   <div class="form-group">
     {% if use_label %}
-      {{ field.label(class="col-md-2 control-label") }}
+      {{ field.label(class='col-md-2 control-label') }}
     {% endif %}
     <div class="col-md-10">
-      {{ field(class="form-control input-md", placeholder=name) }}
+      {{ field(class='form-control input-md', placeholder=name) }}
       <span class="help-block"> {{ field.description }} </span>
       <ul class="help-block input-errors">
         {% for error in field.errors if error is string %}
@@ -60,4 +55,17 @@
       {% endif %}
     </div>
   </div>
+{% endmacro %}
+
+{% macro render_inline_fields(form, skip=()) %}
+  {% for field in form if field.id not in skip %}
+    {{ _render_field_inline_form(field) }}
+  {% endfor %}
+{% endmacro %}
+
+{% macro _render_field_inline_form(field) %}
+  <li class="dropdown-form-field">
+    {{ field.label(class='control-label') }}
+    {{ field(class='form-control input-md', onchange='this.form.submit()') }}
+  </li>
 {% endmacro %}

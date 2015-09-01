@@ -25,18 +25,13 @@
 {% endmacro %}
 
 {% macro dropmenu(name, right=false) %}
-  {% if right %}
-    {% set extra_class=' pull-right' %}
-  {% endif %}
-  <div class="btn-group{{ extra_class }}"><!-- Actions !-->
-    <button class="btn btn-default btn-sm dropdown-toggle"
-            type="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false">
-      {{ name }}
-      <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu"> {{ caller() }} </ul>
-  </div>
+  <button class="btn btn-default btn-sm dropdown-toggle"
+          type="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false">
+    {{ name }}
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu"> {{ caller() }} </ul>
 {% endmacro %}

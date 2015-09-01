@@ -8,29 +8,36 @@
 {% import 'admin/macros/pagination.html' as pagination %}
 
 {# Body #}
-{% block header %}
+{% block content %}
+  <div class="btn-group pull-right"><!-- Filters -->
+    {% call forms.form_tag(filter_form, action='', method='GET') %}
+      {{ filter_form.search() }}
+      {% call utils.dropmenu('Filter by', right=true) %}
+        {{ forms.render_inline_fields(filter_form, skip=['search']) }}
+      {% endcall %}
+    {% endcall %}
+  </div><!-- Filters -->
+
   {{ utils.roles_buttons_create(roles) }}
 
-  {% call utils.dropmenu('With selected') %}
-    {{ forms.render_micro(action_form, submit_text='Do it', skip=['ids']) }}
-  {% endcall %}
+  {% call forms.form_tag(filter_form, action='', method='POST', use_field_set=false) %}
+    <div class="btn-group"><!-- Actions -->
+      {% call utils.dropmenu('With selected') %}
+        {{ forms.render_inline_fields(action_form, skip=['ids']) }}
+      {% endcall %}
+    </div><!-- Actions -->
 
-  {% call utils.dropmenu('Filter by', right=true) %}
-    {{ forms.render_micro(filter_form, submit_text='Filter', method='GET') }}
-  {% endcall %}
-{% endblock %}
-
-{% block content %}
-  {% call table.render(rules.columns, url_generator=url_generator, current=order_by) %}
-    {% for item in items %}
-    <tr>
-      <td> <input type="checkbox" name="ids" value="{{ item.id }}" /> </td>
-      <td> {{ utils.roles_buttons(roles, item=item) }} </td>
-      {% for rule in rules %}
-        {{ rule(item) }}
+    {% call table.render(rules.columns, url_generator=url_generator, current=order_by) %}
+      {% for item in items %}
+      <tr>
+        <td> <input type="checkbox" name="ids" value="{{ item.id }}" /> </td>
+        <td> {{ utils.roles_buttons(roles, item=item) }} </td>
+        {% for rule in rules %}
+          {{ rule(item) }}
+        {% endfor %}
+      </tr>
       {% endfor %}
-    </tr>
-    {% endfor %}
+    {% endcall %}
   {% endcall %}
 
   {{ pagination.render(page, pages, total, url_generator) }}

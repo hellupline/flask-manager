@@ -9,6 +9,10 @@ body {
     font-size: 13px;
 }
 
+form {
+    display: inline;
+}
+
 .form-signin {
   max-width: 330px;
   padding: 15px;
