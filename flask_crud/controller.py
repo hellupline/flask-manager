@@ -37,11 +37,10 @@ class Controller:
         ]
 
     def get_action_form(self):
+        choices = [('', '')]
         if self.actions is not None:
-            choices = [
-                (key, key.title()) for key, action in self.actions.items()]
-        else:
-            choices = []
+            choices.extend(
+                (key, key.title()) for key, action in self.actions.items())
         class ActionsForm(wtforms.Form):
             ids = FakeSelectMultipleField('ids', coerce=int, choices=[])
             action = wtforms.fields.SelectField(choices=choices)
