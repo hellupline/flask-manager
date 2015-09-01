@@ -50,10 +50,10 @@
     <div class="col-md-offset-2 col-md-10 submit-row">
       <input type="submit" value="{{ submit_text }}" class="btn btn-{{ type }}" />
       {% if add_another %}
-        <input type="submit" value="Save and Add Another" name="_add_another" class="btn btn-default" />
+        <input type="submit" value="Save and Add" name="_add_another" class="btn btn-default" />
       {% endif %}
       {% if continue_editing %}
-        <input type="submit" value="Save and Continue Editing" name="_continue_editing" class="btn btn-default" />
+        <input type="submit" value="Save and Continue" name="_continue_editing" class="btn btn-default" />
       {% endif %}
       {% if cancel_url %}
         <a href="{{ url_for(cancel_url) }}" role="button" class="btn btn-danger">Cancel</a>
