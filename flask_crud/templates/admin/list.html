@@ -11,7 +11,9 @@
 {% block content %}
   <div class="btn-group pull-right"><!-- Filters -->
     {% call forms.form_tag(filter_form, action='', method='GET') %}
-      {{ filter_form.search() }}
+      {% if 'search' in filter_form %}
+        {{ filter_form.search() }}
+      {% endif %}
       {% call utils.dropmenu('Filter by', right=true) %}
         {{ forms.render_inline_fields(filter_form, skip=['search']) }}
       {% endcall %}
