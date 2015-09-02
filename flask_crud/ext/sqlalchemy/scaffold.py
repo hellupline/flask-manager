@@ -5,8 +5,8 @@ import sqlalchemy as sa
 from wtforms import FormField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 
-from flask_crud import crud, display, rules
-from flask_crud.ext.sqlalchemy import controller
+from flask_crud import crud as crud_, display as display_, rules as rules_
+from flask_crud.ext.sqlalchemy import controller as sa_controller
 
 
 RELATIONSHIP_TYPES_TO_FIELD = {
@@ -17,21 +17,17 @@ RELATIONSHIP_TYPES_TO_FIELD = {
 
 def build_crud(model_class, db_session,
                inlines=None, filters=None, actions=None,
-               crud_class=crud.Crud):
+               crud_class=crud_.Crud):
     name = get_model_name(model_class)
     form_class = build_form(
-        model_class=model_class, db_session=db_session, inlines=inlines)
-    crud_controller = controller.SQLAlchemyController(
-        db_session=db_session,
-        model_class=model_class,
-        form_class=form_class,
-        filters=filters,
-        actions=actions,
+        model_class=model_class, db_session=db_session, inlines=inlines
     )
-    crud_display = build_display(model_class=model_class)
-    return crud_class(
-        name=name, controller=crud_controller, display=crud_display,
+    controller = sa_controller.SQLAlchemyController(
+        db_session=db_session, model_class=model_class,
+        form_class=form_class, filters=filters, actions=actions,
     )
+    display = build_display(model_class=model_class)
+    return crud_class(name=name, controller=controller, display=display)
 
 
 def build_form(model_class, db_session, form_base_class=wtforms_alchemy.ModelForm,
@@ -53,12 +49,12 @@ def build_display(model_class=None, columns=None):
         if model_class is None:
             raise ValueError('model_class or columns is required.')
         columns = get_columns(model_class)
-    return display.Display(
-        list=rules.ColumnSet(columns),
-        create=[rules.Form()],
-        read=rules.FieldSet(columns),
-        update=[rules.Form()],
-        delete=rules.FieldSet(columns),
+    return display_.Display(
+        list=rules_.ColumnSet(columns),
+        create=[rules_.Form()],
+        read=rules_.FieldSet(columns),
+        update=[rules_.Form()],
+        delete=rules_.FieldSet(columns),
     )
 
 
