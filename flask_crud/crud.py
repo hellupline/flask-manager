@@ -45,15 +45,13 @@ class Group(Tree):
 class Crud(Tree):
     COMPONENTS = [List, Read, Create, Update, Delete]
 
-    def __init__(self, controller, display, name, url=None,
-                 form_class=None, components=None):
+    def __init__(self, controller, display, name, url=None, components=None):
         if components is None:
             self.components = self.COMPONENTS.copy()
         else:
             self.components = components
         self.controller = controller
         self.display = display
-        self.form_class = form_class
         super().__init__(name=name, url=url, items=None)
 
     def endpoints(self):
