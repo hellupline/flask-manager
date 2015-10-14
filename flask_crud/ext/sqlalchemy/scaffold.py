@@ -35,7 +35,7 @@ def build_form(model_class, db_session, form_base_class=wtforms_alchemy.ModelFor
     #  The code below does something like this:
     #  Class Form(form_base_class):
     #      for key, relationship in get_relationships(model_class):
-    #          __dict__[key] = convert_relationship(relationship, db_session)
+    #          vars()[key] = convert_relationship(relationship, db_session)
     #      class Meta:
     #          model = model_class
     body = get_relationships_fields(model_class, db_session, inlines or [])
