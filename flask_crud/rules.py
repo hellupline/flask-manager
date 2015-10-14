@@ -58,17 +58,19 @@ class Container(Macro):
         return super().__call__(obj, caller=caller)
 
 
-class Form(Macro):
-    def __init__(self, macro_name='forms.render'):
-        super().__init__(macro_name=macro_name)
-
-
 class Header(Macro):
     def __init__(self, text, macro_name='utils.header'):
         super().__init__(macro_name=macro_name, text=text)
 
 
+class Form(Macro):
+    """Render a form."""
+    def __init__(self, macro_name='forms.render'):
+        super().__init__(macro_name=macro_name)
+
+
 class Field(Macro):
+    """Render a field in Read/Delete."""
     def __init__(self, field_name, macro_name='data.field'):
         self.field_name = field_name
         super().__init__(macro_name=macro_name)
@@ -78,13 +80,15 @@ class Field(Macro):
         return super().__call__(obj, name=self.field_name, value=field_value)
 
 
-class CellField(Field):
-    def __init__(self, field_name, macro_name='table.field'):
+class FormField(Field):
+    """Render a form field in Create/Update."""
+    def __init__(self, field_name, macro_name='forms.render_field'):
         super().__init__(field_name=field_name, macro_name=macro_name)
 
 
-class FormField(Field):
-    def __init__(self, field_name, macro_name='forms.render_field'):
+class CellField(Field):
+    """Render a field in List."""
+    def __init__(self, field_name, macro_name='table.field'):
         super().__init__(field_name=field_name, macro_name=macro_name)
 
 
@@ -102,6 +106,7 @@ class NestedRule(RuleMixin):
 
 
 class FieldSet(NestedRule):
+    """Read/Delete."""
     def __init__(self, fields, header=None, field_class=Field):
         rules = [field_class(field) for field in fields]
         if header is not None:
@@ -109,12 +114,14 @@ class FieldSet(NestedRule):
         super().__init__(rules=rules)
 
 
+class FormFieldSet(FieldSet):
+    """Create/Update."""
+    def __init__(self, fields, header=None, field_class=FormField):
+        super().__init__(fields=fields, header=header, field_class=field_class)
+
+
 class ColumnSet(FieldSet):
+    """List."""
     def __init__(self, columns, field_class=CellField):
         self.columns = columns
         super().__init__(fields=columns, field_class=field_class)
-
-
-class FormFieldSet(FieldSet):
-    def __init__(self, fields, header=None, field_class=FormField):
-        super().__init__(fields=fields, header=header, field_class=field_class)
