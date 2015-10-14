@@ -65,9 +65,13 @@ class List(Component):
         order_by = request.args.get('order_by')
         items, total = self.controller.get_items(
             page, order_by, filters=request.args)
+        filter_form = self.controller.get_filter_form()(request.args)
+        action_form = self.controller.get_action_form()()
         return self.get_context({
-            'filter_form': self.controller.get_filter_form()(request.args),
-            'action_form': self.controller.get_action_form()(),
+            'filter_form': filter_form,
+            'show_filter_form': self.controller.filters is not None,
+            'action_form': action_form,
+            'show_action_form': self.controller.actions is not None,
             'order_by': order_by,
             'url_generator': partial(
                 url_for, request.url_rule.endpoint, **request.args),
