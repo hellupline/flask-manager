@@ -256,7 +256,7 @@ class Component(TemplateView):
             ctx.update(external_ctx)
         return super().get_context(ctx)
 
-    # Form
+    # controller convenience
     def get_form(self, *args, **kwargs):
         return self.controller.form_class(*args, **kwargs)
 
