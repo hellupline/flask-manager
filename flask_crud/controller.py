@@ -30,6 +30,8 @@ class Controller:
         raise NotImplementedError
 
     def get_filters(self, params):
+        if not self.filters:
+            return []
         return [
             (self.filters[key], value)
             for key, value in params.items()
