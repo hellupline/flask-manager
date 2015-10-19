@@ -16,6 +16,8 @@ def concat_urls(*urls):
     normalized_urls = [url.strip('/') for url in urls]
     joined_urls = '/'.join(normalized_urls)
     normalized_joined_urls = joined_urls.strip('/')
+    if not normalized_joined_urls:
+        return '/'
     return '/{}/'.format(normalized_joined_urls)
 
 
@@ -132,7 +134,7 @@ class Tree:
 
     def get_blueprint(self, template_folder='templates',
                       static_folder='static',
-                      static_url_path='static'):
+                      static_url_path='crud/static'):
         bp = Blueprint(
             self.name.lower(), __name__,
             url_prefix=concat_urls(self.url),
