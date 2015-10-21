@@ -28,7 +28,7 @@
     <div class="col-md-10">
       {{ field(class='form-control input-md', placeholder=name) }}
       <span class="help-block"> {{ field.description }} </span>
-      <ul class="input-errors text-danger">
+      <ul class="input-errors text-danger list-unstyled">
         {% for error in field.errors if error is string %}
           <li> {{ error }} </li>
         {% endfor %}
