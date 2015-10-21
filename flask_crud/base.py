@@ -13,12 +13,11 @@ def concat_urls(*urls):
     Returns:
         str: urls starting and ending with / merged with /
     """
-    normalized_urls = [url.strip('/') for url in urls]
+    normalized_urls = filter(bool, [url.strip('/') for url in urls])
     joined_urls = '/'.join(normalized_urls)
-    normalized_joined_urls = joined_urls.strip('/')
-    if not normalized_joined_urls:
+    if not joined_urls:
         return '/'
-    return '/{}/'.format(normalized_joined_urls)
+    return '/{}/'.format(joined_urls)
 
 
 def slugify(value):
