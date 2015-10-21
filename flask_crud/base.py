@@ -141,13 +141,16 @@ class Tree:
             static_folder=static_folder,
             static_url_path=static_url_path,
         )
+        return self.set_urls_to_blueprint(bp)
 
+    def set_urls_to_blueprint(self, blueprint):
         # remove parent url
         absolute_url_len = len(concat_urls(self.absolute_url()))
         for url, name, view in self.iter_items():
             url = url[absolute_url_len:]
-            bp.add_url_rule(url, name.lower(), view, methods=['GET', 'POST'])
-        return bp
+            blueprint.add_url_rule(
+                url, name.lower(), view, methods=['GET', 'POST'])
+        return blueprint
 
 
 class TemplateView(views.View):
