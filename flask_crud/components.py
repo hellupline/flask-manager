@@ -129,7 +129,7 @@ class Update(Component):
 
     def post(self, pk):
         item = self.get_item(pk)
-        form = self.get_form(request.form)
+        form = self.get_form(request.form, obj=item)
         success_url = None
         if form.validate():
             self.controller.update_item(item, form)
