@@ -40,7 +40,7 @@ class ColumnFilter(Filter):
 
 
 class JoinColumnFilter(ColumnFilter):
-    def __init__(self, column, *joined_tables):
+    def __init__(self, column, joined_tables):
         self.joined_tables = joined_tables
         super().__init__(column=column)
 
