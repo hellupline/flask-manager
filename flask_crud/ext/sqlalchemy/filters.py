@@ -40,12 +40,12 @@ class ColumnFilter(Filter):
 
 
 class JoinColumnFilter(ColumnFilter):
-    def __init__(self, column, joined_table):
-        self.joined_table = joined_table
+    def __init__(self, column, *joined_tables):
+        self.joined_tables = joined_tables
         super().__init__(column=column)
 
     def join_query(self, query):
-        return query.join(self.joined_table)
+        return query.join(*self.joined_tables)
 
     def filter(self, query, value):
         return super().filter(self.join_query(query), value)
