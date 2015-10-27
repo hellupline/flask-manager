@@ -1,4 +1,5 @@
 import wtforms
+from sqlalchemy import func
 
 from flask_crud.controller import Controller
 
@@ -34,6 +35,12 @@ class SQLAlchemyController(Controller):
         self.db_session.delete(model)
         self.db_session.commit()
 
+    def count(self, query):
+        # sqlalchemy query.count() uses a generic subquery count, which
+        # is slow, this one only replace the selected columns with a
+        # COUNT(*)
+        return query.statement.with_only_columns([func.count()]).scalar()
+
     def _get_field(self, name):
         if name[0] == '-':
             return -getattr(self.model_class, name[1:])
@@ -64,7 +71,7 @@ class SQLAlchemyController(Controller):
         if filters is not None:
             for filter_, value in self.get_filters(filters):
                 query = filter_.filter(query, value)
-        return query.offset(start).limit(end), query.count()
+        return query.offset(start).limit(end), self.count(query)
 
     def get_item(self, pk):
         return self.get_query().get(pk)
