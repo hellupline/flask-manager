@@ -27,7 +27,7 @@ class ColumnFilter(Filter):
         return query.filter(self.column == value)
 
     def get_values(self, query):
-        values = query.with_entities(self.column)
+        values = query.with_entities(self.column).distinct()
         return set(chain.from_iterable(values))
 
     def get_form_field(self, key, query):
