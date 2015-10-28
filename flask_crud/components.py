@@ -82,7 +82,7 @@ class List(Component):
         })
 
     def post(self):
-        self.controller.execute_action(request.form)
+        self.controller.execute_action(self.get_form_data())
         return self.get_success_url(), self.get_context({})
 
 
@@ -93,15 +93,15 @@ class Create(Component):
     template_name = 'admin/create.html'
 
     def get(self):
-        form = self.get_form(request.form)
+        form = self.get_form(self.get_form_data())
         return self.get_context({'form': form})
 
     def post(self):
-        form = self.get_form(request.form)
+        form = self.get_form(self.get_form_data())
         success_url = None
         if form.validate():
             item = self.controller.create_item(form)
-            success_url = self.get_success_url(request.form, item)
+            success_url = self.get_success_url(self.get_form_data(), item)
         return success_url, self.get_context({'form': form})
 
 
@@ -124,16 +124,16 @@ class Update(Component):
 
     def get(self, pk):
         item = self.get_item(pk)
-        form = self.get_form(request.form, obj=item)
+        form = self.get_form(self.get_form_data(), obj=item)
         return self.get_context({'item': item, 'form': form})
 
     def post(self, pk):
         item = self.get_item(pk)
-        form = self.get_form(request.form, obj=item)
+        form = self.get_form(self.get_form_data(), obj=item)
         success_url = None
         if form.validate():
             self.controller.update_item(item, form)
-            success_url = self.get_success_url(request.form)
+            success_url = self.get_success_url(self.get_form_data())
         return success_url, self.get_context({'item': item, 'form': form})
 
 

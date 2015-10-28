@@ -3,6 +3,7 @@ from enum import Enum
 from flask import (
     Blueprint, request, abort, redirect, url_for, render_template, views)
 from werkzeug.exceptions import MethodNotAllowed
+from werkzeug.datastructures import CombinedMultiDict
 
 
 def concat_urls(*urls):
@@ -259,6 +260,9 @@ class Component(TemplateView):
         if external_ctx is not None:
             ctx.update(external_ctx)
         return super().get_context(ctx)
+
+    def get_form_data(self):
+        return CombinedMultiDict([request.form, request.files])
 
     # controller convenience
     def get_form(self, *args, **kwargs):
