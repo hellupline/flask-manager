@@ -20,16 +20,17 @@
   </form>
 {% endmacro %}
 
-{% macro render_field(form, name, field, use_label=true) %}
+{% macro render_field(form, name, value, use_label=true) %}
+  {# value is a form field :| #}
   <div class="form-group">
     {% if use_label %}
-      {{ field.label(class='col-md-2 control-label') }}
+      {{ value.label(class='col-md-2 control-label') }}
     {% endif %}
     <div class="col-md-10">
-      {{ field(class='form-control input-md', placeholder=name) }}
-      <span class="help-block"> {{ field.description }} </span>
+      {{ value(class='form-control input-md', placeholder=name) }}
+      <span class="help-block"> {{ value.description }} </span>
       <ul class="input-errors text-danger list-unstyled">
-        {% for error in field.errors if error is string %}
+        {% for error in value.errors if error is string %}
           <li> {{ error }} </li>
         {% endfor %}
       </ul>
