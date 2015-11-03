@@ -27,7 +27,8 @@ class ColumnFilter(Filter):
         return query.filter(self.column == value)
 
     def get_values(self, query):
-        values = query.with_entities(self.column).distinct()
+        # values = query.with_entities(self.column).distinct()
+        values = query.session.query(self.column).distinct()
         return set(chain.from_iterable(values))
 
     def get_form_field(self, key, query):
@@ -44,11 +45,8 @@ class JoinColumnFilter(ColumnFilter):
         self.joined_tables = joined_tables
         super().__init__(column=column)
 
-    def join_query(self, query):
+    def joined_query(self, query):
         return query.join(*self.joined_tables)
 
     def filter(self, query, value):
-        return super().filter(self.join_query(query), value)
-
-    def get_values(self, query):
-        return super().get_values(self.join_query(query))
+        return super().filter(self.joined_query(query), value)
