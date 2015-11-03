@@ -52,6 +52,7 @@ def build_display(model_class=None, columns=None, **kwargs):
         if model_class is None:
             raise ValueError('model_class or columns is required.')
         columns = utils.get_columns(model_class)
+    columns = rules_.ColumnSet(columns)
     form_rules = [rules_.Form()]
     return display_.Display(
         list=kwargs.get('list', columns),
