@@ -47,12 +47,8 @@ def build_form(model_class, db_session, inlines=None,
     return type(class_name, (base_class,), body)
 
 
-def build_display(model_class=None, columns=None, **kwargs):
-    if columns is None:
-        if model_class is None:
-            raise ValueError('model_class or columns is required.')
-        columns = utils.get_columns(model_class)
-    columns = rules_.ColumnSet(columns)
+def build_display(model_class, **kwargs):
+    columns = rules_.ColumnSet(utils.get_columns(model_class))
     form_rules = [rules_.Form()]
     return display_.Display(
         list=kwargs.get('list', columns),
