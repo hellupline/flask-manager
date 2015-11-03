@@ -11,9 +11,8 @@ class SearchFilter(Filter):
         self.columns = columns
 
     def filter(self, query, value):
-        return query.filter(or_(*[
-            column.contains(value) for column in self.columns
-        ]))
+        clauses = [column.contains(value) for column in self.columns]
+        return query.filter(or_(*clauses))
 
     def get_form_field(self, key, query):
         return wtforms.TextField()
@@ -42,7 +41,7 @@ class ColumnFilter(Filter):
 
 class JoinColumnFilter(ColumnFilter):
     def __init__(self, column, joined_tables):
-        self.joined_tables = joined_tables
+        self.joined_tables = joined_tables # add doc about aliases
         super().__init__(column=column)
 
     def joined_query(self, query):
