@@ -1,0 +1,14 @@
+{% macro javascript(roles) %}
+  <script src="{{ url_for('.static', filename='js/jsoneditor.js') }}"></script>
+  <script src="{{ url_for('.static', filename='js/jsoneditor_install.js') }}"></script>
+{% endmacro %}
+
+{% macro editor(form, field, schema_url) %}
+  <script>
+    {% if schema_url %}
+      var website_menu_editor = editor_field.install('{{ field }}', { $ref: '{{ schema_url }}' });
+    {% else %}
+      var website_menu_editor = editor_field.install('{{ field }}');
+    {% endif %}
+  </script>
+{% endmacro %}
