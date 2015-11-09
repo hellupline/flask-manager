@@ -1,8 +1,6 @@
 /*jslint browser:true */
 
 var editor_field = (function() {
-    var editor = null;
-
     function install(field_id, schema) {
         var field_widget = document.getElementById(field_id);
         var placeholder_widget = document.createElement('div');
@@ -17,7 +15,7 @@ var editor_field = (function() {
         if (schema === undefined) {
             schema = {};
         }
-        editor = new JSONEditor(placeholder_widget, {
+        var editor = new JSONEditor(placeholder_widget, {
             schema: schema,
             // -------
             theme: 'bootstrap3',
@@ -55,5 +53,5 @@ var editor_field = (function() {
         return editor;
     }
 
-    return { editor: editor, install: install };
+    return { install: install };
 }());
