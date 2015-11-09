@@ -20,9 +20,9 @@ var editor_field = (function() {
         editor = new JSONEditor(placeholder_widget, {
             schema: schema,
             // -------
-            // theme: 'bootstrap3',
-            // iconlib: 'bootstrap3',
-            // object_layout: 'grid',
+            theme: 'bootstrap3',
+            iconlib: 'bootstrap3',
+            object_layout: 'grid',
             // show_errors: 'interaction',
             // -------
             upload: null,
