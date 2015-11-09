@@ -6,9 +6,9 @@
 {% macro editor(form, field, schema_url) %}
   <script>
     {% if schema_url %}
-      var website_menu_editor = editor_field.install('{{ field }}', { $ref: '{{ schema_url }}' });
+      var {{ field }}_editor = editor_field.install('{{ field }}', { $ref: '{{ schema_url }}' });
     {% else %}
-      var website_menu_editor = editor_field.install('{{ field }}');
+      var {{ field }}_editor = editor_field.install('{{ field }}');
     {% endif %}
   </script>
 {% endmacro %}
