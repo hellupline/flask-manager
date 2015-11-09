@@ -51,6 +51,8 @@ var editor_field = (function() {
         field_widget.onchange = function() {
             editor.setValue(JSON.parse(field_widget.value));
         };
+
+        return editor;
     }
 
     return { editor: editor, install: install };
