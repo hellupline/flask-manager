@@ -118,6 +118,7 @@ class FormFieldSet(FieldSet):
     """Create/Update."""
     def __init__(self, fields, header=None, field_class=FormField):
         super().__init__(fields=fields, header=header, field_class=field_class)
+        self.rules.append(Macro('forms.buttons'))
 
 
 class ColumnSet(FieldSet):
