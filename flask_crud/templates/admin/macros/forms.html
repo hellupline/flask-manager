@@ -3,7 +3,7 @@
     {% for field in form %}
       {{ render_field(form, field.name, field) }}
     {% endfor %}
-    {{ buttons(cancel_url=cancel_url) }}
+    {{ buttons(form=none, cancel_url=cancel_url) }}
   {% endcall %}
 {% endmacro %}
 
@@ -38,7 +38,7 @@
   </div>
 {% endmacro %}
 
-{% macro buttons(cancel_url, add_another=true, continue_editing=true, submit_text='Save', type='primary', use_hr=true) %}
+{% macro buttons(form, cancel_url, add_another=true, continue_editing=true, submit_text='Save', type='primary', use_hr=true) %}
   {% if use_hr %}
     <hr>
   {% endif %}
