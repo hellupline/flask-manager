@@ -48,12 +48,12 @@ def build_form(model_class, db_session, inlines=None,
 
 
 def build_display(model_class, **kwargs):
-    columns = rules_.ColumnSet(utils.get_columns(model_class))
-    form_rules = [rules_.Form()]
+    columns_rules = rules_.ColumnSet(utils.get_columns(model_class))
+    form_rules = rules_.Form()
     return display_.Display(
-        list=kwargs.get('list', columns),
+        list=kwargs.get('list', columns_rules),
         create=kwargs.get('create', form_rules),
-        read=kwargs.get('read', columns),
+        read=kwargs.get('read', columns_rules),
         update=kwargs.get('update', form_rules),
-        delete=kwargs.get('delete', columns),
+        delete=kwargs.get('delete', columns_rules),
     )

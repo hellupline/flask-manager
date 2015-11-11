@@ -7,8 +7,4 @@
 {% import 'admin/macros/json_field.html' as json_editor %}
 
 {# Body #}
-{% block content %}
-  {% for rule in rules %}
-    {{ rule(form) }}
-  {% endfor %}
-{% endblock %}
+{% block content %} {{ rules(form) }} {% endblock %}
