@@ -39,7 +39,8 @@ class SQLAlchemyController(Controller):
         # sqlalchemy query.count() uses a generic subquery count, which
         # is slow, this one only replace the selected columns with a
         # COUNT(*)
-        return query.statement.with_only_columns([func.count()]).scalar()
+        stmt = query.statement.with_only_columns([func.count()])
+        return self.db_session.execute(stmt).scalar()
 
     def _get_field(self, name):
         if name[0] == '-':
