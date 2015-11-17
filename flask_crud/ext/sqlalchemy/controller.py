@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import wtforms
 from sqlalchemy import func
 
@@ -23,17 +24,26 @@ class SQLAlchemyController(Controller):
     def get_query(self):
         return self.db_session.query(self.model_class)
 
+    @contextmanager
+    def transaction(self):
+        try:
+            yield self.db_session
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+
     def new(self):
         return self.model_class()
 
     def save(self, model):
-        self.db_session.add(model)
-        self.db_session.commit()
+        with self.transaction() as session:
+            session.add(model)
         return model
 
     def delete(self, model):
-        self.db_session.delete(model)
-        self.db_session.commit()
+        with self.transaction() as session:
+            session.delete(model)
 
     def count(self, query):
         # sqlalchemy query.count() uses a generic subquery count, which
