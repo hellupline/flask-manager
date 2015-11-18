@@ -1,10 +1,10 @@
-{% macro render() %}
+{% macro render_data(obj) %}
   <table class="table table-bordered">
     <tbody> {{ caller() }} </tbody>
   </table>
 {% endmacro %}
 
-{% macro field(item, name, value) %}
+{% macro render_field(item, name, value) %}
   <tr>
     <th id="{{ name }}" headers="field" width="200"> {{ name }} </th>
     <td headers="data {{ name }}"> {{ value }} </td>

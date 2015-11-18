@@ -9,13 +9,9 @@
 
 {# Body #}
 {% block content %}
-  {% call data.render() %}
-    {% for rule in rules %}
-      {{ rule(item) }}
-    {% endfor %}
-  {% endcall %}
+  {{ rules(item) }}
 
-  {% call forms.form_tag(action='') %}
+  {% call forms.render_form(form=none, action='', show_buttons=false) %}
     {{ forms.buttons(cancel_url='', add_another=false, continue_editing=false, submit_text="Confirm", type='danger') }}
   {% endcall %}
 {% endblock %}

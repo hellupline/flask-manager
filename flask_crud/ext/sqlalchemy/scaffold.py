@@ -31,29 +31,36 @@ def build_crud(model_class, db_session, crud_class=crud_.Crud,
 
 def build_form(model_class, db_session, inlines=None,
                base_class=ModelForm, meta_args=None):
-    #  Class Form(base_class):
-    #      for key, relationship in get_relationships(model_class):
-    #          vars()[key] = convert_relationship(relationship, db_session)
-    #      class Meta:
-    #          model = model_class
-    #          ** meta_args
-    class_name = '{}Form'.format(utils.get_model_name(model_class))
-    meta_body = {'model': model_class}
-    if meta_args is not None:
-        meta_body.update(meta_args)
     body = utils.get_relationships_fields(
         model_class, db_session, inlines or [])
-    body['Meta'] = type('Meta', (), meta_body)
-    return type(class_name, (base_class,), body)
+
+    class Form(base_class):
+        @classmethod
+        def get_session(cls):
+            return db_session
+
+        for key, value in body.items():
+            vars()[key] = value
+            del key, value
+
+        class Meta:
+            for key, value in meta_args or {}:
+                vars()[key] = value
+                del key, value
+            model = model_class
+
+    return Form
 
 
 def build_display(model_class, **kwargs):
-    columns_rules = rules_.ColumnSet(utils.get_columns(model_class))
-    form_rules = rules_.Form()
+    model_columns = utils.get_columns(model_class)
+    columns_rules = rules_.ColumnSet(model_columns)
+    data_rules = rules_.DataFieldSet(model_columns)
+    form_rules = rules_.SimpleForm()
     return display_.Display(
         list=kwargs.get('list', columns_rules),
         create=kwargs.get('create', form_rules),
-        read=kwargs.get('read', columns_rules),
+        read=kwargs.get('read', data_rules),
         update=kwargs.get('update', form_rules),
-        delete=kwargs.get('delete', columns_rules),
+        delete=kwargs.get('delete', data_rules),
     )

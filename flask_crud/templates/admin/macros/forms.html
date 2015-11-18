@@ -1,27 +1,31 @@
-{% macro render(form, action='', method='POST', cancel_url='') %}
-  {% call form_tag(action=action, method=method) %}
+{% macro simple_form_render(form, action='', method='POST', cancel_url='') %}
+  {% call render_form(action=action, method=method) %}
     {% for field in form %}
       {{ render_field(form, field.name, field) }}
     {% endfor %}
-    {{ buttons(form=none, cancel_url=cancel_url) }}
   {% endcall %}
 {% endmacro %}
 
-{% macro form_tag(form, action=none, method='POST', use_field_set=true) %}
-  <form role="form" action="{{ action or '' }}"
-                    method="{{ method }}"
-                    class="form-horizontal"
-                    enctype="multipart/form-data">
+{% macro render_form(form, action='', method='POST', cancel_url='',
+                  use_field_set=true, show_buttons=true) %}
+  <form role="form" action="{{ action }}" method="{{ method }}"
+                    enctype="multipart/form-data"
+                    class="form-horizontal">
     {% if use_field_set %}
-      <fieldset> {{ caller() }} </fieldset>
+      <fieldset>
+        {{ caller() }}
+      </fieldset>
     {% else %}
-       {{ caller() }}
+      {{ caller() }}
+    {% endif %}
+    {% if show_buttons %}
+      {{ buttons(form=form, cancel_url=cancel_url) }}
     {% endif %}
   </form>
 {% endmacro %}
 
 {% macro render_field(form, name, value, use_label=true) %}
-  {# value is a form field :| #}
+  {# value is a form field #}
   <div class="form-group">
     {% if use_label %}
       {{ value.label(class='col-md-2 control-label') }}

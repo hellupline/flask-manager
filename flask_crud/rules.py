@@ -7,7 +7,7 @@ class RuleMixin:
         raise NotImplementedError
 
 
-# simple text
+# Simple Text
 class Text(RuleMixin):
     def __init__(self, text, escape=True):
         self.text = text
@@ -24,11 +24,24 @@ class HTML(Text):
         super().__init__(text=html, escape=False)
 
 
-# jinja2 macros
+class Nested(RuleMixin):
+    """Nested([DataField(...), DataField(...)])"""
+
+    def __init__(self, rules):
+        self.rules = rules
+
+    def __iter__(self):
+        return iter(self.rules)
+
+    def __call__(self, obj, **kwargs):
+        joined_rules = ''.join(rule(obj) for rule in self.rules)
+        return Markup(joined_rules)
+
+
 class Macro(RuleMixin):
     def __init__(self, macro_name, **kwargs):
         self.macro_name = macro_name
-        self.default_kwargs = kwargs
+        self.kwargs = kwargs
 
     def _resolve(self):
         parts = self.macro_name.split('.')
@@ -41,88 +54,88 @@ class Macro(RuleMixin):
 
     def __call__(self, obj, **kwargs):
         macro = self._resolve()
-        opts = self.default_kwargs.copy()
+        opts = self.kwargs.copy()
         opts.update(kwargs)
         return macro(obj, **opts)
 
 
 class Container(Macro):
-    def __init__(self, macro_name, child_rule, **kwargs):
-        self.child_rule = child_rule
+    """Container(Macro('my_macro'), 'h1_tag_macro')()"""
+
+    def __init__(self, child_rule, macro_name, **kwargs):
         super().__init__(macro_name, **kwargs)
+        self.child_rule = child_rule
 
     def __call__(self, obj, **kwargs):
         def caller():
             return get_render_ctx().call(self.child_rule, obj)
+        return super().__call__(obj, caller=caller, **kwargs)
 
-        return super().__call__(obj, caller=caller)
 
-
+# Macros
 class Header(Macro):
+    """Header('Title')()"""
+
     def __init__(self, text, macro_name='utils.header'):
         super().__init__(macro_name=macro_name, text=text)
 
 
-class Form(Macro):
-    """Render a form."""
-    def __init__(self, macro_name='forms.render'):
+class SimpleForm(Macro):
+    """SimpleForm()(Form())"""
+
+    def __init__(self, macro_name='forms.simple_form_render'):
         super().__init__(macro_name=macro_name)
 
 
-class Field(Macro):
+# Crud Macros
+class DataField(Macro):
     """Render a field in Read/Delete."""
-    def __init__(self, field_name, macro_name='data.field'):
-        self.field_name = field_name
-        super().__init__(macro_name=macro_name)
 
-    def __call__(self, obj, **kwargs):
+    def __init__(self, field_name, macro_name='data.render_field'):
+        super().__init__(macro_name=macro_name)
+        self.field_name = field_name
+
+    def __call__(self, obj):
         field_value = getattr(obj, self.field_name)
         return super().__call__(obj, name=self.field_name, value=field_value)
 
 
-class FormField(Field):
+class CellField(DataField):
+    """Render a field in List."""
+
+    def __init__(self, field_name, macro_name='table.render_field'):
+        super().__init__(field_name=field_name, macro_name=macro_name)
+
+
+class FormField(DataField):
     """Render a form field in Create/Update."""
+
     def __init__(self, field_name, macro_name='forms.render_field'):
         super().__init__(field_name=field_name, macro_name=macro_name)
 
 
-class CellField(Field):
-    """Render a field in List."""
-    def __init__(self, field_name, macro_name='table.field'):
-        super().__init__(field_name=field_name, macro_name=macro_name)
+# Containers
+class DataFieldSet(Container):
+    """DataFieldSet([name for name in model])(Model())"""
 
-
-# nested
-class NestedRule(RuleMixin):
-    def __init__(self, rules):
-        # avoid generator consumption
-        self.rules = list(rules)
-
-    def __iter__(self):
-        return iter(self.rules)
-
-    def __call__(self, obj, **kwargs):
-        return Markup(''.join(rule(obj) for rule in self.rules))
-
-
-class FieldSet(NestedRule):
-    """Read/Delete."""
-    def __init__(self, fields, header=None, field_class=Field):
-        rules = [field_class(field) for field in fields]
-        if header is not None:
-            rules.insert(0, Header(header))
-        super().__init__(rules=rules)
-
-
-class FormFieldSet(FieldSet):
-    """Create/Update."""
-    def __init__(self, fields, header=None, field_class=FormField):
-        super().__init__(fields=fields, header=header, field_class=field_class)
-        self.rules.append(Macro('forms.buttons'))
-
-
-class ColumnSet(FieldSet):
-    """List."""
-    def __init__(self, columns, field_class=CellField):
+    def __init__(self, columns, header=None, macro_name='data.render_data',
+                 field_class=DataField):
         self.columns = columns
-        super().__init__(fields=columns, field_class=field_class)
+        self.rules = [field_class(column) for column in columns]
+        if header is not None:
+            self.rules.insert(0, Header(header))
+        super().__init__(child_rule=Nested(self.rules), macro_name=macro_name)
+
+
+class ColumnSet(DataFieldSet):
+    def __init__(self, columns, header=None, macro_name='table.render_row',
+                 field_class=CellField):
+        super().__init__(columns=columns, header=header, macro_name=macro_name,
+                         field_class=field_class)
+
+
+class FormFieldSet(DataFieldSet):
+    def __init__(self, columns, header=None, macro_name='forms.render_form',
+                 field_class=FormField):
+        super().__init__(columns=columns, header=header, macro_name=macro_name,
+                         field_class=field_class)

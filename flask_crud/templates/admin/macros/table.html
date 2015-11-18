@@ -1,4 +1,6 @@
-{% macro render(columns, url_generator, current) %}
+{% import 'admin/macros/utils.html' as utils %}
+
+{% macro render_table(columns, url_generator, current) %}
   <table class="table table-striped table-bordered table-hover model-list">
     <thead>
       <tr>
@@ -16,10 +18,16 @@
         {% endfor %}
       </tr>
     </thead>
-    <tbody> {{ caller() }} </tbody>
+    <tbody>
+      {{ caller() }}
+    </tbody>
   </table>
 {% endmacro %}
 
-{% macro field(item, name, value) %}
+{% macro render_row(item) %}
+  {{ caller() }}
+{% endmacro %}
+
+{% macro render_field(item, name, value) %}
   <td headers="{{ name }}"> {{ value }} </td>
 {% endmacro %}
