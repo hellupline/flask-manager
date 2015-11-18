@@ -28,9 +28,9 @@ class SQLAlchemyController(Controller):
     def transaction(self):
         try:
             yield self.db_session
-            session.commit()
+            self.db_session.commit()
         except Exception:
-            session.rollback()
+            self.db_session.rollback()
             raise
 
     def new(self):
