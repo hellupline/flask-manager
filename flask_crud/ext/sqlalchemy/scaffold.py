@@ -31,8 +31,8 @@ def build_crud(model_class, db_session, crud_class=crud_.Crud,
 
 def build_form(model_class, db_session, inlines=None,
                base_class=ModelForm, meta_args=None):
-    body = utils.get_relationships_fields(
-        model_class, db_session, inlines or [])
+    body = utils.get_rel_fields(model_class, db_session, inlines or [])
+    meta_args = meta_args or {}
 
     class Form(base_class):
         @classmethod
@@ -44,7 +44,7 @@ def build_form(model_class, db_session, inlines=None,
             del key, value
 
         class Meta:
-            for key, value in meta_args or {}:
+            for key, value in meta_args.items():
                 vars()[key] = value
                 del key, value
             model = model_class

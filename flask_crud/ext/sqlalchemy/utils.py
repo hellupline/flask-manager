@@ -1,6 +1,7 @@
 from functools import partial
 
-from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
+from wtforms.ext.sqlalchemy.fields import (
+    QuerySelectField, QuerySelectMultipleField)
 from wtforms import FormField
 from wtforms_alchemy import ModelForm, ModelFieldList, ModelFormField
 
@@ -26,7 +27,7 @@ def get_columns(model_class):
 
 
 # relationships
-def get_relationships_fields(model_class, db_session, inlines):
+def get_rel_fields(model_class, db_session, inlines):
     relationships = sa.inspect(model_class).relationships.items()
     return {
         key: relationship_field(rel, db_session, inline=key in inlines)
@@ -42,13 +43,13 @@ def relationship_field(relationship, db_session, inline=False):
 
 def relationship_field_inline(relationship):
     remote_model = relationship.mapper.entity
+
     class InlineForm(ModelForm):
         class Meta:
             model = remote_model
     if relationship.direction.name == 'ONETOMANY':
         return ModelFieldList(FormField(InlineForm))
     return ModelFormField(InlineForm)
-
 
 
 def relationship_field_simple(relationship, db_session):
