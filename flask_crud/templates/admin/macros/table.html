@@ -1,20 +1,26 @@
-{% import 'admin/macros/utils.html' as utils %}
+{% import 'macros/roles.html' as Roles %}
 
-{% macro render_table(columns, url_generator, current) %}
+{% macro render_row(model, roles) %}
+  <tr>
+    <td> <input type="checkbox" name="ids" value="{{ model.id }}" /> </td>
+    <td> {{ Roles.buttons(roles, model=model) }} </td>
+    {{ caller() }}
+  </tr>
+{% endmacro %}
+
+{% macro render_field(model, field_name, field_value) %}
+  <td headers="{{ field_name }}"> {{ field_value }} </td>
+{% endmacro %}
+
+
+{% macro _render_table(columns, url_generator, current) %}
   <table class="table table-striped table-bordered table-hover model-list">
     <thead>
       <tr>
         <th headers="select" width="1"></th>
         <th headers="actions" width="120">Actions</th>
         {% for column in columns %}
-          {% if current == column %}
-            {% set _column = '-' + column %}
-          {% else %}
-            {% set _column = column %}
-          {% endif %}
-          <th headers="{{ column }}">
-            <a href="{{ url_generator(order_by=_column) }}"> {{ column }} </a>
-          </th>
+          {{ _column_order_by(column, url_generator, current)  }}
         {% endfor %}
       </tr>
     </thead>
@@ -24,10 +30,14 @@
   </table>
 {% endmacro %}
 
-{% macro render_row(item) %}
-  {{ caller() }}
-{% endmacro %}
 
-{% macro render_field(item, name, value) %}
-  <td headers="{{ name }}"> {{ value }} </td>
+{% macro _column_order_by(column, url_generator, current) %}
+  {% if current == column %}
+    {% set column_order = '-' + column %}
+  {% else %}
+    {% set column_order = column %}
+  {% endif %}
+  <th headers="{{ column }}">
+    <a href="{{ url_generator(order_by=column_order) }}"> {{ column }} </a>
+  </th>
 {% endmacro %}

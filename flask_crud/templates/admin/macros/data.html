@@ -1,12 +1,14 @@
-{% macro render_data(obj) %}
+{% macro render_data(model) %}
   <table class="table table-bordered">
-    <tbody> {{ caller() }} </tbody>
+    <tbody>
+      {{ caller() }}
+    </tbody>
   </table>
 {% endmacro %}
 
-{% macro render_field(item, name, value) %}
+{% macro render_field(model, field_name, field_value) %}
   <tr>
-    <th id="{{ name }}" headers="field" width="200"> {{ name }} </th>
-    <td headers="data {{ name }}"> {{ value }} </td>
+    <th id="{{ field_name }}" headers="field" width="200"> {{ field_name }} </th>
+    <td headers="data {{ field_name }}"> {{ field_value }} </td>
   <tr>
 {% endmacro %}

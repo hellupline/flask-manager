@@ -1,4 +1,3 @@
-{# -MENU----------------------------------------- #}
 {% macro menu_tree(tree) %}
   {% set name, endpoint, tree = tree[0] %} {# first node is root alone #}
   <nav class="navbar navbar-default navbar-fixed-top">
@@ -19,9 +18,9 @@
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
           {% for name, endpoint, childrens in tree %}
-          <li class="dropdown">
-            {{ _menu_item(name, endpoint, childrens) }}
-          </li>
+            <li class="dropdown">
+              {{ _menu_item(name, endpoint, childrens) }}
+            </li>
           {% endfor %}
         </ul>
       </div>

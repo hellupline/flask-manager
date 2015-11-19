@@ -1,48 +1,57 @@
-{% extends "admin/base.html" %}
+{% extends "base.html" %}
 
 {# Macros #}
-{% import 'admin/macros/head_menu.html' as head_menu %}
-{% import 'admin/macros/utils.html' as utils %}
-{% import 'admin/macros/table.html' as table %}
-{% import 'admin/macros/forms.html' as forms %}
-{% import 'admin/macros/pagination.html' as pagination %}
+{% import 'macros/menu.html' as Menu %}
+{% import 'macros/utils.html' as Utils %}
+{% import 'macros/pagination.html' as Pagination %}
+{% import 'macros/roles.html' as Roles %}
+{% import 'macros/table.html' as Table %}
+{% import 'macros/data.html' as Data %}
+{% import 'macros/form.html' as Form %}
+
+{# Local macros #}
+{% macro render_filter_form(form, render) %}
+  {% if render %}
+    <div class="btn-group pull-right"><!-- Filters -->
+      {% call Form.render_form(method='GET') %}
+
+        {% if 'search' in form %}
+          {# Search Field outside the dropdown menu #}
+          {{ form.search() }}
+        {% endif %}
+
+        {% call Utils.dropmenu(name='Filter by', right=true) %}
+          {{ Form.render_inline_fields(form, skip=['search']) }}
+        {% endcall %}
+
+      {% endcall %}
+    </div><!-- Filters -->
+  {% endif %}
+{% endmacro %}
+
+{% macro render_action_form(form, render) %}
+  {% if render %}
+    <div class="btn-group"><!-- Actions -->
+      {% call Utils.dropmenu(name='With selected') %}
+        {{ Form.render_inline_fields(form, skip=['ids']) }}
+      {% endcall %}
+    </div><!-- Actions -->
+  {% endif %}
+{% endmacro %}
 
 {# Body #}
 {% block content %}
-  <div class="btn-group pull-right"><!-- Filters -->
-    {% if show_filter_form %}
-      {% call forms.render_form(filter_form, method='GET', show_buttons=false) %}
-        {% if 'search' in filter_form %}
-          {{ filter_form.search() }}
-        {% endif %}
-        {% call utils.dropmenu('Filter by', right=true) %}
-          {{ forms.render_inline_fields(filter_form, skip=['search']) }}
-        {% endcall %}
-      {% endcall %}
-    {% endif %}
-  </div><!-- Filters -->
+  {{ render_filter_form(filter_form, show_filter_form) }}
+  {{ Roles.buttons_create(roles) }}
+  {% call Form.render_form(form=action_form, use_field_set=false) %}
 
-  {{ utils.roles_buttons_create(roles) }}
+    {{ render_action_form(action_form, show_action_form) }}
+    {{ Pagination.render(page, pages, total, url_generator) }}
 
-  {% call forms.render_form(action_form, use_field_set=false, show_buttons=false) %}
-    {% if show_action_form %}
-      <div class="btn-group"><!-- Actions -->
-        {% call utils.dropmenu('With selected') %}
-          {{ forms.render_inline_fields(action_form, skip=['ids']) }}
-        {% endcall %}
-      </div><!-- Actions -->
-    {% endif %}
-
-    {% call table.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
+    {% call Table._render_table(rules.holumns, url_generator=url_generator, current=order_by) %}
       {% for item in items %}
-      <tr>
-        <td> <input type="checkbox" name="ids" value="{{ item.id }}" /> </td>
-        <td> {{ utils.roles_buttons(roles, item=item) }} </td>
-        {{ rules(item) }}
-      </tr>
+        {{ rules(item, roles=roles) }}
       {% endfor %}
     {% endcall %}
   {% endcall %}
-
-  {{ pagination.render(page, pages, total, url_generator) }}
 {% endblock %}
