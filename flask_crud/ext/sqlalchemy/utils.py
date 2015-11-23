@@ -9,7 +9,7 @@ import sqlalchemy as sa
 
 
 RELATIONSHIP_TYPES_TO_FIELD = {
-    'MANYTOMANY': QuerySelectMultipleField,
+    # 'MANYTOMANY': QuerySelectMultipleField,
     'MANYTOONE': QuerySelectField,
 }
 
