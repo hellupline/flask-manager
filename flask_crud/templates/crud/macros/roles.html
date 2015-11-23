@@ -8,12 +8,14 @@
   {% endfor %}
 {% endmacro %}
 
-{% macro buttons(roles, item, type_glyph={'read': 'search', 'update': 'pencil', 'delete': 'trash'}) %}
+{% macro buttons(roles, model, type_glyph={'read': 'search', 'update': 'pencil', 'delete': 'trash'}) %}
   {% for type in ('read', 'update', 'delete') %}
-    {% for role, endpoint in roles[type] %}
-      <a href="{{ url_for(endpoint, pk=item.id) }}">
-        <span class="glyphicon glyphicon-{{ type_glyph[type] }}"></span>
-      </a>
-    {% endfor %}
+    {% if type in roles %}
+      {% for role, endpoint in roles[type] %}
+        <a href="{{ url_for(endpoint, pk=model.id) }}">
+          <span class="glyphicon glyphicon-{{ type_glyph[type] }}"></span>
+        </a>
+      {% endfor %}
+    {% endif %}
   {% endfor %}
 {% endmacro %}

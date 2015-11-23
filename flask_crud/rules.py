@@ -76,14 +76,14 @@ class Container(Macro):
 class Header(Macro):
     """Header('Title')()"""
 
-    def __init__(self, text, macro_name='utils.header'):
+    def __init__(self, text, macro_name='Utils.header'):
         super().__init__(macro_name=macro_name, text=text)
 
 
 class SimpleForm(Macro):
     """SimpleForm()(Form())"""
 
-    def __init__(self, macro_name='forms.simple_form_render'):
+    def __init__(self, macro_name='Forms.simple_form_render'):
         super().__init__(macro_name=macro_name)
 
 
@@ -91,7 +91,7 @@ class SimpleForm(Macro):
 class DataField(Macro):
     """Render a field in Read/Delete."""
 
-    def __init__(self, field_name, macro_name='data.render_field'):
+    def __init__(self, field_name, macro_name='Data.render_field'):
         super().__init__(macro_name=macro_name)
         self.field_name = field_name
 
@@ -103,14 +103,14 @@ class DataField(Macro):
 class CellField(DataField):
     """Render a field in List."""
 
-    def __init__(self, field_name, macro_name='table.render_field'):
+    def __init__(self, field_name, macro_name='Table.render_field'):
         super().__init__(field_name=field_name, macro_name=macro_name)
 
 
 class FormField(DataField):
     """Render a form field in Create/Update."""
 
-    def __init__(self, field_name, macro_name='forms.render_field'):
+    def __init__(self, field_name, macro_name='Forms.render_field'):
         super().__init__(field_name=field_name, macro_name=macro_name)
 
 
@@ -118,7 +118,7 @@ class FormField(DataField):
 class DataFieldSet(Container):
     """DataFieldSet([name for name in model])(Model())"""
 
-    def __init__(self, columns, header=None, macro_name='data.render_data',
+    def __init__(self, columns, header=None, macro_name='Data.render_data',
                  field_class=DataField):
         self.columns = columns
         self.rules = [field_class(column) for column in columns]
@@ -128,14 +128,14 @@ class DataFieldSet(Container):
 
 
 class ColumnSet(DataFieldSet):
-    def __init__(self, columns, header=None, macro_name='table.render_row',
+    def __init__(self, columns, header=None, macro_name='Table.render_row',
                  field_class=CellField):
         super().__init__(columns=columns, header=header, macro_name=macro_name,
                          field_class=field_class)
 
 
 class FormFieldSet(DataFieldSet):
-    def __init__(self, columns, header=None, macro_name='forms.render_form',
+    def __init__(self, columns, header=None, macro_name='Forms.render_form',
                  field_class=FormField):
         super().__init__(columns=columns, header=header, macro_name=macro_name,
                          field_class=field_class)
