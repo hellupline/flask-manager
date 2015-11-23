@@ -6,7 +6,7 @@ from flask_crud.components import List, Create, Read, Update, Delete
 
 
 class LandingView(TemplateView):
-    template_name = 'admin/landing.html'
+    template_name = 'crud/landing.html'
 
     def __init__(self, tree, *args, **kwargs):
         self.tree = tree
@@ -63,10 +63,10 @@ class Crud(Tree):
 
     def iter_items(self):
         for component in self.components:
+            url = concat_urls(self.absolute_url(), component.url)
             name = self._get_component_endpoint(component)
             view = self.init_view(partial(component.as_view, name))
-            for url in component.urls:
-                yield concat_urls(self.absolute_url(), url), name, view
+            yield url, name, view
 
     def init_view(self, view_factory):
         endpoint = self._get_component_endpoint(self.components[0])
