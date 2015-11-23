@@ -57,9 +57,9 @@ Each Component receive:
 
 class List(Component):
     role = Roles.list
-    urls = ['list/', 'list/<int:page>/', '']
+    urls = ['list/']
     name = 'List'
-    template_name = 'admin/list.html'
+    template_name = 'crud/list.html'
 
     def get(self, page=1):
         order_by = request.args.get('order_by')
@@ -90,7 +90,7 @@ class Create(Component):
     role = Roles.create
     urls = ['create/']
     name = 'Create'
-    template_name = 'admin/create.html'
+    template_name = 'crud/create.html'
 
     def get(self):
         form = self.get_form(self.get_form_data())
@@ -109,7 +109,7 @@ class Read(Component):
     role = Roles.read
     urls = ['read/<int:pk>/']
     name = 'Read'
-    template_name = 'admin/read.html'
+    template_name = 'crud/read.html'
 
     def get(self, pk):
         item = self.get_item(pk)
@@ -120,7 +120,7 @@ class Update(Component):
     role = Roles.update
     urls = ['update/<int:pk>/']
     name = 'Update'
-    template_name = 'admin/update.html'
+    template_name = 'crud/update.html'
 
     def get(self, pk):
         item = self.get_item(pk)
@@ -141,7 +141,7 @@ class Delete(Component):
     role = Roles.delete
     urls = ['delete/<int:pk>/']
     name = 'Delete'
-    template_name = 'admin/delete.html'
+    template_name = 'crud/delete.html'
 
     def get(self, pk):
         item = self.get_item(pk)
