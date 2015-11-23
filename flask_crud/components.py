@@ -47,7 +47,7 @@ DELETE:
 """
 Each Component have:
     Permission, Template_name
-    Urls, Name
+    Url, Name
 
 Each Component receive:
     Controller, Display, Roles, Success_url ( for POST Method )
@@ -57,7 +57,7 @@ Each Component receive:
 
 class List(Component):
     role = Roles.list
-    urls = ['list/']
+    url = 'list/'
     name = 'List'
     template_name = 'crud/list.html'
 
@@ -88,7 +88,7 @@ class List(Component):
 
 class Create(Component):
     role = Roles.create
-    urls = ['create/']
+    url = 'create/'
     name = 'Create'
     template_name = 'crud/create.html'
 
@@ -107,7 +107,7 @@ class Create(Component):
 
 class Read(Component):
     role = Roles.read
-    urls = ['read/<int:pk>/']
+    url = 'read/<int:pk>/'
     name = 'Read'
     template_name = 'crud/read.html'
 
@@ -118,7 +118,7 @@ class Read(Component):
 
 class Update(Component):
     role = Roles.update
-    urls = ['update/<int:pk>/']
+    url = 'update/<int:pk>/'
     name = 'Update'
     template_name = 'crud/update.html'
 
@@ -139,7 +139,7 @@ class Update(Component):
 
 class Delete(Component):
     role = Roles.delete
-    urls = ['delete/<int:pk>/']
+    url = 'delete/<int:pk>/'
     name = 'Delete'
     template_name = 'crud/delete.html'
 
