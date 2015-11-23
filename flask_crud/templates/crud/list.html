@@ -47,7 +47,7 @@
     {{ render_action_form(action_form, show_action_form) }}
     {{ Pagination.render(page, pages, total, url_generator) }}
 
-    {% call Table.render_table(rules.holumns, url_generator=url_generator, current=order_by) %}
+    {% call Table.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
       {% for item in items %}
         {{ rules(item, roles=roles) }}
       {% endfor %}
