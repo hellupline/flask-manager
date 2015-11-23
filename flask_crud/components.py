@@ -90,7 +90,7 @@ class Create(Component):
     role = Roles.create
     url = 'create/'
     name = 'Create'
-    template_name = 'crud/create.html'
+    template_name = ('crud/form.html', 'crud/create.html')
 
     def get(self):
         form = self.get_form(self.get_form_data())
@@ -120,7 +120,7 @@ class Update(Component):
     role = Roles.update
     url = 'update/<int:pk>/'
     name = 'Update'
-    template_name = 'crud/update.html'
+    template_name = ('crud/form.html', 'crud/update.html')
 
     def get(self, pk):
         item = self.get_item(pk)
@@ -141,7 +141,7 @@ class Delete(Component):
     role = Roles.delete
     url = 'delete/<int:pk>/'
     name = 'Delete'
-    template_name = 'crud/delete.html'
+    template_name = ('crud/read.html', 'crud/delete.html')
 
     def get(self, pk):
         item = self.get_item(pk)
