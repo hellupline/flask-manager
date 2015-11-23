@@ -8,8 +8,8 @@
   </tr>
 {% endmacro %}
 
-{% macro render_field(model, field_name, field_value) %}
-  <td headers="{{ field_name }}"> {{ field_value }} </td>
+{% macro render_field(model, name, value) %}
+  <td headers="{{ name }}"> {{ value }} </td>
 {% endmacro %}
 
 
