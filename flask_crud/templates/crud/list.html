@@ -1,7 +1,6 @@
 {% extends "crud/base.html" %}
 
 {# Macros #}
-{% import 'crud/macros/menu.html' as Menu %}
 {% import 'crud/macros/utils.html' as Utils %}
 {% import 'crud/macros/pagination.html' as Pagination %}
 {% import 'crud/macros/roles.html' as Roles %}
@@ -43,12 +42,12 @@
 {% block content %}
   {{ render_filter_form(filter_form, show_filter_form) }}
   {{ Roles.buttons_create(roles) }}
-  {% call Form.render_form(form=action_form, use_field_set=false) %}
+  {% call Form.render_form(form=action_form) %}
 
     {{ render_action_form(action_form, show_action_form) }}
     {{ Pagination.render(page, pages, total, url_generator) }}
 
-    {% call Table._render_table(rules.holumns, url_generator=url_generator, current=order_by) %}
+    {% call Table.render_table(rules.holumns, url_generator=url_generator, current=order_by) %}
       {% for item in items %}
         {{ rules(item, roles=roles) }}
       {% endfor %}

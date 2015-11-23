@@ -1,8 +1,11 @@
+{% import 'crud/macros/menu.html' as Menu %}
+
 {% block save_template_context %}
   {% if display is defined %}
     {% set __ = display.store_context() %} {# hide None #}
   {% endif %}
 {% endblock %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -31,7 +34,7 @@
   </head>
   <body>
     {% block menu %}
-      {{ head_menu.menu_tree(tree) }} {# require child template to import macros/head_menu.html #}
+      {{ Menu.menu_tree(tree) }} {# require child template to import macros/head_menu.html #}
     {% endblock %}
     <div class="container">
       {% block content %}{% endblock %}
