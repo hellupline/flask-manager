@@ -32,6 +32,8 @@ class SQLAlchemyController(Controller):
         except Exception:
             self.db_session.rollback()
             raise
+        finally:
+            self.db_session.close()
 
     def new(self):
         return self.model_class()
