@@ -87,6 +87,10 @@ class Header(Macro):
         super().__init__(text=text)
 
 
+class Box(Container):
+    macro_name = 'Utils.box'
+
+
 class Foldable(Container):
     macro_name = 'Utils.foldable'
 

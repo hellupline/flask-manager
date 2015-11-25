@@ -16,6 +16,16 @@
   </div>
 {% endmacro %}
 
+{% macro box(__, text) %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4> {{ text }} </h4>
+    </div>
+    <div class=""> {{ caller() }} </div>
+  </div>
+{% endmacro %}
+
+
 {% macro foldable(__, text, id) %}
   <div class="panel panel-default">
     <div id="label-{{ id }}" class="panel-heading" role="tab">
