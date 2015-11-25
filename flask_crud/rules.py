@@ -68,8 +68,9 @@ class Macro(RuleMixin):
 class Container(Macro):
     """Container(Macro('my_macro'))()"""
 
-    def __init__(self, child_rule):
+    def __init__(self, child_rule, **kwargs):
         self.child_rule = child_rule
+        super().__init__(**kwargs)
 
     def __call__(self, obj, **kwargs):
         def caller():
