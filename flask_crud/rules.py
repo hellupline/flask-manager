@@ -87,6 +87,10 @@ class Header(Macro):
         super().__init__(text=text)
 
 
+class Foldable(Container):
+    macro_name = 'Utils.box'
+
+
 class SimpleForm(Macro):
     """SimpleForm()(Form())"""
     macro_name = 'Form.simple_form_render'
