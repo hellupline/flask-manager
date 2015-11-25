@@ -6,9 +6,9 @@
   </table>
 {% endmacro %}
 
-{% macro render_field(model, field_name, field_value) %}
+{% macro render_field(model, name, value) %}
   <tr>
-    <th id="{{ field_name }}" headers="field" width="200"> {{ field_name }} </th>
-    <td headers="data {{ field_name }}"> {{ field_value }} </td>
+    <th id="{{ name }}" headers="field" width="200"> {{ name }} </th>
+    <td headers="data {{ name }}"> {{ value }} </td>
   <tr>
 {% endmacro %}

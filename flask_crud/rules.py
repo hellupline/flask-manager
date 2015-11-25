@@ -34,13 +34,16 @@ class Nested(RuleMixin):
         return iter(self.rules)
 
     def __call__(self, obj, **kwargs):
-        joined_rules = ''.join(rule(obj) for rule in self.rules)
-        return Markup(joined_rules)
+        return Markup(''.join(rule(obj) for rule in self.rules))
 
 
 class Macro(RuleMixin):
-    def __init__(self, macro_name, **kwargs):
-        self.macro_name = macro_name
+    macro_name = None
+    kwargs = None
+
+    def __init__(self, macro_name=None, **kwargs):
+        if macro_name is not None:
+            self.macro_name = macro_name
         self.kwargs = kwargs
 
     def _resolve(self):
@@ -54,16 +57,18 @@ class Macro(RuleMixin):
 
     def __call__(self, obj, **kwargs):
         macro = self._resolve()
-        opts = self.kwargs.copy()
-        opts.update(kwargs)
+        if self.kwargs is not None:
+            opts = self.kwargs.copy()
+            opts.update(kwargs)
+        else:
+            opts = kwargs
         return macro(obj, **opts)
 
 
 class Container(Macro):
-    """Container(Macro('my_macro'), 'h1_tag_macro')()"""
+    """Container(Macro('my_macro'))()"""
 
-    def __init__(self, child_rule, macro_name, **kwargs):
-        super().__init__(macro_name, **kwargs)
+    def __init__(self, child_rule):
         self.child_rule = child_rule
 
     def __call__(self, obj, **kwargs):
@@ -75,24 +80,23 @@ class Container(Macro):
 # Macros
 class Header(Macro):
     """Header('Title')()"""
+    macro_name = 'Utils.header'
 
-    def __init__(self, text, macro_name='Utils.header'):
-        super().__init__(macro_name=macro_name, text=text)
+    def __init__(self, text):
+        super().__init__(text=text)
 
 
 class SimpleForm(Macro):
     """SimpleForm()(Form())"""
-
-    def __init__(self, macro_name='Forms.simple_form_render'):
-        super().__init__(macro_name=macro_name)
+    macro_name = 'Form.simple_form_render'
 
 
 # Crud Macros
 class DataField(Macro):
     """Render a field in Read/Delete."""
+    macro_name = 'Data.render_field'
 
-    def __init__(self, field_name, macro_name='Data.render_field'):
-        super().__init__(macro_name=macro_name)
+    def __init__(self, field_name):
         self.field_name = field_name
 
     def __call__(self, obj):
@@ -102,40 +106,33 @@ class DataField(Macro):
 
 class CellField(DataField):
     """Render a field in List."""
-
-    def __init__(self, field_name, macro_name='Table.render_field'):
-        super().__init__(field_name=field_name, macro_name=macro_name)
+    macro_name = 'Table.render_field'
 
 
 class FormField(DataField):
     """Render a form field in Create/Update."""
-
-    def __init__(self, field_name, macro_name='Forms.render_field'):
-        super().__init__(field_name=field_name, macro_name=macro_name)
+    macro_name = 'Form.render_field'
 
 
 # Containers
 class DataFieldSet(Container):
     """DataFieldSet([name for name in model])(Model())"""
+    macro_name = 'Data.render_data'
+    field_class = DataField
 
-    def __init__(self, columns, header=None, macro_name='Data.render_data',
-                 field_class=DataField):
-        self.columns = columns
-        self.rules = [field_class(column) for column in columns]
+    def __init__(self, columns, header=None):
+        rules = [self.field_class(column) for column in columns]
         if header is not None:
-            self.rules.insert(0, Header(header))
-        super().__init__(child_rule=Nested(self.rules), macro_name=macro_name)
+            rules.insert(0, Header(header))
+        self.columns = columns
+        super().__init__(child_rule=Nested(rules))
 
 
 class ColumnSet(DataFieldSet):
-    def __init__(self, columns, header=None, macro_name='Table.render_row',
-                 field_class=CellField):
-        super().__init__(columns=columns, header=header, macro_name=macro_name,
-                         field_class=field_class)
+    macro_name = 'Table.render_row'
+    field_class = CellField
 
 
 class FormFieldSet(DataFieldSet):
-    def __init__(self, columns, header=None, macro_name='Forms.render_form',
-                 field_class=FormField):
-        super().__init__(columns=columns, header=header, macro_name=macro_name,
-                         field_class=field_class)
+    macro_name = 'Form.render_form'
+    field_class = FormField

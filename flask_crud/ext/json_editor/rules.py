@@ -2,24 +2,24 @@ from flask_crud import rules
 
 
 class JavaScript(rules.Macro):
-    def __init__(self, macro_name='json_editor.javascript'):
+    def __init__(self, macro_name='JsonField.javascript'):
         super().__init__(macro_name=macro_name)
 
 
 class JsonField(rules.Macro):
-    def __init__(self, field, schema_url=None,
-                 macro_name='json_editor.editor'):
-        super().__init__(macro_name=macro_name, field=field,
-                         schema_url=schema_url)
+    macro_name = 'JsonField.editor'
+
+    def __init__(self, field, schema_url=None):
+        super().__init__(field=field, schema_url=schema_url)
 
 
-class FormFieldSetWithJson(rules.FormFieldSet):
-    def __init__(self, columns, json_fields, header=None,
-                 field_class=rules.FormField):
-        super().__init__(columns=columns, header=header,
-                         field_class=field_class)
-        self.rules.extend(
+class JsonFieldSet(rules.Nested):
+    field_class = JsonField
+
+    def __init__(self, schemas):
+        rules = [
             JsonField(field=field, schema_url=schema_url)
-            for field, schema_url in json_fields.items()
-        )
-        self.rules.insert(0, JavaScript())
+            for field, schema_url in schemas.items()
+        ]
+        rules.insert(0, JavaScript())
+        super().__init__(rules=rules)

@@ -1,9 +1,9 @@
-{% macro javascript() %}
+{% macro javascript(form) %}
   <script src="{{ url_for('.static', filename='js/jsoneditor.js') }}"></script>
   <script src="{{ url_for('.static', filename='js/jsoneditor_install.js') }}"></script>
 {% endmacro %}
 
-{% macro editor(field, schema_url) %}
+{% macro editor(form, field, schema_url) %}
   <script>
     {% if schema_url %}
       var {{ field }}_editor = editor_field.install('{{ field }}', { $ref: '{{ schema_url }}' });
