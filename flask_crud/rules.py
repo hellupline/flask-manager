@@ -88,7 +88,7 @@ class Header(Macro):
 
 
 class Foldable(Container):
-    macro_name = 'Utils.box'
+    macro_name = 'Utils.foldable'
 
 
 class SimpleForm(Macro):
