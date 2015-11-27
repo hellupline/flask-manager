@@ -100,6 +100,11 @@ class SimpleForm(Macro):
     macro_name = 'Form.simple_form_render'
 
 
+class FormButtons(Macro):
+    """FormButtons()(Form()"""
+    macro_name = 'Form.buttons'
+
+
 # Crud Macros
 class DataField(Macro):
     """Render a field in Read/Delete."""
@@ -145,3 +150,18 @@ class ColumnSet(DataFieldSet):
 class FormFieldSet(DataFieldSet):
     macro_name = 'Form.render_form'
     field_class = FormField
+
+    def __init__(self, columns, header=None):
+        super().__init__(columns=columns, header=header)
+        self.child_rule.rules.append(FormButtons())
+
+
+class DataFieldSetWithConfirm(Container):
+    macro_name = 'Form.render_form'
+    field_class = DataField
+
+    def __init__(self, columns, header=None):
+        super().__init__(child_rule=Nested([
+            DataFieldSet(columns=columns, header=None),
+            FormButtons(submit_text='Confirm', type='danger')
+        ]))
