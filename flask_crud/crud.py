@@ -65,17 +65,17 @@ class Crud(Tree):
         for component in self.components:
             url = concat_urls(self.absolute_url(), component.url)
             name = self._get_component_endpoint(component)
-            view = self.init_view(partial(component.as_view, name))
-            yield url, name, view
+            func = partial(component.as_view, name, full_name=name)
+            yield url, name, self.init_view(func)
 
     def init_view(self, view_factory):
-        endpoint = self._get_component_endpoint(self.components[0])
+        main_endpoint = self._get_component_endpoint(self.components[0])
         kwargs = {
             'controller': self.controller,
             'display': self.display,
             'roles': self.get_roles(),
             'tree': self.get_tree_endpoints(),
-            'success_url': '.{}'.format(endpoint),
+            'success_url': '.{}'.format(main_endpoint),
         }
         return view_factory(**kwargs)
 

@@ -155,9 +155,10 @@ class Tree:
 
 
 class TemplateView(views.View):
-    def __init__(self, template_name=None, success_url=None):
+    def __init__(self, template_name=None, full_name=None, success_url=None):
         if template_name is not None:
             self.template_name = template_name
+        self.full_name = full_name
         self.success_url = success_url
 
     def dispatch_request(self, *args, **kwargs):
@@ -194,6 +195,14 @@ class TemplateView(views.View):
         """
         raise MethodNotAllowed(['GET'])
 
+    def get_template_view(self):
+        if self.full_name is None:
+            return self.template_name
+        try:
+            return [self.full_name] + self.template_name
+        except TypeError:
+            return [self.full_name, self.template_name]
+
     def get_context(self, external_ctx):
         """Format input to render."""
         return external_ctx
@@ -217,7 +226,7 @@ class Component(TemplateView):
     name = None
 
     def __init__(self, controller, display, roles, tree, success_url,
-                 urls=None, name=None, template_name=None):
+                 urls=None, name=None, template_name=None, full_name=None):
         self.controller = controller
         self.display = display
         self.roles = roles
