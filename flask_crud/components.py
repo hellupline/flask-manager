@@ -61,8 +61,9 @@ class List(Component):
     name = 'List'
     template_name = 'crud/list.html'
 
-    def get(self, page=1):
+    def get(self):
         order_by = request.args.get('order_by')
+        page = request.args.get('page')
         items, total = self.controller.get_items(
             page, order_by, filters=request.args)
         filter_form = self.controller.get_filter_form()(request.args)
