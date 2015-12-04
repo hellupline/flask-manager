@@ -63,7 +63,7 @@ class List(Component):
 
     def get(self):
         order_by = request.args.get('order_by')
-        page = request.args.get('page')
+        page = request.args.get('page', 1)
         items, total = self.controller.get_items(
             page, order_by, filters=request.args)
         filter_form = self.controller.get_filter_form()(request.args)
