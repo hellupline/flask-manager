@@ -1,7 +1,9 @@
 from collections import defaultdict
 from functools import partial
 
-from flask_crud.base import TemplateView, Tree, Roles, concat_urls, slugify
+from flask_crud.tree import Tree
+from flask_crud.utils import concat_urls, slugify
+from flask_crud.views import TemplateView, Roles
 from flask_crud.components import List, Create, Read, Update, Delete
 
 
