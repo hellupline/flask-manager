@@ -22,5 +22,6 @@ def concat_urls(*urls):
 
 def slugify(value):
     """Simple Slugify."""
-    s1 = first_cap_re.sub(r'\1_\2', value.replace(' ', '_'))
-    return all_cap_re.sub(r'\1_\2', s1).lower()
+    s1 = first_cap_re.sub(r'\1_\2', value)
+    s2 = all_cap_re.sub(r'\1_\2', s1)
+    return s2.lower().replace(' _', '_').replace(' ', '_')
