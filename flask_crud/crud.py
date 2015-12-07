@@ -31,9 +31,10 @@ class Group(Tree):
 
     def iter_items(self):
         yield from super().iter_items()
+        url = concat_urls(self.absolute_url(), '')
         name = self._get_view_endpoint()
-        view = self.init_view(partial(self.view_class.as_view, name))
-        yield concat_urls(self.absolute_url(), ''), name, view
+        func = partial(self.view_class.as_view, name, full_name=name)
+        yield url, name, self.init_view(func)
 
     def init_view(self, view_factory):
         return view_factory(tree=self.get_tree_endpoints())
