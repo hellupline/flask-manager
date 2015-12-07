@@ -22,8 +22,8 @@ class Tree:
         self.register_items(items)
 
     def __repr__(self):
-        clsname = self.__class__.__name__
-        return '<{}: name="{}", url="{}">'.format(clsname, self.name, self.url)
+        cls_name = self.__class__.__name__
+        return '<{}: name="{}" url="{}">'.format(cls_name, self.name, self.url)
 
     def __str__(self):
         return self.name
