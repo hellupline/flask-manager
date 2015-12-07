@@ -61,12 +61,15 @@ class Tree:
         if parent is not None:
             self.parent = parent
 
-    def is_root(self):
-        """Check if ``self`` do not have a parent ( is root node ).
+    def absolute_name(self):
+        """Get the absolute name of ``self``.
+
         Returns:
-            bool: True if no parent, False otherwise.
+            str: the absolute name.
         """
-        return self.parent is None
+        if self.is_root() or self.parent.is_root():
+            return slugify(self.name)
+        return '-'.join([self.parent.absolute_name(), slugify(self.name)])
 
     def absolute_url(self):
         """Get the absolute url of ``self``.
@@ -78,26 +81,22 @@ class Tree:
             return self.url
         return concat_urls(self.parent.absolute_url(), self.url)
 
-    def absolute_name(self):
-        """Get the absolute name of ``self``.
-
-        Returns:
-            str: the absolute name.
-        """
-        if self.is_root() or self.parent.is_root():
-            return slugify(self.name)
-        return '-'.join([self.parent.absolute_name(), slugify(self.name)])
+    def get_tree_endpoints(self):
+        """Get the entire tree endpoints."""
+        if self.is_root():
+            return list(self.endpoints())
+        return self.parent.get_tree_endpoints()
 
     def endpoints(self):
         """All endpoints under ``self``."""
         raise NotImplementedError
 
-    def get_tree_endpoints(self):
-        """Get the entire tree endpoints."""
-        if self.is_root():
-            return list(self.endpoints())
-        else:
-            return self.parent.get_tree_endpoints()
+    def is_root(self):
+        """Check if ``self`` do not have a parent ( is root node ).
+        Returns:
+            bool: True if no parent, False otherwise.
+        """
+        return self.parent is None
 
     def iter_items(self):
         """Iterate over all items under ``self``."""
