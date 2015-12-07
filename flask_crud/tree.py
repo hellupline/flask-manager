@@ -25,8 +25,19 @@ class Tree:
         cls_name = self.__class__.__name__
         return '<{}: name="{}" url="{}">'.format(cls_name, self.name, self.url)
 
-    def __str__(self):
-        return self.name
+    def register_items(self, items):
+        """Bulk ``register_item``.
+
+        Args:
+            items (iterable[Tree]): sequence of nodes to be
+                registered as childrens.
+
+        """
+        if items is None:
+            return
+        for item in items:
+            item.set_parent(self)
+        self.items.extend(item for item in items)
 
     def register_item(self, item):
         """Register the item with its parent.
@@ -46,22 +57,6 @@ class Tree:
         """
         if parent is not None:
             self.parent = parent
-
-    def register_items(self, items):
-        """Bulk ``register_item``.
-
-        Args:
-            items (iterable[Tree]): sequence of nodes to be
-                registered as childrens.
-
-        """
-        if items is None:
-            return
-        if self.items is None:
-            self.items = []
-        for item in items:
-            item.set_parent(self)
-        self.items.extend(item for item in items)
 
     def is_root(self):
         """Check if ``self`` do not have a parent ( is root node ).
