@@ -19,30 +19,44 @@ class LandingView(TemplateView):
 
 
 class Group(Tree):
-    def __init__(self, name, url=None, items=None, view_class=LandingView):
-        self.view_class = view_class
+    def __init__(self, name, url=None, items=None,
+                 view_func=LandingView.as_view):
+        self.view_func = view_func
         super().__init__(name=name, url=url, items=items)
 
     def endpoints(self):
-        endpoint = '.{}'.format(self._get_view_endpoint())
-        return [(self.name, endpoint, [
+        children_endpoints = [
             endpoint for item in self.items for endpoint in item.endpoints()
-        ])]
+        ]
+        endpoint = '.{}'.format(self._view_endpoint())
+        return [(self.name, endpoint, children_endpoints)]
 
     def iter_items(self):
+        name = self._view_endpoint()
+        view = self.view_func(
+            name, full_name=name,
+            tree=self.get_tree_endpoints()
+        )
+        yield concat_urls(self.absolute_url()), name, view
         yield from super().iter_items()
-        url = concat_urls(self.absolute_url(), '')
-        name = self._get_view_endpoint()
-        func = partial(self.view_class.as_view, name, full_name=name)
-        yield url, name, self.init_view(func)
 
-    def init_view(self, view_factory):
-        return view_factory(tree=self.get_tree_endpoints())
-
-    def _get_view_endpoint(self):
+    def _view_endpoint(self):
         if self.is_root():
             return 'home'
         return '-'.join([self.absolute_name(), 'home'])
+
+
+class ViewNode(Tree):
+    def __init__(self, name, view_func, url=None):
+        self.view_func = view_func
+        super().__init__(name=name, url=url)
+
+    def endpoints(self):
+        return [(self.name, self.absolute_name(), ())]
+
+    def iter_items(self):
+        name = self.absolute_name()
+        yield concat_urls(self.absolute_url()), name, self.view_func
 
 
 class Crud(Tree):
@@ -55,7 +69,7 @@ class Crud(Tree):
             self.components = components
         self.controller = controller
         self.display = display
-        super().__init__(name=name, url=url, items=None)
+        super().__init__(name=name, url=url)
 
     def endpoints(self):
         for component in self.components:
