@@ -1,3 +1,10 @@
+import re
+
+
+first_cap_re = re.compile('(.)([A-Z][a-z]+)')
+all_cap_re = re.compile('([a-z0-9])([A-Z])')
+
+
 def concat_urls(*urls):
     """Concat Urls
     Args:
@@ -15,4 +22,5 @@ def concat_urls(*urls):
 
 def slugify(value):
     """Simple Slugify."""
-    return value.lower().replace(' ', '_')
+    s1 = first_cap_re.sub(r'\1_\2', value.replace(' ', '_'))
+    return all_cap_re.sub(r'\1_\2', s1).lower()
