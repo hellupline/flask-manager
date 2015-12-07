@@ -20,7 +20,7 @@ class Tree:
         if items is not None:
             self.register_items(items)
 
-        if url is not None:
+        if url is None:
             self.url = slugify(name)
         else:
             self.url = url
