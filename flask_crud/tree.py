@@ -17,9 +17,14 @@ class Tree:
 
     def __init__(self, name, url=None, items=None):
         self.items = []
+        if items is not None:
+            self.register_items(items)
+
+        if url is not None:
+            self.url = slugify(name)
+        else:
+            self.url = url
         self.name = name
-        self.url = url or slugify(name)
-        self.register_items(items)
 
     def __repr__(self):
         cls_name = self.__class__.__name__
@@ -33,8 +38,6 @@ class Tree:
                 registered as childrens.
 
         """
-        if items is None:
-            return
         for item in items:
             item.set_parent(self)
         self.items.extend(item for item in items)
