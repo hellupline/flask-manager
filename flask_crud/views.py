@@ -46,13 +46,10 @@ class TemplateView(views.View):
         """
         raise MethodNotAllowed(['GET'])
 
-    def get_template_view(self):
+    def get_template_name(self):
         if self.full_name is None:
             return self.template_name
-        try:
-            return [self.full_name] + self.template_name
-        except TypeError:
-            return [self.full_name, self.template_name]
+        return ('crud/{}.html'.format(self.full_name), ) + self.template_name
 
     def get_context(self, external_ctx):
         """Format input to render."""
@@ -60,7 +57,7 @@ class TemplateView(views.View):
 
     def render_response(self, context):
         """Render the context to a response."""
-        return render_template(self.template_name, **context)
+        return render_template(self.get_template_name(), **context)
 
 
 class Roles(Enum):
@@ -87,7 +84,11 @@ class Component(TemplateView):
             self.urls = urls
         if name is not None:
             self.name = name
-        super().__init__(success_url=success_url, template_name=template_name)
+        super().__init__(
+            success_url=success_url,
+            template_name=template_name,
+            full_name=full_name,
+        )
 
     def get_success_url(self, params=None, item=None):
         if params is None:
