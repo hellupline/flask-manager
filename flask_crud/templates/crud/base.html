@@ -31,14 +31,14 @@
         $('select').select2();
       });
     </script>
+
+    {% block head %}{% endblock %}
   </head>
   <body>
-    {% block menu %}
-      {{ Menu.menu_tree(tree) }} {# require child template to import macros/head_menu.html #}
-    {% endblock %}
+    {% block menu %} {{ Menu.menu_tree(tree) }} {% endblock %}
     <div class="container">
       {% block content %}{% endblock %}
     </div>
-    {% block footer %}{% endblock %}
+    {% block tail %}{% endblock %}
   </body>
 </html>
