@@ -8,7 +8,7 @@ from flask_crud.components import List, Create, Read, Update, Delete
 
 
 class LandingView(TemplateView):
-    template_name = 'crud/landing.html'
+    template_name = ('crud/landing.html', )
 
     def __init__(self, tree, *args, **kwargs):
         self.tree = tree
