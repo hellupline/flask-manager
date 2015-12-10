@@ -59,7 +59,7 @@ class List(Component):
     role = Roles.list
     url = 'list/'
     name = 'List'
-    template_name = 'crud/list.html'
+    template_name = ('crud/list.html', )
 
     def get(self):
         order_by = request.args.get('order_by')
@@ -110,7 +110,7 @@ class Read(Component):
     role = Roles.read
     url = 'read/<int:pk>/'
     name = 'Read'
-    template_name = 'crud/read.html'
+    template_name = ('crud/read.html', )
 
     def get(self, pk):
         item = self.get_item(pk)
