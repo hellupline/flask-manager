@@ -52,7 +52,7 @@ class ViewNode(Tree):
         super().__init__(name=name, url=url)
 
     def endpoints(self):
-        return [(self.name, self.absolute_name(), ())]
+        return [(self.name, '.{}'.format(self.absolute_name()), ())]
 
     def iter_items(self):
         name = self.absolute_name()
