@@ -75,10 +75,7 @@ class Crud(Tree):
     def init_view(self, view_factory):
         main_endpoint = self._get_component_endpoint(self.components[0])
         kwargs = {
-            'controller': self.controller,
-            'display': self.display,
-            'roles': self.get_roles(),
-            'tree': self.get_tree_endpoints(),
+            'crud': self,
             'success_url': '.{}'.format(main_endpoint),
         }
         return view_factory(**kwargs)
