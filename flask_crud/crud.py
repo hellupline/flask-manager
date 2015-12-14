@@ -8,14 +8,13 @@ from flask_crud.components import List, Create, Read, Update, Delete
 
 
 class Group(Tree):
-    def __init__(self, name, url=None, items=None,
-                 view_func=LandingView.as_view):
-        self.view_func = view_func
-        super().__init__(name=name, url=url, items=items)
+    view_func = LandingView.as_view
 
     def endpoints(self):
         children_endpoints = [
-            endpoint for item in self.items for endpoint in item.endpoints()
+            endpoint
+            for item in self.items
+            for endpoint in item.endpoints()
         ]
         endpoint = '.{}'.format(self._view_endpoint())
         return [(self.name, endpoint, children_endpoints)]
@@ -23,8 +22,7 @@ class Group(Tree):
     def iter_items(self):
         name = self._view_endpoint()
         view = self.view_func(
-            name, full_name=name,
-            tree=self.get_tree_endpoints()
+            name, view_name=name, tree=self.get_tree_endpoints()
         )
         yield concat_urls(self.absolute_url()), name, view
         yield from super().iter_items()
