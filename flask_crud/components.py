@@ -64,26 +64,26 @@ class List(Component):
     def get(self):
         order_by = request.args.get('order_by')
         page = request.args.get('page', 1)
-        items, total = self.controller.get_items(
+        items, total = self.crud.controller.get_items(
             page, order_by, filters=request.args)
-        filter_form = self.controller.get_filter_form()(request.args)
-        action_form = self.controller.get_action_form()()
+        filter_form = self.crud.controller.get_filter_form()(request.args)
+        action_form = self.crud.controller.get_action_form()()
         return self.get_context({
             'filter_form': filter_form,
-            'show_filter_form': self.controller.filters is not None,
+            'show_filter_form': self.crud.controller.filters is not None,
             'action_form': action_form,
-            'show_action_form': self.controller.actions is not None,
+            'show_action_form': self.crud.controller.actions is not None,
             'order_by': order_by,
             'url_generator': partial(
                 url_for, request.url_rule.endpoint, **request.args),
             'items': items,
             'total': total,
             'page': page,
-            'pages': ceil(total/self.controller.per_page),
+            'pages': ceil(total/self.crud.controller.per_page),
         })
 
     def post(self):
-        self.controller.execute_action(self.get_form_data())
+        self.crud.controller.execute_action(self.get_form_data())
         return self.get_success_url(), self.get_context({})
 
 
@@ -101,7 +101,7 @@ class Create(Component):
         form = self.get_form(self.get_form_data())
         success_url = None
         if form.validate():
-            item = self.controller.create_item(form)
+            item = self.crud.controller.create_item(form)
             success_url = self.get_success_url(self.get_form_data(), item)
         return success_url, self.get_context({'form': form})
 
@@ -133,7 +133,7 @@ class Update(Component):
         form = self.get_form(self.get_form_data(), obj=item)
         success_url = None
         if form.validate():
-            self.controller.update_item(item, form)
+            self.crud.controller.update_item(item, form)
             success_url = self.get_success_url(self.get_form_data())
         return success_url, self.get_context({'item': item, 'form': form})
 
@@ -150,5 +150,5 @@ class Delete(Component):
 
     def post(self, pk):
         item = self.get_item(pk)
-        self.controller.delete_item(item)
+        self.crud.controller.delete_item(item)
         return url_for(self.success_url), self.get_context()
