@@ -5,12 +5,26 @@ from werkzeug.datastructures import CombinedMultiDict
 from flask import request, abort, redirect, url_for, render_template, views
 
 
-class TemplateView(views.View):
-    def __init__(self, template_name=None, full_name=None, success_url=None):
+class View(views.View):
+    template_name = None
+    sucess_url = None
+    view_name = None
+
+    def __init__(self, view_name=None, success_url=None, template_name=None):
+        """
+        Args:
+            view_name (str): is the name of the view,
+                used to create a custom template name.
+            success_url (str): is the url returned by ``post``
+                if form is valid.
+            template_name (tuple[str]): template nams for render_template
+        """
         if template_name is not None:
             self.template_name = template_name
-        self.full_name = full_name
-        self.success_url = success_url
+        if success_url is not None:
+            self.success_url = success_url
+        if view_name is not None:
+            self.view_name = view_name
 
     def dispatch_request(self, *args, **kwargs):
         """Dispatch the request.
@@ -27,33 +41,35 @@ class TemplateView(views.View):
     def get(self, *args, **kwargs):
         """Handle the exibition of data.
 
+        Args:
+            *args, **kwargs: the same args from dispatch_request
+
         Returns:
-            dict: The context.
-            eg:
-                {'form': Form()}
+            (dict): Context for template
         """
         raise NotImplementedError
 
     def post(self, *args, **kwargs):
         """Handle the processing of data.
 
+        Args:
+            *args, **kwargs: the same args from dispatch_request
+
         Returns:
-            tuple:
-                The return url (str or None),
-                the context (dict).
-                eg:
-                    ('/', {'item': item})
+            (tuple): tuple containing:
+                sucess_url (str): a url to return when form is valid,
+                    if None, render template with the second value of the tuple
+                (dict): Context for template, if success_url is None
         """
-        raise MethodNotAllowed(['GET'])
+        raise MethodNotAllowed(valid_methods=['GET'])
 
     def get_template_name(self):
-        if self.full_name is None:
-            return self.template_name
-        return ('crud/{}.html'.format(self.full_name), ) + self.template_name
+        """Return a tuple of template names for ``render_template``"""
+        return ('crud/{}.html'.format(self.view_name), ) + self.template_name
 
-    def get_context(self, external_ctx):
-        """Format input to render."""
-        return external_ctx
+    def get_context(self):
+        """Get the context for render_tamplate"""
+        return {}
 
     def render_response(self, context):
         """Render the context to a response."""
@@ -68,41 +84,40 @@ class Roles(Enum):
     delete = 5
 
 
-class Component(TemplateView):
+class Component(View):
     role = None
-    urls = None
-    name = None
+    url = None
+    view_name = None
 
-    def __init__(self, controller, display, roles, tree, success_url,
-                 urls=None, name=None, template_name=None, full_name=None):
-        self.controller = controller
-        self.display = display
-        self.roles = roles
-        self.tree = tree
+    def __init__(self, crud, urls=None, *args, **kwargs):
+        """
+        Args:
+            crud(Crud) the crud who manages this component
+        """
+        self.crud = crud
 
         if urls is not None:
             self.urls = urls
-        if name is not None:
-            self.name = name
-        super().__init__(
-            success_url=success_url,
-            template_name=template_name,
-            full_name=full_name,
-        )
+        super().__init__(*args, **kwargs)
 
     def get_success_url(self, params=None, item=None):
         if params is None:
             return url_for(self.success_url)
+
+        crud_roles = self.crud.get_roles()
         if '_add_another' in params:
-            return url_for(self.roles[Roles.create.name][0][1])
+            return url_for(crud_roles[Roles.create.name][0][1])
         elif '_continue_editing' in params and item is not None:
-            return url_for(self.roles[Roles.update.name][0][1], pk=item.id)
+            return url_for(crud_roles[Roles.update.name][0][1], pk=item.id)
         return url_for(self.success_url)
 
     # Permissions
     def is_allowed(self):
-        roles = [name for name, __ in self.roles.get(self.role.name, ())]
-        return self.name in roles
+        crud_roles = self.crud.get_roles()
+        for name, __ in crud_roles.get(self.role.name, ()):
+            if self.view_name == name:
+                return True
+        return False
 
     # View
     def dispatch_request(self, *args, **kwargs):
@@ -110,27 +125,25 @@ class Component(TemplateView):
             abort(401)
         return super().dispatch_request(*args, **kwargs)
 
-    def get_context(self, external_ctx=None):
-        ctx = {
-            'controller': self.controller,
-            'display': self.display,
-            'roles': self.roles,
-            'tree': self.tree,
-            'rules': self.display.get_rules(self.role.name),
-        }
-        if external_ctx is not None:
-            ctx.update(external_ctx)
-        return super().get_context(ctx)
+    def get_context(self):
+        ctx = super().get_context()
+        ctx['controller'] = self.crud.controller
+        ctx['display'] = self.crud.display
+        ctx['roles'] = self.crud.get_roles()
+        ctx['tree'] = self.crud.get_tree_endpoints()
+        ctx['rules'] = self.crud.display.get_rules(self.role.name)
+        return ctx
 
+    # form convenience
     def get_form_data(self):
         return CombinedMultiDict([request.form, request.files])
 
     # controller convenience
     def get_form(self, *args, **kwargs):
-        return self.controller.form_class(*args, **kwargs)
+        return self.crud.controller.form_class(*args, **kwargs)
 
     def get_item(self, pk):
-        item = self.controller.get_item(pk)
+        item = self.crud.controller.get_item(pk)
         if item is None:
             abort(404)
         return item
