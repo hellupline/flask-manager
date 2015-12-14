@@ -3,19 +3,8 @@ from functools import partial
 
 from flask_crud.tree import Tree
 from flask_crud.utils import concat_urls, slugify
-from flask_crud.views import TemplateView, Roles
+from flask_crud.views import LandingView, Roles
 from flask_crud.components import List, Create, Read, Update, Delete
-
-
-class LandingView(TemplateView):
-    template_name = ('crud/landing.html', )
-
-    def __init__(self, tree, *args, **kwargs):
-        self.tree = tree
-        super().__init__(*args, **kwargs)
-
-    def get(self):
-        return {'tree': self.tree}
 
 
 class Group(Tree):

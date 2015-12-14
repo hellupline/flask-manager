@@ -76,6 +76,17 @@ class View(views.View):
         return render_template(self.get_template_name(), **context)
 
 
+class LandingView(View):
+    template_name = ('crud/landing.html', )
+
+    def __init__(self, tree, *args, **kwargs):
+        self.tree = tree
+        super().__init__(*args, **kwargs)
+
+    def get(self):
+        return {'tree': self.tree}
+
+
 class Roles(Enum):
     list = 1
     create = 2
