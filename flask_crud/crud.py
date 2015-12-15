@@ -1,5 +1,4 @@
 from collections import defaultdict
-from functools import partial
 
 from flask_crud.tree import Tree
 from flask_crud.utils import concat_urls, slugify
@@ -16,18 +15,18 @@ class Group(Tree):
             for item in self.items
             for endpoint in item.endpoints()
         ]
-        endpoint = '.{}'.format(self._view_endpoint())
+        endpoint = '.{}'.format(self._view_name())
         return [(self.name, endpoint, children_endpoints)]
 
     def iter_items(self):
-        name = self._view_endpoint()
+        name = self._view_name()
         view = self.view_func(
             name, view_name=name, tree=self.get_tree_endpoints()
         )
         yield concat_urls(self.absolute_url()), name, view
         yield from super().iter_items()
 
-    def _view_endpoint(self):
+    def _view_name(self):
         if self.is_root():
             return 'home'
         return '-'.join([self.absolute_name(), 'home'])
@@ -42,8 +41,9 @@ class ViewNode(Tree):
         return [(self.name, '.{}'.format(self.absolute_name()), ())]
 
     def iter_items(self):
+        url = concat_urls(self.absolute_url())
         name = self.absolute_name()
-        yield concat_urls(self.absolute_url()), name, self.view_func
+        yield url, name, self.view_func
 
 
 class Crud(Tree):
@@ -62,30 +62,26 @@ class Crud(Tree):
         for component in self.components:
             if component.role is not Roles.list:
                 continue
-            endpoint = '.{}'.format(self._get_component_endpoint(component))
+            endpoint = '.{}'.format(self._component_name(component))
             yield self.name, endpoint, ()
 
     def iter_items(self):
+        main_endpoint = self._component_name(self.components[0])
         for component in self.components:
             url = concat_urls(self.absolute_url(), component.url)
-            name = self._get_component_endpoint(component)
-            func = partial(component.as_view, name, full_name=name)
-            yield url, name, self.init_view(func)
-
-    def init_view(self, view_factory):
-        main_endpoint = self._get_component_endpoint(self.components[0])
-        kwargs = {
-            'crud': self,
-            'success_url': '.{}'.format(main_endpoint),
-        }
-        return view_factory(**kwargs)
+            name = self._component_name(component)
+            view = component.as_view(
+                name, crud=self, view_name=name,
+                success_url='.{}'.format(main_endpoint),
+            )
+            yield url, name, view
 
     def get_roles(self):
         roles = defaultdict(list)
         for component in self.components:
-            endpoint = '.{}'.format(self._get_component_endpoint(component))
+            endpoint = '.{}'.format(self._component_name(component))
             roles[component.role.name].append((component.name, endpoint))
         return roles
 
-    def _get_component_endpoint(self, component):
+    def _component_name(self, component):
         return '-'.join([self.absolute_name(), slugify(component.name)])
