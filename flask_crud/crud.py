@@ -20,9 +20,7 @@ class Group(Tree):
 
     def iter_items(self):
         name = self._view_name()
-        view = self.view_func(
-            name, view_name=name, tree=self.get_tree_endpoints()
-        )
+        view = self.view_func(name, parent=self, view_name=name)
         yield concat_urls(self.absolute_url()), name, view
         yield from super().iter_items()
 

@@ -81,11 +81,11 @@ class Tree:
             return self.url
         return concat_urls(self.parent.absolute_url(), self.url)
 
-    def get_tree_endpoints(self):
+    def tree_endpoints(self):
         """Get the entire tree endpoints."""
         if self.is_root():
             return list(self.endpoints())
-        return self.parent.get_tree_endpoints()
+        return self.parent.tree_endpoints()
 
     def endpoints(self):
         """All endpoints under ``self``."""

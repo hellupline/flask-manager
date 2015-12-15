@@ -79,12 +79,12 @@ class View(views.View):
 class LandingView(View):
     template_name = ('crud/landing.html', )
 
-    def __init__(self, tree, *args, **kwargs):
-        self.tree = tree
+    def __init__(self, parent, *args, **kwargs):
+        self.parent = parent
         super().__init__(*args, **kwargs)
 
     def get(self):
-        return {'tree': self.tree}
+        return {'tree': self.parent.tree_endpoints()}
 
 
 class Roles(Enum):
@@ -141,7 +141,7 @@ class Component(View):
         ctx['controller'] = self.crud.controller
         ctx['display'] = self.crud.display
         ctx['roles'] = self.crud.get_roles()
-        ctx['tree'] = self.crud.get_tree_endpoints()
+        ctx['tree'] = self.crud.tree_endpoints()
         ctx['rules'] = self.crud.display.get_rules(self.role.name)
         return ctx
 
