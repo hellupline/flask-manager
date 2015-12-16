@@ -29,10 +29,18 @@ def build_crud(model_class, db_session, crud_class=crud_.Crud,
     return crud_class(name=name, controller=controller, display=display)
 
 
-def build_form(model_class, db_session, inlines=None,
-               base_class=ModelForm, meta_args=None):
-    body = utils.get_rel_fields(model_class, db_session, inlines or [])
-    meta_args = meta_args or {}
+def build_form(model_class, db_session,
+               inline_field_names=None,
+               exclude_relationships=None,
+               base_class=ModelForm,
+               meta_args=None):
+    if meta_args is None:
+        meta_args = {}
+    body = utils.get_rel_fields(
+        model_class, db_session,
+        inline_field_names,
+        exclude_relationships,
+    )
 
     class Form(base_class):
         @classmethod

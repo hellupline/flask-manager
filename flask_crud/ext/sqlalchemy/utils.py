@@ -9,7 +9,7 @@ import sqlalchemy as sa
 
 
 RELATIONSHIP_TYPES_TO_FIELD = {
-    # 'MANYTOMANY': QuerySelectMultipleField,
+    'MANYTOMANY': QuerySelectMultipleField,
     'MANYTOONE': QuerySelectField,
 }
 
@@ -27,16 +27,31 @@ def get_columns(model_class):
 
 
 # relationships
-def get_rel_fields(model_class, db_session, inlines):
-    relationships = sa.inspect(model_class).relationships.items()
-    return {
-        key: relationship_field(rel, db_session, inline=key in inlines)
-        for key, rel in relationships
-    }
+def get_rel_fields(model_class, db_session,
+                   inline_field_names=None,
+                   exclude_relationships=None):
+    if exclude_relationships is None:
+        exclude_relationships = set()
+    if inline_field_names is None:
+        inline_field_names = ()
+
+    relationships = set(sa.inspect(model_class).relationships.items())
+    fields = {}
+    for key, relationship in relationships:
+        if key in exclude_relationships:
+            continue
+        use_inline_form = key in inline_field_names
+        field = relationship_field(
+            relationship, db_session,
+            use_inline_form=use_inline_form
+        )
+        if field is not None:
+            fields[key] = field
+    return fields
 
 
-def relationship_field(relationship, db_session, inline=False):
-    if inline:
+def relationship_field(relationship, db_session, use_inline_form=False):
+    if use_inline_form:
         return relationship_field_inline(relationship)
     return relationship_field_simple(relationship, db_session)
 
@@ -55,7 +70,6 @@ def relationship_field_inline(relationship):
 def relationship_field_simple(relationship, db_session):
     remote_model = relationship.mapper.entity
     column = relationship.local_remote_pairs[0][0]
-
     try:
         field = RELATIONSHIP_TYPES_TO_FIELD[relationship.direction.name]
     except KeyError:
