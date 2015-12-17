@@ -1,7 +1,7 @@
 {% macro buttons_create(roles) %}
   {% for role, endpoint in roles['create'] %}
     <div class="btn-group">
-      <a href="{{ url_for(endpoint) }}" class="btn btn-default btn-default btn-sm btn-info">
+      <a href="{{ url_for('.{}'.format(endpoint)) }}" class="btn btn-default btn-default btn-sm btn-info">
         Create
       </a>
     </div>
@@ -12,7 +12,7 @@
   {% for type in ('read', 'update', 'delete') %}
     {% if type in roles %}
       {% for role, endpoint in roles[type] %}
-        <a href="{{ url_for(endpoint, pk=model.id) }}">
+        <a href="{{ url_for('.{}'.format(endpoint), pk=model.id) }}">
           <span class="glyphicon glyphicon-{{ type_glyph[type] }}"></span>
         </a>
       {% endfor %}
