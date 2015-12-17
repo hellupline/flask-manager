@@ -8,23 +8,21 @@ from flask import request, abort, redirect, url_for, render_template, views
 class View(views.View):
     template_name = None
     sucess_url = None
-    view_name = None
 
-    def __init__(self, view_name=None, success_url=None, template_name=None):
-        """
+    def __init__(self, view_name, success_url=None, template_name=None):
+        """A Basic View with template.
+
         Args:
-            view_name (str): is the name of the view,
+            view_name (str): The name of the view,
                 used to create a custom template name.
-            success_url (str): is the url returned by ``post``
-                if form is valid.
-            template_name (tuple[str]): template nams for render_template
+            success_url (str): The url returned by ``post`` if form is valid.
+            template_name (tuple[str]): Template nams for render_template.
         """
         if template_name is not None:
             self.template_name = template_name
         if success_url is not None:
             self.success_url = success_url
-        if view_name is not None:
-            self.view_name = view_name
+        self.view_name = view_name
 
     def dispatch_request(self, *args, **kwargs):
         """Dispatch the request.
@@ -42,10 +40,10 @@ class View(views.View):
         """Handle the exibition of data.
 
         Args:
-            *args, **kwargs: the same args from dispatch_request
+            *args, **kwargs: the same args from dispatch_request.
 
         Returns:
-            (dict): Context for template
+            (dict): Context for template.
         """
         raise NotImplementedError
 
@@ -53,28 +51,28 @@ class View(views.View):
         """Handle the processing of data.
 
         Args:
-            *args, **kwargs: the same args from dispatch_request
+            *args, **kwargs: The same args from dispatch_request.
 
         Returns:
             (tuple): tuple containing:
-                sucess_url (str): a url to return when form is valid,
-                    if None, render template with the second value of the tuple
-                (dict): Context for template, if success_url is None
+                sucess_url (str): Url to return if form is valid,
+                    if None, render template with the dict.
+                (dict): Context for template, if success_url is None.
         """
         raise MethodNotAllowed(valid_methods=['GET'])
 
     def get_template_name(self):
-        """Return a tuple of template names for ``render_template``"""
+        """Return a tuple of template names for ``render_template``."""
         return ('crud/{}.html'.format(self.view_name), ) + self.template_name
 
     def context(self, external_ctx=None):
         """Called by ``get`` or ``post``, get the context for render_tamplate.
 
         Args:
-            injected_context (dict): vars for template.
+            injected_context (dict): Vars for template.
 
         Returns:
-            (dict): the ``injected_context`` merged with a base context
+            (dict): The ``injected_context`` merged with a base context.
 
         """
         if external_ctx is not None:
@@ -82,7 +80,15 @@ class View(views.View):
         return {}
 
     def render_response(self, context):
-        """Render the context to a response."""
+        """Render the context to a response.
+
+        Args:
+            context (dict): Vars for template.
+
+        Returns:
+            (str): Template rendered with the context.
+
+        """
         return render_template(self.get_template_name(), **context)
 
 
@@ -90,6 +96,11 @@ class LandingView(View):
     template_name = ('crud/landing.html', )
 
     def __init__(self, parent, *args, **kwargs):
+        """A simple landing view, template may be overwriten to customize.
+
+        Args:
+            parent (Group): ``Group`` host of ``self``.
+        """
         self.parent = parent
         super().__init__(*args, **kwargs)
 
@@ -106,19 +117,19 @@ class Roles(Enum):
 
 
 class Component(View):
+    """Role this component represent, enumerated in ``Roles``."""
     role = None
     url = None
-    view_name = None
 
-    def __init__(self, crud, urls=None, *args, **kwargs):
+    def __init__(self, crud, url=None, *args, **kwargs):
         """
         Args:
-            crud(Crud) the crud who manages this component
+            crud (Crud): ``Crud`` who manages ``self``.
+            url (str): Relative url.
         """
+        if url is not None:
+            self.url = url
         self.crud = crud
-
-        if urls is not None:
-            self.urls = urls
         super().__init__(*args, **kwargs)
 
     def get_success_url(self, params=None, item=None):
