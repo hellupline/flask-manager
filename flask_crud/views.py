@@ -67,8 +67,18 @@ class View(views.View):
         """Return a tuple of template names for ``render_template``"""
         return ('crud/{}.html'.format(self.view_name), ) + self.template_name
 
-    def get_context(self):
-        """Get the context for render_tamplate"""
+    def context(self, external_ctx=None):
+        """Called by ``get`` or ``post``, get the context for render_tamplate.
+
+        Args:
+            injected_context (dict): vars for template.
+
+        Returns:
+            (dict): the ``injected_context`` merged with a base context
+
+        """
+        if external_ctx is not None:
+            return external_ctx
         return {}
 
     def render_response(self, context):
@@ -136,14 +146,17 @@ class Component(View):
             abort(401)
         return super().dispatch_request(*args, **kwargs)
 
-    def get_context(self):
-        ctx = super().get_context()
-        ctx['controller'] = self.crud.controller
-        ctx['display'] = self.crud.display
-        ctx['roles'] = self.crud.get_roles()
-        ctx['tree'] = self.crud.tree_endpoints()
-        ctx['rules'] = self.crud.display.get_rules(self.role.name)
-        return ctx
+    def context(self, external_ctx=None):
+        ctx = {
+            'controller': self.crud.controller,
+            'display': self.crud.display,
+            'roles': self.crud.get_roles(),
+            'tree': self.crud.tree_endpoints(),
+            'rules': self.crud.display.get_rules(self.role.name),
+        }
+        if external_ctx is not None:
+            ctx.update(external_ctx)
+        return super().context(ctx)
 
     # form convenience
     def get_form_data(self):
