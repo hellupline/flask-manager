@@ -134,11 +134,7 @@ class Component(View):
 
     # Permissions
     def is_allowed(self):
-        crud_roles = self.crud.get_roles()
-        for __, name in crud_roles.get(self.role.name, ()):
-            if name == self.view_name:
-                return True
-        return False
+        return self.view_name in self.crud.get_roles().get(self.role.name, ())
 
     # View
     def dispatch_request(self, *args, **kwargs):

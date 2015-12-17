@@ -76,7 +76,7 @@ class Crud(Tree):
     def get_roles(self):
         roles = defaultdict(list)
         for component in self.components:
-            role = (component.role.name, self._component_name(component))
+            role = self._component_name(component)
             roles[component.role.name].append(role)
         return roles
 
