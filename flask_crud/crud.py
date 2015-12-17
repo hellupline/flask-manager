@@ -9,6 +9,12 @@ from flask_crud.components import List, Create, Read, Update, Delete
 class Group(Tree):
     view_func = LandingView.as_view
 
+    def __iter__(self):
+        name = self._view_name()
+        view = self.view_func(name, parent=self, view_name=name)
+        yield concat_urls(self.absolute_url()), name, view
+        yield from super().__iter__()
+
     def endpoints(self):
         children_endpoints = [
             endpoint
@@ -17,12 +23,6 @@ class Group(Tree):
         ]
         endpoint = '.{}'.format(self._view_name())
         return [(self.name, endpoint, children_endpoints)]
-
-    def iter_items(self):
-        name = self._view_name()
-        view = self.view_func(name, parent=self, view_name=name)
-        yield concat_urls(self.absolute_url()), name, view
-        yield from super().iter_items()
 
     def _view_name(self):
         if self.is_root():
@@ -35,13 +35,13 @@ class ViewNode(Tree):
         self.view_func = view_func
         super().__init__(name=name, url=url)
 
-    def endpoints(self):
-        return [(self.name, '.{}'.format(self.absolute_name()), ())]
-
-    def iter_items(self):
+    def __iter__(self):
         url = concat_urls(self.absolute_url())
         name = self.absolute_name()
         yield url, name, self.view_func
+
+    def endpoints(self):
+        return [(self.name, '.{}'.format(self.absolute_name()), ())]
 
 
 class Crud(Tree):
@@ -56,15 +56,8 @@ class Crud(Tree):
         self.display = display
         super().__init__(name=name, url=url)
 
-    def endpoints(self):
-        for component in self.components:
-            if component.role is not Roles.list:
-                continue
-            endpoint = '.{}'.format(self._component_name(component))
-            yield self.name, endpoint, ()
-
-    def iter_items(self):
-        main_endpoint = self._component_name(self.components[0])
+    def __iter__(self):
+        main_endpoint = self._component_name(self._main_component())
         for component in self.components:
             url = concat_urls(self.absolute_url(), component.url)
             name = self._component_name(component)
@@ -74,12 +67,23 @@ class Crud(Tree):
             )
             yield url, name, view
 
+    def endpoints(self):
+        for component in self.components:
+            if component.role is Roles.list:
+                endpoint = '.{}'.format(self._component_name(component))
+                yield self.name, endpoint, ()
+
     def get_roles(self):
         roles = defaultdict(list)
         for component in self.components:
-            endpoint = '.{}'.format(self._component_name(component))
-            roles[component.role.name].append((component.name, endpoint))
+            role = (component.role.name, self._component_name(component))
+            roles[component.role.name].append(role)
         return roles
 
     def _component_name(self, component):
-        return '-'.join([self.absolute_name(), slugify(component.name)])
+        return '-'.join([self.absolute_name(), slugify(component.role.name)])
+
+    def _main_component(self):
+        for component in self.components:
+            if component.role is Roles.list:
+                return component

@@ -30,6 +30,11 @@ class Tree:
         cls_name = self.__class__.__name__
         return '<{}: name="{}" url="{}">'.format(cls_name, self.name, self.url)
 
+    def __iter__(self):
+        """Iterate over all items under ``self``."""
+        for item in self.items:
+            yield from item
+
     def register_items(self, items):
         """Bulk ``register_item``.
 
@@ -40,7 +45,7 @@ class Tree:
         """
         for item in items:
             item.set_parent(self)
-        self.items.extend(item for item in items)
+        self.items.extend(items)
 
     def register_item(self, item):
         """Register the item with its parent.
@@ -88,7 +93,16 @@ class Tree:
         return self.parent.tree_endpoints()
 
     def endpoints(self):
-        """All endpoints under ``self``."""
+        """
+        Get all the endpoints under this node in a tree like structure.
+
+        Returns:
+            (list[tuple]):
+                name (str): This node's name.
+                endpoint (str): Endpoint name relative to root.
+                children (list): ``child.endpoints for each child
+
+        """
         raise NotImplementedError
 
     def is_root(self):
@@ -97,11 +111,6 @@ class Tree:
             bool: True if no parent, False otherwise.
         """
         return self.parent is None
-
-    def iter_items(self):
-        """Iterate over all items under ``self``."""
-        for item in self.items:
-            yield from item.iter_items()
 
     def get_blueprint(self, template_folder='templates',
                       static_folder='static',
@@ -118,7 +127,7 @@ class Tree:
     def set_urls_to_blueprint(self, blueprint):
         # remove parent url
         absolute_url_len = len(concat_urls(self.absolute_url()))
-        for url, name, view in self.iter_items():
+        for url, name, view in self:
             url = url[absolute_url_len:]
             blueprint.add_url_rule(
                 url, name.lower(), view, methods=['GET', 'POST'])
