@@ -45,16 +45,7 @@ class ViewNode(Tree):
 
 
 class Crud(Tree):
-    COMPONENTS = [List, Read, Create, Update, Delete]
-
-    def __init__(self, controller, display, name, url=None, components=None):
-        if components is None:
-            self.components = self.COMPONENTS.copy()
-        else:
-            self.components = components
-        self.controller = controller
-        self.display = display
-        super().__init__(name=name, url=url)
+    components = (List, Read, Create, Update, Delete)
 
     def __iter__(self):
         main_endpoint = self._component_name(self._main_component())

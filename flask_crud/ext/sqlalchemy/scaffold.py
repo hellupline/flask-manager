@@ -1,32 +1,48 @@
+from cached_property import cached_property
 from wtforms_alchemy import ModelForm
 
 from flask_crud import crud as crud_, display as display_, rules as rules_
 from flask_crud.ext.sqlalchemy import controller as controller_, utils
 
 
-def build_crud(model_class, db_session, crud_class=crud_.Crud,
-               form_class=None, form_args=None,
-               display=None, display_args=None,
-               controller=None, filters=None, actions=None):
-    if form_class is None:
-        if form_args is None:
-            form_args = {}
-        form_class = build_form(
-            model_class=model_class, db_session=db_session, **form_args)
+class SQLAlchemyCrud(crud_.Crud):
+    rules = {}
 
-    if display is None:
-        if display_args is None:
-            display_args = {}
-        display = build_display(
-            model_class=model_class, **display_args)
+    def __init__(self):
+        super(name=utils.get_model_name(self.model))
 
-    if controller is None:
-        controller = controller_.SQLAlchemyController(
-            model_class=model_class, db_session=db_session,
-            form_class=form_class, filters=filters, actions=actions)
+    @cached_property
+    def controller(self):
+        return controller_.SQLAlchemyController(
+            db_session=self.db_session,
+            model_class=self.model,
+            filters=self.filters,
+            actions=self.actions,
+            form_class=self.form_class,
+        )
 
-    name = utils.get_model_name(model_class)
-    return crud_class(name=name, controller=controller, display=display)
+    @cached_property
+    def form_class(self):
+        return build_form(
+            db_session=self.db_session,
+            model_class=self.model,
+        )
+
+    @cached_property
+    def display(self):
+        model_columns = utils.get_columns(self.model)
+        columns_rules = rules_.ColumnSet(model_columns)
+        form_rules = self.rules_.get('form', rules_.SimpleForm())
+        data_rules = rules_.DataFieldSet(model_columns)
+        delete_rules = rules_.DataFieldSetWithConfirm(model_columns)
+
+        return display_.Display(
+            list=self.rules.get('list', columns_rules),
+            create=self.rules.get('create', form_rules),
+            read=self.rules.get('read', data_rules),
+            update=self.rules.get('update', form_rules),
+            delete=self.rules.get('delete', delete_rules),
+        )
 
 
 def build_form(model_class, db_session,
@@ -58,20 +74,3 @@ def build_form(model_class, db_session,
             model = model_class
 
     return Form
-
-
-def build_display(model_class, **kwargs):
-    model_columns = utils.get_columns(model_class)
-
-    columns_rules = rules_.ColumnSet(model_columns)
-    form_rules = rules_.SimpleForm()
-    data_rules = rules_.DataFieldSet(model_columns)
-    delete_rules = rules_.DataFieldSetWithConfirm(model_columns)
-
-    return display_.Display(
-        list=kwargs.get('list', columns_rules),
-        create=kwargs.get('create', kwargs.get('form', form_rules)),
-        read=kwargs.get('read', data_rules),
-        update=kwargs.get('update', kwargs.get('form', form_rules)),
-        delete=kwargs.get('delete', delete_rules),
-    )

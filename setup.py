@@ -37,7 +37,8 @@ setup(
     install_requires=[
         'flask>=0.7',
         'wtforms',
-        'wtforms-alchemy'
+        'wtforms-alchemy',
+        'cached-property',
     ],
     extras_require={
         'dev': ['ipython'],
