@@ -173,7 +173,7 @@ class Component(View):
 
     # controller convenience
     def get_form(self, *args, **kwargs):
-        return self.crud.controller.form_class(*args, **kwargs)
+        return self.crud.form_class(*args, **kwargs)
 
     def get_item(self, pk):
         item = self.crud.controller.get_item(pk)

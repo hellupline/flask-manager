@@ -17,10 +17,8 @@ class Filter:
 class Controller:
     per_page = 100
 
-    def __init__(self, model_class, form_class,
-                 filters=None, actions=None, per_page=None):
+    def __init__(self, model_class, filters=None, actions=None, per_page=None):
         self.model_class = model_class
-        self.form_class = form_class
         self.filters = filters
         self.actions = actions
         if per_page is not None:
