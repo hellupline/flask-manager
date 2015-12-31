@@ -157,11 +157,11 @@ class Component(View):
 
     def context(self, external_ctx=None):
         ctx = {
-            'controller': self.crud.controller,
-            'display': self.crud.display,
-            'roles': self.crud.get_roles(),
-            'tree': self.crud.tree_endpoints(),
             'rules': self.crud.display.get_rules(self.role.name),
+            'tree': self.crud.tree_endpoints(),
+            'roles': self.crud.get_roles(),
+            'display': self.crud.display,
+            # 'controller': self.crud.controller,
         }
         if external_ctx is not None:
             ctx.update(external_ctx)
