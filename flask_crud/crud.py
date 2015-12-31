@@ -1,8 +1,10 @@
 from collections import defaultdict
+from cached_property import cached_property
 
-from flask_crud.tree import Tree
 from flask_crud.utils import concat_urls, slugify
 from flask_crud.views import LandingView, Roles
+from flask_crud.display import Display
+from flask_crud.tree import Tree
 from flask_crud.components import List, Create, Read, Update, Delete
 
 
@@ -46,6 +48,7 @@ class ViewNode(Tree):
 
 class Crud(Tree):
     components = (List, Read, Create, Update, Delete)
+    rules = {}
 
     def __iter__(self):
         main_endpoint = self._component_name(self._main_component())
@@ -57,6 +60,10 @@ class Crud(Tree):
                 success_url='.{}'.format(main_endpoint),
             )
             yield url, name, view
+
+    @cached_property
+    def display(self):
+        return Display(**self.rules)
 
     def endpoints(self):
         for component in self.components:
