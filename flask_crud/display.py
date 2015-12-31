@@ -19,19 +19,14 @@ def get_render_ctx():
 
 class Display:
     RULES_NAMES = (
-        'list',
-        'create',
-        'read',
-        'update',
-        'delete',
+        'list', 'create', 'read', 'update', 'delete',
     )
     store_context = staticmethod(store_context)
 
     def __init__(self, **kwargs):
         self.rules = {
-            key: kwargs[key]
-            for key in self.RULES_NAMES
-            if key in kwargs
+            key: value for key, value in kwargs.items()
+            if key in self.RULES_NAMES
         }
 
     def get_rules(self, name):
