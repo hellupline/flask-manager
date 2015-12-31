@@ -7,14 +7,14 @@ def store_context(context):
     """
         Resolve current Jinja2 context and store it for general consumption.
     """
-    g.le_admin_render_ctx = context
+    g.crud_render_ctx = context
 
 
 def get_render_ctx():
     """
         Get view template context.
     """
-    return g.le_admin_render_ctx
+    return g.crud_render_ctx
 
 
 class Display:
