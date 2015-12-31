@@ -145,7 +145,9 @@ class Component(View):
 
     # Permissions
     def is_allowed(self):
-        return self.view_name in self.crud.get_roles().get(self.role.name, ())
+        roles = self.crud.get_roles()
+        allowed = roles.get(self.role.name, ())
+        return self.view_name in allowed
 
     # View
     def dispatch_request(self, *args, **kwargs):
