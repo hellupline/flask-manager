@@ -15,16 +15,16 @@ class Tree:
     parent = None
     items = None
 
-    def __init__(self, name, url=None, items=None):
+    def __init__(self, name=None, url=None, items=None):
         self.items = []
+        if name is not None:
+            self.name = name
+        if url is not None:
+            self.url = url
+        else:
+            self.url = slugify(self.name)
         if items is not None:
             self.register_items(items)
-
-        if url is None:
-            self.url = slugify(name)
-        else:
-            self.url = url
-        self.name = name
 
     def __repr__(self):
         cls_name = self.__class__.__name__
