@@ -3,7 +3,6 @@ from cached_property import cached_property
 
 from flask_crud.utils import concat_urls, slugify
 from flask_crud.views import LandingView, Roles
-from flask_crud.display import Display
 from flask_crud.tree import Tree
 from flask_crud.components import List, Create, Read, Update, Delete
 
@@ -64,10 +63,6 @@ class Crud(Tree):
     def endpoints(self):
         endpoint = '.{}'.format(self._component_name(self._main_component()))
         return [(self.name, endpoint, ())]
-
-    @cached_property
-    def display(self):
-        return Display(**self.rules)
 
     def get_roles(self):
         roles = defaultdict(list)

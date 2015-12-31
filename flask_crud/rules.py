@@ -1,5 +1,5 @@
 from jinja2 import Markup
-from .display import get_render_ctx
+from flask_crud.utils import get_render_ctx
 
 
 class RuleMixin:

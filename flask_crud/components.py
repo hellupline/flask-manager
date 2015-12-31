@@ -50,7 +50,7 @@ Each Component have:
     Url, Name
 
 Each Component receive:
-    Controller, Display, Roles, Success_url ( for POST Method )
+    Controller, Roles, Success_url ( for POST Method )
     and a possible a form class ( Overwrite Display form class )
 """
 

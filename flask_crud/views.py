@@ -3,6 +3,7 @@ from enum import Enum
 from werkzeug.exceptions import MethodNotAllowed
 from werkzeug.datastructures import CombinedMultiDict
 from flask import request, abort, redirect, url_for, render_template, views
+from flask_crud.utils import store_context
 
 
 class View(views.View):
@@ -75,9 +76,10 @@ class View(views.View):
             (dict): The ``injected_context`` merged with a base context.
 
         """
+        ctx = {'store_context': store_context}
         if external_ctx is not None:
-            return external_ctx
-        return {}
+            ctx.update(external_ctx)
+        return ctx
 
     def render_response(self, context):
         """Render the context to a response.
@@ -157,10 +159,9 @@ class Component(View):
 
     def context(self, external_ctx=None):
         ctx = {
-            'rules': self.crud.display.get_rules(self.role.name),
+            'rules': self.crud.rules[self.role.name],
             'tree': self.crud.tree_endpoints(),
             'roles': self.crud.get_roles(),
-            'display': self.crud.display,
             # 'controller': self.crud.controller,
         }
         if external_ctx is not None:

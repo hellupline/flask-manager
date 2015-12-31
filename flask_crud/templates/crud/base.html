@@ -1,10 +1,5 @@
 {% import 'crud/macros/menu.html' as Menu %}
-
-{% block save_template_context %}
-  {% if display is defined %}
-    {% set __ = display.store_context() %} {# hide None #}
-  {% endif %}
-{% endblock %}
+{% set __ = display.store_context() %} {# hide None #}
 
 <!DOCTYPE html>
 <html lang="en">
