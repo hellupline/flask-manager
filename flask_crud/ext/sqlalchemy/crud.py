@@ -18,19 +18,14 @@ class SQLAlchemyCrud(crud.Crud):
     @cached_property
     def controller(self):
         return controller_.SQLAlchemyController(
-            db_session=self.db_session,
-            model_class=self.model,
-            filters=self.filters,
-            actions=self.actions,
-            form_class=self.form_class,
+            db_session=self.db_session, model_class=self.model,
+            filters=self.filters, actions=self.actions,
         )
 
     @cached_property
     def form_class(self):
         return utils.build_form(
-            db_session=self.db_session,
-            model_class=self.model,
-        )
+            db_session=self.db_session, model_class=self.model)
 
     @cached_property
     def rules(self):
