@@ -61,15 +61,13 @@ class Crud(Tree):
             )
             yield url, name, view
 
+    def endpoints(self):
+        endpoint = '.{}'.format(self._component_name(self._main_component()))
+        return [(self.name, endpoint, ())]
+
     @cached_property
     def display(self):
         return Display(**self.rules)
-
-    def endpoints(self):
-        for component in self.components:
-            if component.role is Roles.list:
-                endpoint = '.{}'.format(self._component_name(component))
-                yield self.name, endpoint, ()
 
     def get_roles(self):
         roles = defaultdict(list)
