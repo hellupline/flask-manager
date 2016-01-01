@@ -119,8 +119,10 @@ class Tree:
                       static_folder='static',
                       static_url_path='crud/static'):
         bp = Blueprint(
-            self.name.lower(), __name__,
+            slugify(self.name.lower()),
+            __name__,
             url_prefix=concat_urls(self.url),
+
             template_folder=template_folder,
             static_folder=static_folder,
             static_url_path=static_url_path,
