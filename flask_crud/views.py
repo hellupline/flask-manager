@@ -10,17 +10,14 @@ class View(views.View):
     template_name = None
     sucess_url = None
 
-    def __init__(self, view_name, success_url=None, template_name=None):
+    def __init__(self, view_name, success_url=None):
         """A Basic View with template.
 
         Args:
             view_name (str): The name of the view,
                 used to create a custom template name.
             success_url (str): The url returned by ``post`` if form is valid.
-            template_name (tuple[str]): Template nams for render_template.
         """
-        if template_name is not None:
-            self.template_name = template_name
         if success_url is not None:
             self.success_url = success_url
         self.view_name = view_name
@@ -107,7 +104,7 @@ class LandingView(View):
         super().__init__(*args, **kwargs)
 
     def get(self):
-        return self.context({'tree': self.parent.tree_endpoints()})
+        return self.context({'tree': self.parent.endpoints_tree()})
 
 
 class Roles(Enum):
@@ -123,14 +120,11 @@ class Component(View):
     role = None
     url = None
 
-    def __init__(self, crud, url=None, *args, **kwargs):
+    def __init__(self, crud, *args, **kwargs):
         """
         Args:
-            crud (Crud): ``Crud`` who manages ``self``.
-            url (str): Relative url.
+            crud (Crud): ``Crud`` parent.
         """
-        if url is not None:
-            self.url = url
         self.crud = crud
         super().__init__(*args, **kwargs)
 
@@ -160,7 +154,7 @@ class Component(View):
     def context(self, external_ctx=None):
         ctx = {
             'rules': self.crud.rules[self.role.name],
-            'tree': self.crud.tree_endpoints(),
+            'tree': self.crud.endpoints_tree(),
             'roles': self.crud.get_roles(),
             # 'controller': self.crud.controller,
         }

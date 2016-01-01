@@ -1,3 +1,4 @@
+from cached_property import cached_property
 from flask import Blueprint
 
 from flask_crud.utils import concat_urls, slugify
@@ -66,6 +67,7 @@ class Tree:
         if parent is not None:
             self.parent = parent
 
+    @cached_property
     def absolute_name(self):
         """Get the absolute name of ``self``.
 
@@ -74,8 +76,9 @@ class Tree:
         """
         if self.is_root() or self.parent.is_root():
             return slugify(self.name)
-        return '-'.join([self.parent.absolute_name(), slugify(self.name)])
+        return '-'.join([self.parent.absolute_name, slugify(self.name)])
 
+    @cached_property
     def absolute_url(self):
         """Get the absolute url of ``self``.
 
@@ -84,13 +87,13 @@ class Tree:
         """
         if self.is_root():
             return self.url
-        return concat_urls(self.parent.absolute_url(), self.url)
+        return concat_urls(self.parent.absolute_url, self.url)
 
-    def tree_endpoints(self):
+    def endpoints_tree(self):
         """Get the entire tree endpoints."""
         if self.is_root():
-            return list(self.endpoints())
-        return self.parent.tree_endpoints()
+            return self.endpoints()
+        return self.parent.endpoints_tree()
 
     def endpoints(self):
         """
@@ -126,7 +129,7 @@ class Tree:
 
     def set_urls_to_blueprint(self, blueprint):
         # remove parent url
-        absolute_url_len = len(concat_urls(self.absolute_url()))
+        absolute_url_len = len(concat_urls(self.absolute_url))
         for url, name, view in self:
             url = url[absolute_url_len:]
             blueprint.add_url_rule(
