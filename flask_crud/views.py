@@ -107,7 +107,7 @@ class LandingView(View):
         super().__init__(*args, **kwargs)
 
     def get(self):
-        return {'tree': self.parent.tree_endpoints()}
+        return self.context({'tree': self.parent.tree_endpoints()})
 
 
 class Roles(Enum):
