@@ -156,7 +156,6 @@ class Component(View):
             'rules': self.crud.rules[self.role.name],
             'tree': self.crud.endpoints_tree(),
             'roles': self.crud.get_roles(),
-            # 'controller': self.crud.controller,
         }
         if external_ctx is not None:
             ctx.update(external_ctx)
