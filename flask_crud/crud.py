@@ -22,6 +22,8 @@ class Group(Tree):
         return self.name, endpoint, children
 
     def _view_name(self):
+        if self.is_root():
+            return 'home'
         return '-'.join([self.absolute_name, 'home'])
 
 
