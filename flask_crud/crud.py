@@ -22,8 +22,6 @@ class Group(Tree):
         return self.name, endpoint, children
 
     def _view_name(self):
-        if self.is_root():
-            return 'home'
         return '-'.join([self.absolute_name, 'home'])
 
 
@@ -46,6 +44,7 @@ class ViewNode(Tree):
 
 class Crud(Tree):
     components = (List, Read, Create, Update, Delete)
+    decorators = ()
     rules = {}
     controller = None
 
@@ -58,7 +57,7 @@ class Crud(Tree):
                 name, crud=self, view_name=name,
                 success_url='.{}'.format(main_endpoint),
             )
-            yield url, name, view
+            yield url, name, self._decorate_view(view)
 
     def endpoints(self):
         endpoint = '.{}'.format(self._component_name(self._main_component()))
@@ -71,10 +70,15 @@ class Crud(Tree):
             roles[component.role.name].append(role)
         return roles
 
-    def _component_name(self, component):
-        return '-'.join([self.absolute_name, slugify(component.role.name)])
-
     def _main_component(self):
         for component in self.components:
             if component.role is Roles.list:
                 return component
+
+    def _component_name(self, component):
+        return '-'.join([self.absolute_name, slugify(component.role.name)])
+
+    def _decorate_view(self, view):
+        for decorator in self.decorators:
+            view = decorator(view)
+        return view
