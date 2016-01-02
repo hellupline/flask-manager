@@ -14,6 +14,10 @@ class ViewNode(Tree):
         self.view_func = view_func
         super().__init__(name=name, url=url)
 
+    @cached_property
+    def endpoint(self):
+        return '.{}'.format(self.absolute_name)
+
     def get_nodes(self):
         url = concat_urls(self.absolute_url)
         name = self.absolute_name
@@ -49,14 +53,14 @@ class Crud(Tree):
     rules = {}
     controller = None
 
+    @cached_property
+    def endpoint(self):
+        return '.{}'.format(self._main_component_name())
+
     def get_nodes(self):
         endpoint = '.{}'.format(self._main_component_name())
         for index, component in enumerate(self.components):
             yield self._get_view(component, index, endpoint)
-
-    @cached_property
-    def endpoint(self):
-        return '.{}'.format(self._main_component_name())
 
     def get_roles(self):
         roles = defaultdict(list)
