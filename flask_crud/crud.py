@@ -47,6 +47,7 @@ class ViewNode(Tree):
 class Crud(Tree):
     components = (List, Read, Create, Update, Delete)
     rules = {}
+    controller = None
 
     def __iter__(self):
         main_endpoint = self._component_name(self._main_component())
