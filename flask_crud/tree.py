@@ -16,6 +16,10 @@ class Tree:
     parent = None
     items = None
 
+    name = None
+    url = None
+    endpoint = None
+
     def __init__(self, name=None, url=None, items=None):
         self.items = []
         if name is not None:
@@ -100,13 +104,14 @@ class Tree:
         Get all the endpoints under this node in a tree like structure.
 
         Returns:
-            (list[tuple]):
+            (tuple):
                 name (str): This node's name.
                 endpoint (str): Endpoint name relative to root.
                 children (list): ``child.endpoints for each child
 
         """
-        raise NotImplementedError
+        children = [item.endpoints() for item in self.items]
+        return self.name, self.endpoint, children
 
     def is_root(self):
         """Check if ``self`` do not have a parent ( is root node ).

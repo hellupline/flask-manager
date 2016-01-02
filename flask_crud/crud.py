@@ -1,30 +1,10 @@
 from collections import defaultdict
+from cached_property import cached_property
 
 from flask_crud.utils import concat_urls, slugify
 from flask_crud.views import LandingView, Roles
 from flask_crud.tree import Tree
 from flask_crud.components import List, Create, Read, Update, Delete
-
-
-class Group(Tree):
-    view_func = LandingView.as_view
-
-    def __iter__(self):
-        url = concat_urls(self.absolute_url)
-        name = self._view_name()
-        view = self.view_func(name, parent=self, view_name=name)
-        yield url, name, view
-        yield from super().__iter__()
-
-    def endpoints(self):
-        children = [item.endpoints() for item in self.items]
-        endpoint = '.{}'.format(self._view_name())
-        return self.name, endpoint, children
-
-    def _view_name(self):
-        if self.is_root():
-            return 'home'
-        return '-'.join([self.absolute_name, 'home'])
 
 
 class ViewNode(Tree):
@@ -39,31 +19,44 @@ class ViewNode(Tree):
         name = self.absolute_name
         yield url, name, self.view_func
 
-    def endpoints(self):
-        endpoint = '.{}'.format(self.absolute_name)
-        return self.name, endpoint, ()
+
+class Group(Tree):
+    view_class = LandingView
+
+    def __iter__(self):
+        yield from super().__iter__()
+        yield self._get_view()
+
+    @cached_property
+    def endpoint(self):
+        return '.{}'.format(self._view_name())
+
+    def _view_name(self):
+        if self.is_root():
+            return 'home'
+        return self.absolute_name
+
+    def _get_view(self):
+        url = concat_urls(self.absolute_url)
+        name = self._view_name()
+        view = self.view_class.as_view(name, parent=self, view_name=name)
+        return url, name, view
 
 
 class Crud(Tree):
-    components = (List, Read, Create, Update, Delete)
+    components = (List, Create, Read, Update, Delete)
     decorators = ()
     rules = {}
     controller = None
 
     def __iter__(self):
-        main_endpoint = '.{}'.format(self._main_component_name())
-        for index, component in enumerate(self.components):
-            url = concat_urls(self.absolute_url, component.url)
-            name = self._component_name(component, index)
-            view = component.as_view(
-                name, crud=self, view_name=name,
-                success_url=main_endpoint,
-            )
-            yield url, name, self._decorate_view(view)
-
-    def endpoints(self):
         endpoint = '.{}'.format(self._main_component_name())
-        return self.name, endpoint, ()
+        for index, component in enumerate(self.components):
+            yield self._get_view(component, index, endpoint)
+
+    @cached_property
+    def endpoint(self):
+        return '.{}'.format(self._main_component_name())
 
     def get_roles(self):
         roles = defaultdict(list)
@@ -73,17 +66,26 @@ class Crud(Tree):
         return roles
 
     def _main_component_name(self):
+        # warn if no List Component, use a Create ?
         for index, component in enumerate(self.components):
             if component.role is Roles.list:
                 return self._component_name(component, index)
 
     def _component_name(self, component, index):
-        parts = [self.absolute_name, slugify(component.role.name)]
-        if self.components.count(component) > 1:
-            parts.append(str(index))
-        return '-'.join(parts)
+        return '-'.join([
+            self.absolute_name,
+            slugify(component.role.name),
+            str(index)
+        ])
 
     def _decorate_view(self, view):
         for decorator in self.decorators:
             view = decorator(view)
         return view
+
+    def _get_view(self, component, index, endpoint):
+        url = concat_urls(self.absolute_url, component.url)
+        name = self._component_name(component, index)
+        view = component.as_view(
+            name, crud=self, view_name=name, success_url=endpoint)
+        return url, name, self._decorate_view(view)
