@@ -28,7 +28,9 @@ class Group(Tree):
 
 
 class ViewNode(Tree):
-    def __init__(self, name, view_func, url=None):
+    def __init__(self, view_func, name=None, url=None):
+        if name is None:
+            name = view_func.__name__.title()
         self.view_func = view_func
         super().__init__(name=name, url=url)
 
