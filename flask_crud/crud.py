@@ -51,34 +51,37 @@ class Crud(Tree):
     controller = None
 
     def __iter__(self):
-        main_endpoint = self._component_name(self._main_component())
-        for component in self.components:
+        main_endpoint = '.{}'.format(self._main_component_name())
+        for index, component in enumerate(self.components):
             url = concat_urls(self.absolute_url, component.url)
-            name = self._component_name(component)
+            name = self._component_name(component, index)
             view = component.as_view(
                 name, crud=self, view_name=name,
-                success_url='.{}'.format(main_endpoint),
+                success_url=main_endpoint,
             )
             yield url, name, self._decorate_view(view)
 
     def endpoints(self):
-        endpoint = '.{}'.format(self._component_name(self._main_component()))
+        endpoint = '.{}'.format(self._main_component_name())
         return self.name, endpoint, ()
 
     def get_roles(self):
         roles = defaultdict(list)
-        for component in self.components:
-            role = self._component_name(component)
+        for index, component in enumerate(self.components):
+            role = self._component_name(component, index)
             roles[component.role.name].append(role)
         return roles
 
-    def _main_component(self):
-        for component in self.components:
+    def _main_component_name(self):
+        for index, component in enumerate(self.components):
             if component.role is Roles.list:
-                return component
+                return self._component_name(component, index)
 
-    def _component_name(self, component):
-        return '-'.join([self.absolute_name, slugify(component.role.name)])
+    def _component_name(self, component, index):
+        parts = [self.absolute_name, slugify(component.role.name)]
+        if self.components.count(component) > 1:
+            parts.append(str(index))
+        return '-'.join(parts)
 
     def _decorate_view(self, view):
         for decorator in self.decorators:
