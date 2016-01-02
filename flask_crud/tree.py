@@ -15,7 +15,6 @@ class Tree:
     """
     parent = None
     items = None
-
     name = None
     url = None
     endpoint = None
@@ -35,31 +34,17 @@ class Tree:
         cls_name = self.__class__.__name__
         return '<{}: name="{}" url="{}">'.format(cls_name, self.name, self.url)
 
-    def __iter__(self):
-        """Iterate over all items under ``self``."""
-        for item in self.items:
-            yield from item
-
+    # {{{ Tree interface
     def register_items(self, items):
         """Bulk ``register_item``.
 
         Args:
-            items (iterable[Tree]): sequence of nodes to be
-                registered as childrens.
-
+            items (iterable[Tree]):
+                Sequence of nodes to be registered as children.
         """
         for item in items:
             item.set_parent(self)
         self.items.extend(items)
-
-    def register_item(self, item):
-        """Register the item with its parent.
-
-        Args:
-            item (Tree): another node which will become child of ``self``.
-        """
-        item.set_parent(self)
-        self.items.append(item)
 
     def set_parent(self, parent):
         """Set parent node.
@@ -71,28 +56,15 @@ class Tree:
         if parent is not None:
             self.parent = parent
 
-    @cached_property
-    def absolute_name(self):
-        """Get the absolute name of ``self``.
-
+    def is_root(self):
+        """Check if ``self`` do not have a parent ( is root node ).
         Returns:
-            str: the absolute name.
+            bool: True if no parent, False otherwise.
         """
-        if self.is_root() or self.parent.is_root():
-            return slugify(self.name)
-        return '-'.join([self.parent.absolute_name, slugify(self.name)])
+        return self.parent is None
+    # }}} Tree interface
 
-    @cached_property
-    def absolute_url(self):
-        """Get the absolute url of ``self``.
-
-        Returns:
-            str: the absolute url.
-        """
-        if self.is_root():
-            return self.url
-        return concat_urls(self.parent.absolute_url, self.url)
-
+    # {{{ Menu interface
     def endpoints_tree(self):
         """Get the entire tree endpoints."""
         if self.is_root():
@@ -112,14 +84,37 @@ class Tree:
         """
         children = [item.endpoints() for item in self.items]
         return self.name, self.endpoint, children
+    # }}} Menu interface
 
-    def is_root(self):
-        """Check if ``self`` do not have a parent ( is root node ).
+    # {{{ Blueprint interface
+    @cached_property
+    def absolute_name(self):
+        """Get the absolute name of ``self``.
+
         Returns:
-            bool: True if no parent, False otherwise.
+            str: the absolute name.
         """
-        return self.parent is None
+        if self.is_root() or self.parent.is_root():
+            return slugify(self.name)
+        return '-'.join([self.parent.absolute_name, slugify(self.name)])
 
+    @cached_property
+    def absolute_url(self):
+        """Get the absolute url of ``self``.
+
+        Returns:
+            str: the absolute url.
+        """
+        if self.is_root():
+            return concat_urls(self.url)
+        return concat_urls(self.parent.absolute_url, self.url)
+
+    def get_nodes(self):
+        for item in self.items:
+            yield from item.get_nodes()
+    # }}} Blueprint interface
+
+    # {{{ Blueprint builder
     def get_blueprint(self, template_folder='templates',
                       static_folder='static',
                       static_url_path='crud/static'):
@@ -137,8 +132,11 @@ class Tree:
     def set_urls_to_blueprint(self, blueprint):
         # remove parent url
         absolute_url_len = len(concat_urls(self.absolute_url))
-        for url, name, view in self:
+        for url, name, view in self.get_nodes():
             url = url[absolute_url_len:]
             blueprint.add_url_rule(
-                url, name.lower(), view, methods=['GET', 'POST'])
+                url, name.lower(), view,
+                methods=['GET', 'POST']
+            )
         return blueprint
+    # }}} Blueprint builder

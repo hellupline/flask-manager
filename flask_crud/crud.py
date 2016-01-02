@@ -14,7 +14,7 @@ class ViewNode(Tree):
         self.view_func = view_func
         super().__init__(name=name, url=url)
 
-    def __iter__(self):
+    def get_nodes(self):
         url = concat_urls(self.absolute_url)
         name = self.absolute_name
         yield url, name, self.view_func
@@ -23,13 +23,13 @@ class ViewNode(Tree):
 class Group(Tree):
     view_class = LandingView
 
-    def __iter__(self):
-        yield from super().__iter__()
-        yield self._get_view()
-
     @cached_property
     def endpoint(self):
         return '.{}'.format(self._view_name())
+
+    def get_nodes(self):
+        yield from super().get_nodes()
+        yield self._get_view()
 
     def _view_name(self):
         if self.is_root():
@@ -49,7 +49,7 @@ class Crud(Tree):
     rules = {}
     controller = None
 
-    def __iter__(self):
+    def get_nodes(self):
         endpoint = '.{}'.format(self._main_component_name())
         for index, component in enumerate(self.components):
             yield self._get_view(component, index, endpoint)
