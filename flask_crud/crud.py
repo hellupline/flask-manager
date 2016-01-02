@@ -1,5 +1,4 @@
 from collections import defaultdict
-from cached_property import cached_property
 
 from flask_crud.utils import concat_urls, slugify
 from flask_crud.views import LandingView, Roles
