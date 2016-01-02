@@ -132,11 +132,13 @@ class Component(View):
         if params is None:
             return url_for(self.success_url)
 
-        crud_roles = self.crud.get_roles()
+        roles = self.crud.get_roles()
         if '_add_another' in params:
-            return url_for(crud_roles[Roles.create.name][0][1])
+            return url_for(
+                '.{}'.format(roles[Roles.create.name][0]))
         elif '_continue_editing' in params and item is not None:
-            return url_for(crud_roles[Roles.update.name][0][1], pk=item.id)
+            return url_for(
+                '.{}'.format(roles[Roles.update.name][0]), pk=str(item.id))
         return url_for(self.success_url)
 
     # Permissions

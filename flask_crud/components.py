@@ -130,7 +130,7 @@ class Update(Component):
         success_url = None
         if form.validate():
             self.crud.controller.update_item(item, form)
-            success_url = self.get_success_url(self.get_form_data())
+            success_url = self.get_success_url(self.get_form_data(), item)
         return success_url, self.context({'item': item, 'form': form})
 
 
