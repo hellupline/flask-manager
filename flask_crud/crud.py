@@ -83,7 +83,7 @@ class Crud(Tree):
         return ':'.join([
             self.absolute_name,
             slugify(component.role.name),
-            component.__name__,
+            component.__name__.lower(),
         ])
 
     def _decorate_view(self, view):
