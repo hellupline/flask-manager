@@ -96,7 +96,7 @@ class Tree:
         """
         if self.is_root() or self.parent.is_root():
             return slugify(self.name)
-        return '-'.join([self.parent.absolute_name, slugify(self.name)])
+        return ':'.join([self.parent.absolute_name, slugify(self.name)])
 
     @cached_property
     def absolute_url(self):

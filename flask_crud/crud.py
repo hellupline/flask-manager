@@ -59,27 +59,27 @@ class Crud(Tree):
 
     def get_nodes(self):
         endpoint = '.{}'.format(self._main_component_name())
-        for index, component in enumerate(self.components):
-            yield self._get_view(component, index, endpoint)
+        for component in self.components:
+            yield self._get_view(component, endpoint)
 
     def get_roles(self):
         roles = defaultdict(list)
-        for index, component in enumerate(self.components):
-            role = self._component_name(component, index)
+        for component in self.components:
+            role = self._component_name(component)
             roles[component.role.name].append(role)
         return roles
 
     def _main_component_name(self):
         # warn if no List Component, use a Create ?
-        for index, component in enumerate(self.components):
+        for component in self.components:
             if component.role is Roles.list:
-                return self._component_name(component, index)
+                return self._component_name(component)
 
-    def _component_name(self, component, index):
-        return '-'.join([
+    def _component_name(self, component):
+        return ':'.join([
             self.absolute_name,
             slugify(component.role.name),
-            str(index)
+            component.__name__,
         ])
 
     def _decorate_view(self, view):
@@ -87,9 +87,9 @@ class Crud(Tree):
             view = decorator(view)
         return view
 
-    def _get_view(self, component, index, endpoint):
+    def _get_view(self, component, endpoint):
         url = concat_urls(self.absolute_url, component.url)
-        name = self._component_name(component, index)
+        name = self._component_name(component)
         view = component.as_view(
             name, crud=self, view_name=name, success_url=endpoint)
         return url, name, self._decorate_view(view)
