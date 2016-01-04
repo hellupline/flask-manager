@@ -26,6 +26,7 @@ class ViewNode(Tree):
 
 class Group(Tree):
     view_class = LandingView
+    decorators = ()
 
     @cached_property
     def endpoint(self):
@@ -40,11 +41,17 @@ class Group(Tree):
             return 'home'
         return self.absolute_name
 
+    def _decorate_view(self, view):
+        for decorator in self.decorators:
+            view = decorator(view)
+        return view
+
     def _get_view(self):
         url = concat_urls(self.absolute_url)
         name = self._view_name()
-        view = self.view_class.as_view(name, parent=self, view_name=name)
-        return url, name, view
+        view = self.view_class.as_view(
+            name, parent=self, view_name=name)
+        return url, name, self._decorate_view(view)
 
 
 class Crud(Tree):

@@ -3,6 +3,8 @@ from flask_crud import Group
 
 
 class RestrictedGroup(Group):
+    decorators = [login_required]
+
     def endpoints(self):
         user_roles = current_user.get_roles()
         endpoints = super().endpoints()
