@@ -84,6 +84,11 @@ class Tree:
         """
         children = [item.endpoints() for item in self.items]
         return self.name, self.endpoint, children
+
+    def all_endpoints(self):
+        for item in self.items:
+            yield from item.all_endpoints()
+        yield self.endpoint.strip('.')
     # }}} Menu interface
 
     # {{{ Blueprint interface

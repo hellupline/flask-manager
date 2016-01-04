@@ -53,6 +53,10 @@ class Crud(Tree):
     rules = {}
     controller = None
 
+    def all_endpoints(self):
+        for component in self.components:
+            yield self._component_name(component)
+
     @cached_property
     def endpoint(self):
         return '.{}'.format(self._main_component_name())
