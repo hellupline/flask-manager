@@ -2,44 +2,8 @@ from jinja2 import Markup
 from flask_crud.utils import get_render_ctx
 
 
-class RuleMixin:
-    def __call__(self, obj, extra_kwargs=None):
-        raise NotImplementedError
-
-
-# Simple Text
-class Text(RuleMixin):
-    def __init__(self, text, escape=True):
-        self.text = text
-        self.escape = escape
-
-    def __call__(self, obj, **kwargs):
-        if self.escape:
-            return self.text
-        return Markup(self.text)
-
-
-class HTML(Text):
-    def __init__(self, html):
-        super().__init__(text=html, escape=False)
-
-
-class Nested(RuleMixin):
-    """Nested([DataField(...), DataField(...)])"""
-
-    def __init__(self, rules):
-        self.rules = rules
-
-    def __iter__(self):
-        return iter(self.rules)
-
-    def __call__(self, obj, **kwargs):
-        return Markup(''.join(rule(obj) for rule in self.rules))
-
-
-class Macro(RuleMixin):
+class Macro:
     macro_name = None
-    kwargs = None
 
     def __init__(self, macro_name=None, **kwargs):
         if macro_name is not None:
@@ -57,16 +21,23 @@ class Macro(RuleMixin):
 
     def __call__(self, obj, **kwargs):
         macro = self._resolve()
-        if self.kwargs is not None:
-            opts = self.kwargs.copy()
-            opts.update(kwargs)
-        else:
-            opts = kwargs
+        opts = self.kwargs.copy()
+        opts.update(kwargs)
         return macro(obj, **opts)
 
 
+class Nested:
+    """Nested([Rule(...), Rule(...)])"""
+
+    def __init__(self, rules):
+        self.rules = rules
+
+    def __call__(self, obj, **kwargs):
+        return Markup(''.join(rule(obj) for rule in self.rules))
+
+
 class Container(Macro):
-    """Container(Macro('my_macro'))()"""
+    """Container(Macro(...))()"""
 
     def __init__(self, child_rule, **kwargs):
         self.child_rule = child_rule
@@ -78,20 +49,100 @@ class Container(Macro):
         return super().__call__(obj, caller=caller, **kwargs)
 
 
-# Macros
+# {{{ FieldMacros
+class CellField(Macro):
+    """Render a field in List."""
+    macro_name = 'Table.render_field'
+
+    def __init__(self, field_name, **kwargs):
+        self.field_name = field_name
+        super().__init__(**kwargs)
+
+    def __call__(self, obj):
+        value = getattr(obj, self.field_name)
+        return super().__call__(obj, name=self.field_name, value=value)
+
+
+class DataField(CellField):
+    """Render a field in Read/Delete."""
+    macro_name = 'Data.render_field'
+
+
+class FormField(CellField):
+    """Render a form field in Create/Update."""
+    macro_name = 'Form.render_field'
+# }}} FieldMacros
+
+
+# {{{ RowContainers
+class ColumnSet(Container):
+    macro_name = 'Table.render_row'
+    field_class = CellField
+
+    def __init__(self, columns):
+        rules = [self.field_class(column) for column in columns]
+        self.columns = columns
+        super().__init__(child_rule=Nested(rules))
+
+
+class DataFieldSet(ColumnSet):
+    """DataFieldSet([name for name in model])(Model())"""
+    macro_name = 'Data.render_data'
+    field_class = DataField
+
+
+class FormFieldSet(ColumnSet):
+    macro_name = 'Form.render_form'
+    field_class = FormField
+
+    def __init__(self, columns):
+        super().__init__(columns=columns)
+        self.child_rule.rules.append(FormButtons())
+
+
+class DataFieldSetWithConfirm(ColumnSet):
+    macro_name = 'Form.render_form'
+    field_class = DataField
+
+    def __init__(self, columns):
+        super().__init__(columns=columns)
+        self.child_rule.rules.append(
+            FormButtons(submit_text='Confirm', type='danger'))
+# }}} RowContainers
+
+
+# {{{ EyeCandy
+class Text:
+    def __init__(self, text, escape=True):
+        self.text = text
+        self.escape = escape
+
+    def __call__(self, obj, **kwargs):
+        if self.escape:
+            return self.text
+        return Markup(self.text)
+
+
+class HTML(Text):
+    def __init__(self, html):
+        super().__init__(text=html, escape=False)
+
+
 class Header(Macro):
     """Header('Title')()"""
     macro_name = 'Utils.header'
 
-    def __init__(self, text):
-        super().__init__(text=text)
+    def __init__(self, text, **kwargs):
+        super().__init__(text=text, **kwargs)
 
 
 class Box(Container):
+    """Box(Rule())()"""
     macro_name = 'Utils.box'
 
 
 class Foldable(Container):
+    """Foldable(Rule())()"""
     macro_name = 'Utils.foldable'
 
 
@@ -101,67 +152,6 @@ class SimpleForm(Macro):
 
 
 class FormButtons(Macro):
-    """FormButtons()(Form()"""
+    """FormButtons()(Form())"""
     macro_name = 'Form.buttons'
-
-
-# Crud Macros
-class DataField(Macro):
-    """Render a field in Read/Delete."""
-    macro_name = 'Data.render_field'
-
-    def __init__(self, field_name):
-        self.field_name = field_name
-
-    def __call__(self, obj):
-        field_value = getattr(obj, self.field_name)
-        return super().__call__(obj, name=self.field_name, value=field_value)
-
-
-class CellField(DataField):
-    """Render a field in List."""
-    macro_name = 'Table.render_field'
-
-
-class FormField(DataField):
-    """Render a form field in Create/Update."""
-    macro_name = 'Form.render_field'
-
-
-# Containers
-class DataFieldSet(Container):
-    """DataFieldSet([name for name in model])(Model())"""
-    macro_name = 'Data.render_data'
-    field_class = DataField
-
-    def __init__(self, columns, header=None):
-        rules = [self.field_class(column) for column in columns]
-        if header is not None:
-            rules.insert(0, Header(header))
-        self.columns = columns
-        super().__init__(child_rule=Nested(rules))
-
-
-class ColumnSet(DataFieldSet):
-    macro_name = 'Table.render_row'
-    field_class = CellField
-
-
-class FormFieldSet(DataFieldSet):
-    macro_name = 'Form.render_form'
-    field_class = FormField
-
-    def __init__(self, columns, header=None):
-        super().__init__(columns=columns, header=header)
-        self.child_rule.rules.append(FormButtons())
-
-
-class DataFieldSetWithConfirm(Container):
-    macro_name = 'Form.render_form'
-    field_class = DataField
-
-    def __init__(self, columns, header=None):
-        super().__init__(child_rule=Nested([
-            DataFieldSet(columns=columns, header=None),
-            FormButtons(submit_text='Confirm', type='danger')
-        ]))
+# }}} EyeCandy
