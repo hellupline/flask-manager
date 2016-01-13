@@ -1,0 +1,41 @@
+{% macro menu_tree(tree) %}
+{% set name, endpoint, children = tree %} {# first node is root #}
+<header>
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <ul class="dropdown menu" data-dropdown-menu>
+                <li><a href="{{ url_for(endpoint) }}">{{ name }}</a></li>
+                {{ _menu_tree(children) }}
+            </ul>
+        </div>
+    </div>
+</header>
+{% endmacro %}
+
+{% macro _menu_tree(tree) %}
+{% for name, endpoint, children in tree %}
+<li class="{% if children %}has-submenu{% endif %}">
+    <a href="{{ url_for(endpoint) }}">{{ name }}</a>
+    {% if children %}
+    <ul class="submenu menu vertical" data-submenu>
+        {{ _menu_tree(children) }}
+    </ul>
+    {% endif %}
+</li>
+{% endfor %}
+{% endmacro %}
+
+{#
+<div class="top-bar-right last-menu">
+    <ul class="dropdown menu" data-dropdown-menu>
+        <li class="has-submenu">
+            <a>andre@mucca.co</a>
+            <ul class="submenu menu vertical" data-submenu>
+                <li><a href="#">Website</a></li>
+                <li><a href="#">Subsite</a></li>
+                <li><a href="#">Category</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+#}

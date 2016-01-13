@@ -1,0 +1,14 @@
+{% macro render_data(item) %}
+<table class="stack">
+    <tbody>
+        {{ caller() }}
+    </tbody>
+</table>
+{% endmacro %}
+
+{% macro render_field(item, name, value) %}
+  <tr>
+    <th width="200"> {{ name }} </th>
+    <td> {{ value }} </td>
+  <tr>
+{% endmacro %}

@@ -1,0 +1,56 @@
+#login-block {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: #424242;
+  color: #fff;
+}
+
+.header {
+  padding: 20px 0;
+  background: #f4f4f4;
+}
+
+#login-block label {
+  color: #fff;
+}
+
+#login-block form {
+  margin-top: 12%;
+}
+
+.last-menu {
+  margin-right: 20px;
+  margin-top: 5px;
+  width: 200px;
+}
+
+.spacer {
+  height: 40px;
+  display: block;
+}
+
+.navigation-tabs {
+   width: 100%;
+}
+
+.navigation-tabs ul {
+    border-bottom: 1px solid #ddd;
+}
+
+.navigation-tabs li {
+  padding: 0 15px 10px 0px!important;
+
+}
+
+table {
+  margin: 20px 0;
+  width: 100%;
+  font-size: 85%;
+}
+
+table span {
+  font-size: 150%;
+}

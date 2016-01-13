@@ -1,0 +1,45 @@
+{% import 'crud/macros/roles.html' as Roles %}
+
+{% macro render_table(columns, url_generator, current) %}
+<table class="stack">
+    <thead>
+        <tr>
+            <th headers="select" width="1"></th>
+            <th headers="actions" width="70"></th>
+            {% for column in columns %}
+            <th headers="{{ column }}">
+                {{ _column_order_by(column, url_generator, current)  }}
+            </th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {{ caller() }}
+    </tbody>
+</table>
+{% endmacro %}
+
+{% macro _column_order_by(column, url_generator, current) %}
+{% if current == column %}
+{% set column_order = '-' + column %}
+{% else %}
+{% set column_order = column %}
+{% endif %}
+<a href="{{ url_generator(order_by=column_order) }}">{{ column }}</a>
+{% endmacro %}
+
+{% macro render_row(item, roles) %}
+<tr>
+    <td>
+        <input type="checkbox" name="ids" value="{{ item.id }}" />
+    </td>
+    <td>
+        {{ Roles.buttons(roles, item=item) }}
+    </td>
+    {{ caller() }}
+</tr>
+{% endmacro %}
+
+{% macro render_field(item, name, value) %}
+<td headers="{{ name }}"> {{ value }} </td>
+{% endmacro %}

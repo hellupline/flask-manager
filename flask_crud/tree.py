@@ -120,8 +120,9 @@ class Tree:
     # }}} Blueprint interface
 
     # {{{ Blueprint builder
-    def get_blueprint(self, template_folder='templates',
-                      static_folder='static',
+    def get_blueprint(self,
+                      template_folder='templates/foundation',
+                      static_folder='static/foundation',
                       static_url_path='crud/static'):
         bp = Blueprint(
             slugify(self.name.lower()),
