@@ -1,5 +1,5 @@
 {% macro render_data(item) %}
-    <table class="stack">
+    <table role="grid">
         <tbody>
             {{ caller() }}
         </tbody>
@@ -8,10 +8,10 @@
 
 {% macro render_field(item, name, value) %}
     <tr>
-        <th width="200">
+        <th id="{{ name }}" width="200" scope="row">
             {{ name }}
         </th>
-        <td>
+        <td headers="{{ name }}">
             {{ value }}
         </td>
     </tr>
