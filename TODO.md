@@ -3,13 +3,11 @@ TODO
 
 templates
 ---------
-* box
-* header
 * drop menu
-
 
 rules.py
 --------
+* cancel url
 * flowchart of args
 * examples
 
@@ -21,10 +19,6 @@ crud.py
 controller.py
 -------------
 * remove model class from __init__
-
-rules.py
---------
-* cancel url
 
 list.html
 ---------
