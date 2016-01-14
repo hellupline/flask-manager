@@ -1,23 +1,28 @@
+from functools import lru_cache
+
+from flask import current_app
 from jinja2 import Markup
-from flask_crud.utils import get_render_ctx
+
+
+@lru_cache()
+def get_template(template_name):
+    return current_app.jinja_env.get_or_select_template(template_name)
 
 
 class Macro:
+    template_name = None
     macro_name = None
 
-    def __init__(self, macro_name=None, **kwargs):
+    def __init__(self, template_name=None, macro_name=None, **kwargs):
+        if template_name is not None:
+            self.template_name = template_name
         if macro_name is not None:
             self.macro_name = macro_name
         self.kwargs = kwargs
 
     def _resolve(self):
-        parts = self.macro_name.split('.')
-        macro = get_render_ctx().resolve(parts[0])
-        if not macro:
-            raise ValueError('Cannot find macro {}.'.format(self.macro_name))
-        for part in parts[1:]:
-            macro = getattr(macro, part)
-        return macro
+        template = get_template(self.template_name)
+        return getattr(template.module, self.macro_name)
 
     def __call__(self, obj, **kwargs):
         macro = self._resolve()
@@ -45,14 +50,15 @@ class Container(Macro):
 
     def __call__(self, obj, **kwargs):
         def caller():
-            return get_render_ctx().call(self.child_rule, obj)
+            return self.child_rule(obj)
         return super().__call__(obj, caller=caller, **kwargs)
 
 
 # {{{ FieldMacros
 class CellField(Macro):
     """Render a field in List."""
-    macro_name = 'Table.render_field'
+    template_name = 'crud/macros/table.html'
+    macro_name = 'render_field'
 
     def __init__(self, field_name, **kwargs):
         self.field_name = field_name
@@ -65,18 +71,20 @@ class CellField(Macro):
 
 class DataField(CellField):
     """Render a field in Read/Delete."""
-    macro_name = 'Data.render_field'
+    template_name = 'crud/macros/data.html'
 
 
 class FormField(CellField):
     """Render a form field in Create/Update."""
-    macro_name = 'Form.render_field'
+    template_name = 'crud/macros/form.html'
 # }}} FieldMacros
 
 
 # {{{ RowContainers
 class ColumnSet(Container):
-    macro_name = 'Table.render_row'
+    """ColumnSet([name for name in model])(Model())"""
+    template_name = 'crud/macros/table.html'
+    macro_name = 'render_row'
     field_class = CellField
 
     def __init__(self, columns):
@@ -86,13 +94,14 @@ class ColumnSet(Container):
 
 
 class DataFieldSet(ColumnSet):
-    """DataFieldSet([name for name in model])(Model())"""
-    macro_name = 'Data.render_data'
+    template_name = 'crud/macros/data.html'
+    macro_name = 'render_data'
     field_class = DataField
 
 
 class FormFieldSet(ColumnSet):
-    macro_name = 'Form.render_form'
+    template_name = 'crud/macros/form.html'
+    macro_name = 'render_form'
     field_class = FormField
 
     def __init__(self, columns):
@@ -101,7 +110,8 @@ class FormFieldSet(ColumnSet):
 
 
 class DataFieldSetWithConfirm(ColumnSet):
-    macro_name = 'Form.render_form'
+    template_name = 'crud/macros/form.html'
+    macro_name = 'render_form'
     field_class = DataField
 
     def __init__(self, columns):
@@ -128,30 +138,35 @@ class HTML(Text):
         super().__init__(text=html, escape=False)
 
 
+class Box(Container):
+    """Box(Rule())()"""
+    template_name = 'crud/macros/utils.html'
+    macro_name = 'box'
+
+
+class Foldable(Container):
+    """Foldable(Rule())()"""
+    template_name = 'crud/macros/utils.html'
+    macro_name = 'foldable'
+
+
 class Header(Macro):
     """Header('Title')()"""
-    macro_name = 'Utils.header'
+    template_name = 'crud/macros/utils.html'
+    macro_name = 'header'
 
     def __init__(self, text, **kwargs):
         super().__init__(text=text, **kwargs)
 
 
-class Box(Container):
-    """Box(Rule())()"""
-    macro_name = 'Utils.box'
-
-
-class Foldable(Container):
-    """Foldable(Rule())()"""
-    macro_name = 'Utils.foldable'
-
-
 class SimpleForm(Macro):
     """SimpleForm()(Form())"""
-    macro_name = 'Form.simple_form_render'
+    template_name = 'crud/macros/form.html'
+    macro_name = 'simple_form_render'
 
 
 class FormButtons(Macro):
     """FormButtons()(Form())"""
-    macro_name = 'Form.buttons'
+    template_name = 'crud/macros/form.html'
+    macro_name = 'buttons'
 # }}} EyeCandy

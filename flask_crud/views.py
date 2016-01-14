@@ -3,7 +3,6 @@ from enum import Enum
 from werkzeug.exceptions import MethodNotAllowed
 from werkzeug.datastructures import CombinedMultiDict
 from flask import request, abort, redirect, url_for, render_template, views
-from flask_crud.utils import store_context
 
 
 class View(views.View):
@@ -73,7 +72,7 @@ class View(views.View):
             (dict): The ``injected_context`` merged with a base context.
 
         """
-        ctx = {'store_context': store_context}
+        ctx = {}
         if external_ctx is not None:
             ctx.update(external_ctx)
         return ctx
