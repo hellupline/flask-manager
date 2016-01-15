@@ -1,17 +1,17 @@
 {% macro buttons_create(roles) %}
-{% for endpoint in roles['create'] %}
-<a href="{{ url_for('.{}'.format(endpoint)) }}" class="button">
-    Create
-</a>
-{% endfor %}
+    {% for endpoint in roles['create'] %}
+        <a href="{{ url_for('.{}'.format(endpoint)) }}" class="button">
+            Create
+        </a>
+    {% endfor %}
 {% endmacro %}
 
 {% macro buttons(roles, item, type_glyph={'read': 'search', 'update': 'edit', 'delete': 'trash-a'}) %}
-{% for type in ('read', 'update', 'delete') if type in roles %}
-{% for endpoint in roles[type] %}
-<a href="{{ url_for('.{}'.format(endpoint), pk=item.id) }}">
-    <span class="ion-{{ type_glyph[type] }}"></span>
-</a>
-{% endfor %}
-{% endfor %}
+    {% for type in ('read', 'update', 'delete') if type in roles %}
+        {% for endpoint in roles[type] %}
+            <a href="{{ url_for('.{}'.format(endpoint), pk=item.id) }}">
+                <span class="ion-{{ type_glyph[type] }}"></span>
+            </a>
+        {% endfor %}
+    {% endfor %}
 {% endmacro %}

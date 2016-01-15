@@ -1,13 +1,13 @@
 {% macro dropmenu(name, right=false) %}
-  <button class="btn btn-default btn-sm dropdown-toggle"
-          type="button"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false">
-    {{ name }}
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu"> {{ caller() }} </ul>
+    <button class="btn btn-default btn-sm dropdown-toggle"
+            type="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false">
+        {{ name }}
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu"> {{ caller() }} </ul>
 {% endmacro %}
 
 {% macro header(__, text) %}

@@ -1,60 +1,60 @@
+{% macro simple_form_render(form, action='', method='POST', cancel_url='') %}
+    {% call render_form(form=form, action=action, method=method) %}
+        {% for field in form %}
+            {{ render_field(form, field.name, field) }}
+        {% endfor %}
+        {{ buttons(cancel_url=cancel_url) }}
+    {% endcall %}
+{% endmacro %}
+
 {% macro render_form(form, action='.', method='POST') %}
-<form action="{{ action }}" method="{{ method }}" enctype="multipart/form-data">
-    {{ caller() }}
-</form>
+    <form action="{{ action }}" method="{{ method }}" enctype="multipart/form-data">
+        {{ caller() }}
+    </form>
 {% endmacro %}
 
 {% macro render_field(form, name, value, use_label=true) %}
-<div class="row">
-    <div class="small-1 columns">
-        {{ value.label(class='middle', for='middle-label') }}
+    <div class="row">
+        <div class="small-1 columns">
+            {{ value.label(class='middle', for='middle-label') }}
+        </div>
+        <div class="small-7 columns float-left">
+            {{ value(placeholder=name) }}
+        </div>
+        <ul>
+            {% for error in value.errors if error is string %}
+            <li> {{ error }} </li>
+            {% endfor %}
+        </ul>
     </div>
-    <div class="small-7 columns float-left">
-        {{ value(placeholder=name) }}
-    </div>
-    <ul>
-        {% for error in value.errors if error is string %}
-        <li> {{ error }} </li>
-        {% endfor %}
-    </ul>
-</div>
 {% endmacro %}
 
 {% macro buttons(form, cancel_url, add_another=true, continue_editing=true, submit_text='Save', type='success') %}
-<div class="row">
-    <div class="large-11 large-centered columns float-right">
-        <input type="submit" value="Save" name="_save" class="button {{ type }}" />
-        {% if add_another %}
-        <input type="submit" value="Save and Add Another" name="_add_another" class="button" />
-        {% endif %}
-        {% if continue_editing %}
-        <input type="submit" value="Save and Continue Editing" name="_continue_editing" class="button" />
-        {% endif %}
-        {% if cancel_url %}
-        <a href="{{ url_for(cancel_url) }}" role="button" class="button alert">Cancel</a>
-        {% endif %}
+    <div class="row">
+        <div class="large-11 large-centered columns float-right">
+            <input type="submit" value="Save" name="_save" class="button {{ type }}" />
+            {% if add_another %}
+                <input type="submit" value="Save and Add Another" name="_add_another" class="button" />
+            {% endif %}
+            {% if continue_editing %}
+                <input type="submit" value="Save and Continue Editing" name="_continue_editing" class="button" />
+            {% endif %}
+            {% if cancel_url %}
+                <a href="{{ url_for(cancel_url) }}" role="button" class="button alert">Cancel</a>
+            {% endif %}
+        </div>
     </div>
-</div>
 {% endmacro %}
 
 {% macro render_inline_fields(form, skip=(), use_autosubmit=true) %}
-{% for field in form if field.id not in skip %}
-<li class="dropdown-form-field">
-    {{ field.label(class='control-label') }}
-    {% if use_autosubmit %}
-    {{ field(class='form-control input-md', onchange='this.form.submit()') }}
-    {% else %}
-    {{ field(class='form-control input-md') }}
-    {% endif %}
-</li>
-{% endfor %}
-{% endmacro %}
-
-{% macro simple_form_render(form, action='', method='POST', cancel_url='') %}
-{% call render_form(form=form, action=action, method=method) %}
-{% for field in form %}
-{{ render_field(form, field.name, field) }}
-{% endfor %}
-{{ buttons(cancel_url=cancel_url) }}
-{% endcall %}
+    {% for field in form if field.id not in skip %}
+        <li class="dropdown-form-field">
+            {{ field.label(class='control-label') }}
+            {% if use_autosubmit %}
+                {{ field(class='form-control input-md', onchange='this.form.submit()') }}
+            {% else %}
+                {{ field(class='form-control input-md') }}
+            {% endif %}
+        </li>
+    {% endfor %}
 {% endmacro %}
