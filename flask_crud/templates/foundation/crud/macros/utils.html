@@ -21,23 +21,19 @@
     </div>
 {% endmacro %}
 
-{% macro foldable(__, text, id) %}
-    <ul class="accordion" data-accordion role="tablist">
-        <li class="accordion-item is-active">
-            <!-- The tab title needs role="tab", an href, a unique ID, and aria-controls. -->
-            <a href="#panel-{{ id }}" id="panel-{{ id }}-heading" class="accordion-title"
-                    role="tab"
-                    data-toggle="collapse"
-                    aria-expanded="{{ str(True).lower() }}"
-                    aria-controls="panel-{{ id }}">
+{% macro foldable(__, text, expanded=True) %}
+    {% set src='abcdefghijklmnopqrstuvwxyz' %}
+    {% set id=[src|random, src|random, src|random, src|random, src|random, src|random, src|random, src|random, src|random, src|random]|join() %}
+
+    <ul class="accordion" role="tablist" data-accordion data-allow-all-closed="true">
+        <li class="accordion-navigation">
+            <a href="#panel-{{ id }}" id="panel-{{ id }}-heading" role="tab"
+                    aria-expanded="{% if expanded %}true{% endif %}" aria-hidden="true">
                 {{ text }}
             </a>
-            <!-- The content pane needs an ID that matches the above href, role="tabpanel", data-tab-content, and aria-labelledby. -->
-            <div id="panel-{{ id }}" class="accordion-content"
-                    role="tabpanel"
-                    data-tab-content
-                    aria-labelledby="panel-{{ id }}-heading" >
-                Panel 1. Lorem ipsum dolor
+            <div id="panel-{{ id }}" class="content" role="tabpanel"
+                    aria-labelledby="panel-{{ id }}-heading" aria-hidden="false">
+                {{ caller() }}
             </div>
         </li>
     </ul>
