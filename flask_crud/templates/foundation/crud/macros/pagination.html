@@ -9,7 +9,7 @@
 
 {% macro _item(text, class='', href='javascript:void(0)') %}
     <li class="{{ class }}">
-        <a href="{{ href }}">{{ class }}</a>
+        <a href="{{ href }}">{{ text|safe }}</a>
     </li>
 {% endmacro %}
 

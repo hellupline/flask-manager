@@ -1,10 +1,10 @@
 {% macro dropdown(name) %}
     {% set key=_get_key() %}
-    <button class="button" data-dropdown="panel-{{ key }}"
+    <a class="button" data-dropdown="panel-{{ key }}"
             aria-controls="panel-{{ key }}"
             aria-expanded="false">
         {{ name }}
-    </button>
+    </a>
     <div id="panel-{{ key }}" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
         {{ caller() }}
     </div>

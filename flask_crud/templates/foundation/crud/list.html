@@ -1,56 +1,91 @@
 {% extends "crud/common.html" %}
 
-{# Macros #}
 {% import 'crud/macros/utils.html' as Utils %}
 {% import 'crud/macros/pagination.html' as Pagination %}
 {% import 'crud/macros/roles.html' as Roles %}
 {% import 'crud/macros/table.html' as Table %}
-{% import 'crud/macros/data.html' as Data %}
 {% import 'crud/macros/form.html' as Form %}
 
-{# Local macros #}
-{% macro render_filter_form(form, render) %}
-  {% if render %}
-    <div class="btn-group pull-right"><!-- Filters -->
-      {% call Form.render_form(method='GET') %}
+-{# Macros #}
+{% macro select_as_links(field) %}
+    {% for value, name in field.choices %}
+        <li>
+            <a class="input-select-link"
+                    data-field="{{ field.id }}"
+                    data-value="{{ value }}">
+                {% if field.data == value %} * {% endif %}
+                {{ name or 'All' }}
+            </a>
+        </li>
+    {% endfor %}
+{% endmacro %}
 
-        {% if 'search' in form %}
-          {# Search Field outside the dropdown menu #}
-          {{ form.search() }}
+{% macro dropdown_form(form, skip=()) %}
+    {% for field in form if field.id not in skip %}
+        {{ field.label() }}
+        {{ field(style='display: none;') }}
+        <ul>
+            {{ select_as_links(field) }}
+        </ul>
+    {% endfor %}
+{% endmacro %}
+
+{% macro filter_widget() %}
+    <div class="medium-4 columns">
+        {% if 'search' in filter_form %}
+            {{ filter_form.search() }}
         {% endif %}
-
+    </div>
+    <div class="medium-2 columns">
         {% call Utils.dropdown(name='Filter by') %}
-          {{ Form.render_inline_fields(form, skip=['search']) }}
+            {{ dropdown_form(filter_form, skip=['search']) }}
         {% endcall %}
-
-      {% endcall %}
-    </div><!-- Filters -->
-  {% endif %}
+    </div>
 {% endmacro %}
 
-{% macro render_action_form(form, render) %}
-  {% if render %}
-    <div class="btn-group"><!-- Actions -->
-      {% call Utils.dropdown(name='With selected') %}
-        {{ Form.render_inline_fields(form, skip=['ids']) }}
-      {% endcall %}
-    </div><!-- Actions -->
-  {% endif %}
+{% macro action_widget() %}
+    <div class="medium-3 columns">
+        {% call Utils.dropdown(name='With selected') %}
+            {{ dropdown_form(action_form, skip=['ids']) }}
+        {% endcall %}
+    </div>
 {% endmacro %}
+
 
 {# Body #}
 {% block content %}
-  {{ render_filter_form(filter_form, show_filter_form) }}
-  {{ Roles.buttons_create(roles) }}
-  {% call Form.render_form(form=action_form) %}
+    <div class="row">
+        {% call Form.render_form() %}
+            {% if show_action_form or True %} {{ action_widget() }} {% endif %}
+        {% endcall %}
+        <div class="medium-3 columns">
+            {{ Roles.buttons_create(roles) }}
+        </div>
+        {% call Form.render_form(method='GET') %}
+            {% if show_filter_form %} {{ filter_widget() }} {% endif %}
+        {% endcall %}
+    </div>
+    <div class="row">
+        {{ Pagination.render(page+25, pages+100, total+10000, url_generator) }}
+    </div>
+    <div class="row">
+        {% call Table.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
+            {% for item in items %}
+                {{ rules(item, roles=roles) }}
+            {% endfor %}
+        {% endcall %}
+    </div>
+{% endblock %}
 
-    {{ render_action_form(action_form, show_action_form) }}
-    {{ Pagination.render(page, pages, total, url_generator) }}
-
-    {% call Table.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
-      {% for item in items %}
-        {{ rules(item, roles=roles) }}
-      {% endfor %}
-    {% endcall %}
-  {% endcall %}
+{% block javascript %}
+    {{ super() }}
+    <script>
+        $(".input-select-link").on('click', function() {
+            var self = $(this);
+            var field = $('#'+self.data('field'));
+            var value = self.data('value');
+            field.val(value);
+            field[0].form.submit();
+        });
+    </script>
 {% endblock %}

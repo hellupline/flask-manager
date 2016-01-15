@@ -45,16 +45,3 @@
         </div>
     </div>
 {% endmacro %}
-
-{% macro render_inline_fields(form, skip=(), use_autosubmit=true) %}
-    {% for field in form if field.id not in skip %}
-        <li class="dropdown-form-field">
-            {{ field.label(class='control-label') }}
-            {% if use_autosubmit %}
-                {{ field(class='form-control input-md', onchange='this.form.submit()') }}
-            {% else %}
-                {{ field(class='form-control input-md') }}
-            {% endif %}
-        </li>
-    {% endfor %}
-{% endmacro %}
