@@ -14,3 +14,12 @@ crud.py
 controller.py
 -------------
 * remove model_class from __init__
+
+rules.py
+--------
+* cancel_url
+
+
+list.html
+---------
+* get columns metadata ( sortable )
