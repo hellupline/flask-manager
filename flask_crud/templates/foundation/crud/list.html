@@ -19,7 +19,7 @@
           {{ form.search() }}
         {% endif %}
 
-        {% call Utils.dropmenu(name='Filter by', right=true) %}
+        {% call Utils.dropdown(name='Filter by') %}
           {{ Form.render_inline_fields(form, skip=['search']) }}
         {% endcall %}
 
@@ -31,7 +31,7 @@
 {% macro render_action_form(form, render) %}
   {% if render %}
     <div class="btn-group"><!-- Actions -->
-      {% call Utils.dropmenu(name='With selected') %}
+      {% call Utils.dropdown(name='With selected') %}
         {{ Form.render_inline_fields(form, skip=['ids']) }}
       {% endcall %}
     </div><!-- Actions -->

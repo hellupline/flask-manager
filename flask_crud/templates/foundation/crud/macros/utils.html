@@ -1,17 +1,17 @@
-{% macro dropmenu(name, right=false) %}
-    <button class="btn btn-default btn-sm dropdown-toggle"
-            type="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
+{% macro dropdown(name) %}
+    {% set key=_get_key() %}
+    <button class="button" data-dropdown="panel-{{ key }}"
+            aria-controls="panel-{{ key }}"
             aria-expanded="false">
         {{ name }}
-        <span class="caret"></span>
     </button>
-    <ul class="dropdown-menu"> {{ caller() }} </ul>
+    <div id="panel-{{ key }}" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+        {{ caller() }}
+    </div>
 {% endmacro %}
 
 {% macro header(__, text) %}
-    <h2> {{ text }} </h2>
+    <h2>{{ text }}</h2>
 {% endmacro %}
 
 {% macro box(__, text) %}
@@ -22,19 +22,23 @@
 {% endmacro %}
 
 {% macro foldable(__, text, expanded=True) %}
-    {% set src='abcdefghijklmnopqrstuvwxyz' %}
-    {% set id=[src|random, src|random, src|random, src|random, src|random, src|random, src|random, src|random, src|random, src|random]|join() %}
-
+    {% set key=_get_key() %}
     <ul class="accordion" role="tablist" data-accordion data-allow-all-closed="true">
         <li class="accordion-navigation">
-            <a href="#panel-{{ id }}" id="panel-{{ id }}-heading" role="tab"
+            <a href="#panel-{{ key }}" id="panel-{{ key }}-heading" role="tab"
                     aria-expanded="{% if expanded %}true{% endif %}" aria-hidden="true">
                 {{ text }}
             </a>
-            <div id="panel-{{ id }}" class="content" role="tabpanel"
-                    aria-labelledby="panel-{{ id }}-heading" aria-hidden="false">
+            <div id="panel-{{ key }}" class="content" role="tabpanel"
+                    aria-labelledby="panel-{{ key }}-heading" aria-hidden="false">
                 {{ caller() }}
             </div>
         </li>
     </ul>
 {% endmacro %}
+
+{% macro _get_key(size=10, src='abcdefghijklmnopqrstuvwxyz') -%}
+    {%- for i in range(size) -%}
+        {{ src|random }}
+    {%- endfor -%}
+{%- endmacro %}
