@@ -1,7 +1,14 @@
 TODO
 ====
 
-Rules.py
+templates
+---------
+* box
+* header
+* drop menu
+
+
+rules.py
 --------
 * flowchart of args
 * examples
@@ -13,12 +20,11 @@ crud.py
 
 controller.py
 -------------
-* remove model_class from __init__
+* remove model class from __init__
 
 rules.py
 --------
-* cancel_url
-
+* cancel url
 
 list.html
 ---------
