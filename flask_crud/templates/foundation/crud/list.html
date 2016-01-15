@@ -24,11 +24,16 @@
         {% if not loop.first %}
             <hr class="dropdown-menu-line" />
         {% endif %}
-        {{ field(style='display: none;') }}
         <strong>{{ field.name|title }}</strong>
         <ul class="dropdown-menu-link">
             {{ select_as_links(field) }}
         </ul>
+    {% endfor %}
+{% endmacro %}
+
+{% macro hidden_form_fields(form, skip=()) %}
+    {% for field in form if field.id not in skip %}
+        {{ field(style='display: none;') }}
     {% endfor %}
 {% endmacro %}
 
@@ -55,19 +60,11 @@
 {# Body #}
 {% block content %}
     <div class="row">
-        {% if show_action_form or True %}
-            {% call Form.render_form() %}
-                {{ action_widget() }}
-            {% endcall %}
-        {% endif %}
-        <div class="large-4 column">
+        {% if show_action_form %} {{ action_widget() }} {% endif %}
+        <div class="large-4 column {% if not show_action_form %}large-offset-2{% endif %}">
             {{ Roles.buttons_create(roles) }}
         </div>
-        {% if show_filter_form %}
-            {% call Form.render_form(method='GET') %}
-                {{ filter_widget() }}
-            {% endcall %}
-        {% endif %}
+        {% if show_filter_form %} {{ filter_widget() }} {% endif %}
     </div>
     <hr />
     <div class="row">
@@ -76,13 +73,19 @@
         </div>
     </div>
     <div class="row">
-        <div class="large-12 column large-centered">
-            {% call Table.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
-                {% for item in items %}
-                    {% call Table.render_row(item, roles=roles) %}
-                        {{ rules(item) }}
-                    {% endcall %}
-                {% endfor %}
+        <div class="large-12 column">
+            {% call Form.render_form(method='GET') %}
+                {{ hidden_form_fields(filter_form, skip=['search']) }}
+            {% endcall %}
+            {% call Form.render_form() %}
+                {{ hidden_form_fields(action_form, skip=['ids']) }}
+                {% call Table.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
+                    {% for item in items %}
+                        {% call Table.render_row(item, roles=roles) %}
+                            {{ rules(item) }}
+                        {% endcall %}
+                    {% endfor %}
+                {% endcall %}
             {% endcall %}
         </div>
     </div>

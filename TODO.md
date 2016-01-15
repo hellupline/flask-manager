@@ -1,10 +1,6 @@
 TODO
 ====
 
-templates
----------
-* drop menu
-
 rules.py
 --------
 * cancel url
