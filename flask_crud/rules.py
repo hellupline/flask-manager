@@ -81,43 +81,28 @@ class FormField(CellField):
 
 
 # {{{ RowContainers
-class ColumnSet(Container):
+class ColumnSet(Nested):
     """ColumnSet([name for name in model])(Model())"""
-    template_name = 'crud/macros/table.html'
-    macro_name = 'render_row'
     field_class = CellField
 
     def __init__(self, columns):
         rules = [self.field_class(column) for column in columns]
         self.columns = columns
-        super().__init__(child_rule=Nested(rules))
+        super().__init__(rules=rules)
 
 
 class DataFieldSet(ColumnSet):
-    template_name = 'crud/macros/data.html'
-    macro_name = 'render_data'
     field_class = DataField
 
 
 class FormFieldSet(ColumnSet):
-    template_name = 'crud/macros/form.html'
-    macro_name = 'render_form'
     field_class = FormField
-
-    def __init__(self, columns):
-        super().__init__(columns=columns)
-        self.child_rule.rules.append(FormButtons())
 
 
 class DataFieldSetWithConfirm(ColumnSet):
     template_name = 'crud/macros/form.html'
     macro_name = 'render_form'
     field_class = DataField
-
-    def __init__(self, columns):
-        super().__init__(columns=columns)
-        self.child_rule.rules.append(
-            FormButtons(submit_text='Confirm', type='danger'))
 # }}} RowContainers
 
 
@@ -155,18 +140,12 @@ class Header(Macro):
     template_name = 'crud/macros/utils.html'
     macro_name = 'header'
 
-    def __init__(self, text, **kwargs):
-        super().__init__(text=text, **kwargs)
+    def __init__(self, html):
+        super().__init__(text=html)
 
 
 class SimpleForm(Macro):
     """SimpleForm()(Form())"""
     template_name = 'crud/macros/form.html'
     macro_name = 'simple_form_render'
-
-
-class FormButtons(Macro):
-    """FormButtons()(Form())"""
-    template_name = 'crud/macros/form.html'
-    macro_name = 'buttons'
 # }}} EyeCandy

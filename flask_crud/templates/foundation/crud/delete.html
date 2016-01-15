@@ -1,9 +1,8 @@
 {% extends "crud/common.html" %}
 
-{% import 'crud/macros/data.html' as Data %}
-
 {% block content %}
-    {% call Data.render_data(item) %}
+    {% call Form.render_form(form) %}
         {{ rules(item) }}
+        {{ Form.buttons(submit_text='Confirm', type='danger') }}
     {% endcall %}
 {% endblock %}
