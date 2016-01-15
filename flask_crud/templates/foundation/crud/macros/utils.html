@@ -1,0 +1,44 @@
+{% macro dropmenu(name, right=false) %}
+  <button class="btn btn-default btn-sm dropdown-toggle"
+          type="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false">
+    {{ name }}
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu"> {{ caller() }} </ul>
+{% endmacro %}
+
+{% macro header(__, text) %}
+    <h2> {{ text }} </h2>
+{% endmacro %}
+
+{% macro box(__, text) %}
+    <div class="callout">
+        <h5>{{ text}}</h5>
+        {{ caller() }}
+    </div>
+{% endmacro %}
+
+{% macro foldable(__, text, id) %}
+    <ul class="accordion" data-accordion role="tablist">
+        <li class="accordion-item is-active">
+            <!-- The tab title needs role="tab", an href, a unique ID, and aria-controls. -->
+            <a href="#panel-{{ id }}" id="panel-{{ id }}-heading" class="accordion-title"
+                    role="tab"
+                    data-toggle="collapse"
+                    aria-expanded="{{ str(True).lower() }}"
+                    aria-controls="panel-{{ id }}">
+                {{ text }}
+            </a>
+            <!-- The content pane needs an ID that matches the above href, role="tabpanel", data-tab-content, and aria-labelledby. -->
+            <div id="panel-{{ id }}" class="accordion-content"
+                    role="tabpanel"
+                    data-tab-content
+                    aria-labelledby="panel-{{ id }}-heading" >
+                Panel 1. Lorem ipsum dolor
+            </div>
+        </li>
+    </ul>
+{% endmacro %}

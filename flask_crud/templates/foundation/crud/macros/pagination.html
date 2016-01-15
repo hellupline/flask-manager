@@ -1,0 +1,67 @@
+{% macro render(page, pages, total, url_generator) %}
+<ul class="pagination" role="navigation" aria-label="Pagination">
+    {{ _pager(page, pages, url_generator) }}
+    <li>
+        <span>Total: {{ total }}</span>
+    </li>
+</ul>
+{% endmacro %}
+
+{% macro _item(text, class='', href='javascript:void(0)') %}
+    <li class="{{ class }}">
+        <a href="{{ href }}">{{ class }}</a>
+    </li>
+{% endmacro}
+
+{% macro _pager(page, pages, url_generator) %}
+  {% if pages > 1 %}
+    {% set min = page - 3 %}
+    {% set max = page + 4 %}
+
+    {% if min < 1 %}
+        {% set max = max - min %}
+    {% endif %}
+    {% if max >= pages %}
+        {% set min = min - max + pages %}
+    {% endif %}
+
+    {% if min < 1 %}
+        {% set min = 1 %}
+    {% endif %}
+    {% if max >= pages %}
+        {% set max = pages %}
+    {% endif %}
+
+    {% if min > 1 %}
+        {{ _item('&laquo;', href=url_generator(page=1)) }}
+    {% else %}
+        {{ _item('&laquo;', class='disabled') }}
+    {% endif %}
+
+    {% if page > 1 %}
+        {{ _item('&lt;', href=url_generator(page=page - 1)) }}
+    {% else %}
+        {{ _item('&lt;', class='disabled') }}
+    {% endif %}
+
+    {% for p in range(min, max + 1) %}
+      {% if page == p %}
+        {{ _item(p, class='current')   }}
+      {% else %}
+        {{ _item(p, href=url_generator(page=p)) }}
+      {% endif %}
+    {% endfor %}
+
+    {% if page < pages %}
+        {{ _item('&gt;', href=url_generator(page=page + 1)) }}
+    {% else %}
+        {{ _item('&lt;', class='disabled') }}
+    {% endif %}
+
+    {% if max < pages %}
+        {{ _item('&raquo;', href=url_generator(page=pages) ) }}
+    {% else %}
+        {{ _item('&raquo;', class='disabled') }}
+    {% endif %}
+  {% endif %}
+{% endmacro %}
