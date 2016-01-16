@@ -21,16 +21,14 @@
     </div>
 {% endmacro %}
 
-{% macro foldable(__, text, expanded=True) %}
+{% macro foldable(__, text, expanded=true) %}
     {% set key=_get_key() %}
     <ul class="accordion" role="tablist" data-accordion data-allow-all-closed="true">
         <li class="accordion-navigation">
-            <a href="#panel-{{ key }}" id="panel-{{ key }}-heading" role="tab"
-                    aria-expanded="{% if expanded %}true{% endif %}" aria-hidden="true">
+            <a href="#panel-{{ key }}" id="panel-{{ key }}-header" role="tab">
                 {{ text }}
             </a>
-            <div id="panel-{{ key }}" class="content" role="tabpanel"
-                    aria-labelledby="panel-{{ key }}-heading" aria-hidden="false">
+            <div id="panel-{{ key }}" class="content {% if expanded %}active{% endif %}" role="tabpanel" aria-labelledby="panel-{{ key }}-header">
                 {{ caller() }}
             </div>
         </li>
