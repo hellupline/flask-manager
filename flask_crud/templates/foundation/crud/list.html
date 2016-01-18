@@ -66,12 +66,14 @@
         {% endcall %}
     </div>
     <div class="row">
-        {{ Pagination.render(page+25, pages+100, total+10000, url_generator) }}
+        {{ Pagination.render(page, pages, total, url_generator) }}
     </div>
     <div class="row">
         {% call Table.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
             {% for item in items %}
-                {{ rules(item, roles=roles) }}
+                {% call Table.render_row(item, roles=roles) %}
+                    {{ rules(item) }}
+                {% endcall %}
             {% endfor %}
         {% endcall %}
     </div>

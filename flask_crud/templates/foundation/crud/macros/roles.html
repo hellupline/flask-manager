@@ -1,6 +1,6 @@
 {% macro buttons_create(roles) %}
     {% for endpoint in roles['create'] %}
-        <a href="{{ url_for('.{}'.format(endpoint)) }}" class="button">
+        <a href="{{ url_for('.{}'.format(endpoint)) }}" class="button radius">
             Create
         </a>
     {% endfor %}
