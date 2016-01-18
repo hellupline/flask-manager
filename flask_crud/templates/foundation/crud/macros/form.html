@@ -12,10 +12,10 @@
 
 {% macro render_field(form, name, value, use_label=true) %}
     <div class="row">
-        <div class="small-1 columns">
-            {{ value.label(class='middle', for='middle-label') }}
+        <div class="large-2 columns">
+            {{ value.label(class='text-right') }}
         </div>
-        <div class="small-7 columns float-left">
+        <div class="large-9 columns float-left">
             {{ value(placeholder=name) }}
         </div>
         <ul>
@@ -27,17 +27,18 @@
 {% endmacro %}
 
 {% macro buttons(form, cancel_url, add_another=true, continue_editing=true, submit_text='Save', type='success') %}
+<div class="spacer"></div>
     <div class="row">
-        <div class="large-11 large-centered columns float-right">
-            <input type="submit" value="{{ submit_text }}" name="_save" class="button radius {{ type }}" />
+        <div class="large-9 columns large-offset-2 large-centered">
+            <input type="submit" value="{{ submit_text }}" name="_save" class="margin button small radius {{ type }}" />
             {% if add_another %}
-                <input type="submit" value="Save and Add Another" name="_add_another" class="button radius" />
+                <input type="submit" value="Save and Add Another" name="_add_another" class="margin button small radius" />
             {% endif %}
             {% if continue_editing %}
-                <input type="submit" value="Save and Continue Editing" name="_continue_editing" class="button radius" />
+                <input type="submit" value="Save and Continue Editing" name="_continue_editing" class="margin button small radius" />
             {% endif %}
             {% if cancel_url %}
-                <a href="{{ url_for(cancel_url) }}" role="button" class="button radius alert">Cancel</a>
+                <a href="{{ url_for(cancel_url) }}" role="button" class="margin button small radius alert">Cancel</a>
             {% endif %}
         </div>
     </div>

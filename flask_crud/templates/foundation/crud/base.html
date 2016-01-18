@@ -7,6 +7,15 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>{{ NAME }}</title>
+        <style>
+            .spacer {
+                display: block;
+                height: 60px;
+            }
+            .button.margin {
+                margin: 0 10px 0 0;
+            }
+        </style>
         {% block css %}
             <link href="{{ url_for('.static', filename='css/foundation.css') }}" rel="stylesheet" />
             <link href="{{ url_for('.static', filename='css/normalize.css') }}" rel="stylesheet" />
@@ -15,6 +24,7 @@
     </head>
     <body>
         {% block menu %}{% endblock menu %}
+        <div class="spacer"></div>
         {% block content %}{% endblock content %}
         {% block javascript %}
             <script src="{{ url_for('.static', filename='js/vendor/jquery.js') }}" type="text/javascript"></script>

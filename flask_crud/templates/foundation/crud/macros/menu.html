@@ -5,17 +5,18 @@
             <li class="name">
                 <h1><a href="{{ url_for(endpoint) }}">{{ name }}</a></h1>
             </li>
-            <li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a></li>
+            <li class="toggle-topbar menu-icon">
+                <a href="#"><span>menu</span></a>
+            </li>
         </ul><!-- Title Area -->
 
         <section class="top-bar-section">
-            <!-- Left Nav Section -->
             <ul class="left">
                 <li class="divider"></li>
                 {{ _menu_tree(children, divider=True) }}
             </ul>
-            <!-- Right Nav Section -->
-            <ul class="right"></ul>
+            <ul class="right">
+            </ul>
         </section>
     </nav>
 {% endmacro %}

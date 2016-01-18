@@ -31,12 +31,12 @@
 {% endmacro %}
 
 {% macro filter_widget() %}
-    <div class="medium-4 columns">
+    <div class="large-4 columns">
         {% if 'search' in filter_form %}
             {{ filter_form.search() }}
         {% endif %}
     </div>
-    <div class="medium-2 columns">
+    <div class="large-2 columns">
         {% call Utils.dropdown(name='Filter by') %}
             {{ dropdown_form(filter_form, skip=['search']) }}
         {% endcall %}
@@ -44,7 +44,7 @@
 {% endmacro %}
 
 {% macro action_widget() %}
-    <div class="medium-3 columns">
+    <div class="large-3 columns">
         {% call Utils.dropdown(name='With selected') %}
             {{ dropdown_form(action_form, skip=['ids']) }}
         {% endcall %}
@@ -58,7 +58,7 @@
         {% call Form.render_form() %}
             {% if show_action_form or True %} {{ action_widget() }} {% endif %}
         {% endcall %}
-        <div class="medium-3 columns">
+        <div class="large-3 columns">
             {{ Roles.buttons_create(roles) }}
         </div>
         {% call Form.render_form(method='GET') %}
