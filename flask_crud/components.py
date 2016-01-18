@@ -137,7 +137,7 @@ class Update(Component):
 class Delete(Component):
     role = Roles.delete
     url = 'delete/<int:pk>/'
-    template_name = ('crud/read.html', 'crud/delete.html')
+    template_name = ('crud/delete.html', 'crud/read.html')
 
     def get(self, pk):
         item = self.get_item(pk)
