@@ -1,10 +1,7 @@
-{% macro simple_form_render(form, action='', method='POST', cancel_url='') %}
-    {% call render_form(form=form, action=action, method=method) %}
-        {% for field in form %}
-            {{ render_field(form, field.name, field) }}
-        {% endfor %}
-        {{ buttons(cancel_url=cancel_url) }}
-    {% endcall %}
+{% macro simple_form_render(form, action='.', method='POST') %}
+    {% for field in form %}
+        {{ render_field(form, field.name, field) }}
+    {% endfor %}
 {% endmacro %}
 
 {% macro render_form(form, action='.', method='POST') %}
