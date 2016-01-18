@@ -1,8 +1,17 @@
 {% extends "crud/common.html" %}
 
+{% import 'crud/macros/form.html' as Form %}
+{% import 'crud/macros/data.html' as Data %}
+
 {% block content %}
-    {% call Form.render_form(form) %}
-        {{ rules(item) }}
-        {{ Form.buttons(submit_text='Confirm', type='danger') }}
-    {% endcall %}
+    <div class="row">
+        <div class="large-12 columns">
+            {% call Form.render_form() %}
+                {% call Data.render_data(item) %}
+                    {{ rules(item) }}
+                {% endcall %}
+                {{ Form.buttons(add_another=false, continue_editing=false, submit_text='Confirm', type='alert') }}
+            {% endcall %}
+        </div>
+    </div>
 {% endblock %}

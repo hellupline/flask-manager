@@ -29,15 +29,15 @@
 {% macro buttons(form, cancel_url, add_another=true, continue_editing=true, submit_text='Save', type='success') %}
     <div class="row">
         <div class="large-11 large-centered columns float-right">
-            <input type="submit" value="Save" name="_save" class="button {{ type }}" />
+            <input type="submit" value="{{ submit_text }}" name="_save" class="button radius {{ type }}" />
             {% if add_another %}
-                <input type="submit" value="Save and Add Another" name="_add_another" class="button" />
+                <input type="submit" value="Save and Add Another" name="_add_another" class="button radius" />
             {% endif %}
             {% if continue_editing %}
-                <input type="submit" value="Save and Continue Editing" name="_continue_editing" class="button" />
+                <input type="submit" value="Save and Continue Editing" name="_continue_editing" class="button radius" />
             {% endif %}
             {% if cancel_url %}
-                <a href="{{ url_for(cancel_url) }}" role="button" class="button alert">Cancel</a>
+                <a href="{{ url_for(cancel_url) }}" role="button" class="button radius alert">Cancel</a>
             {% endif %}
         </div>
     </div>
