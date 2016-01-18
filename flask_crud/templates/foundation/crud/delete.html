@@ -4,14 +4,10 @@
 {% import 'crud/macros/data.html' as Data %}
 
 {% block content %}
-    <div class="row">
-        <div class="large-12 columns">
-            {% call Form.render_form() %}
-                {% call Data.render_data(item) %}
-                    {{ rules(item) }}
-                {% endcall %}
-                {{ Form.buttons(add_another=false, continue_editing=false, submit_text='Confirm', type='alert') }}
-            {% endcall %}
-        </div>
-    </div>
+    {% call Form.render_form() %}
+        {% call Data.render_data(item) %}
+            {{ rules(item) }}
+        {% endcall %}
+        {{ Form.buttons(add_another=false, continue_editing=false, submit_text='Confirm', type='alert') }}
+    {% endcall %}
 {% endblock %}

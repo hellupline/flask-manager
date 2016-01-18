@@ -1,6 +1,6 @@
-{% macro dropdown(name) %}
+{% macro dropdown(name, right=false) %}
     {% set key=_get_key() %}
-    <a class="button radius" data-dropdown="panel-{{ key }}"
+    <a class="button tiny radius {% if right %}right{% endif %}" data-dropdown="panel-{{ key }}"
             aria-controls="panel-{{ key }}"
             aria-expanded="false">
         {{ name }}

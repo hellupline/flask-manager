@@ -3,11 +3,7 @@
 {% import 'crud/macros/data.html' as Data %}
 
 {% block content %}
-    <div class="row">
-        <div class="large-12 column">
-            {% call Data.render_data(item) %}
-                {{ rules(item) }}
-            {% endcall %}
-        </div>
-    </div>
+    {% call Data.render_data(item) %}
+        {{ rules(item) }}
+    {% endcall %}
 {% endblock %}

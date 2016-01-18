@@ -1,14 +1,14 @@
 {% import 'crud/macros/roles.html' as Roles %}
 
 {% macro render_table(columns, url_generator, current) %}
-    <table class="stack" border=1>
+    <table class="stack large-12 column" border=1>
         <thead>
             <tr>
                 <th headers="select" width="1"></th>
-                <th headers="actions" width="70"></th>
+                <th headers="actions" width="70">Actions</th>
                 {% for column in columns %}
                     <th headers="{{ column }}">
-                        {{ _column_order_by(column, url_generator, current)  }}
+                        {{ _column_order_by(column, url_generator, current) }}
                     </th>
                 {% endfor %}
             </tr>
@@ -25,7 +25,7 @@
     {% else %}
         {% set column_order = column %}
     {% endif %}
-    <a href="{{ url_generator(order_by=column_order) }}">{{ column }}</a>
+    <a href="{{ url_generator(order_by=column_order) }}">{{ column|title }}</a>
 {% endmacro %}
 
 {% macro render_row(item, roles) %}

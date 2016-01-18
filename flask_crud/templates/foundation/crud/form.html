@@ -3,12 +3,8 @@
 {% import 'crud/macros/form.html' as Form %}
 
 {% block content %}
-    <div class="row">
-        <div class="large-12 column">
-            {% call Form.render_form(form) %}
-                {{ rules(form) }}
-                {{ Form.buttons() }}
-            {% endcall %}
-        </div>
-    </div>
+    {% call Form.render_form(form) %}
+        {{ rules(form) }}
+        {{ Form.buttons() }}
+    {% endcall %}
 {% endblock %}
