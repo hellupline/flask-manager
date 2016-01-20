@@ -1,3 +1,41 @@
+.spacer {
+    display: block;
+    height: 30px;
+}
+
+.dropdown-menu-link {
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.dropdown-menu-link li {
+    font-size: 11px;
+    color: #b7b7b7;
+}
+.dropdown-menu-link a {
+    display: block;
+    font-size: 12px;
+    margin: 0;
+    padding: 2px !important;
+}
+.dropdown-menu-link a.active {
+    color: #007095;
+    font-weight: bold;
+}
+.dropdown-menu-line {
+    margin: 5px 0 !important;
+}
+.button.margin {
+    margin: 0 10px 0 0;
+}
+.pagination span {
+    color: #b7b7b7;
+}
+label {
+    text-transform: capitalize;
+}
+
 #login-block {
   position: absolute;
   width: 100%;
@@ -7,50 +45,9 @@
   background: #424242;
   color: #fff;
 }
-
-.header {
-  padding: 20px 0;
-  background: #f4f4f4;
-}
-
 #login-block label {
   color: #fff;
 }
-
 #login-block form {
   margin-top: 12%;
-}
-
-.last-menu {
-  margin-right: 20px;
-  margin-top: 5px;
-  width: 200px;
-}
-
-.spacer {
-  height: 40px;
-  display: block;
-}
-
-.navigation-tabs {
-   width: 100%;
-}
-
-.navigation-tabs ul {
-    border-bottom: 1px solid #ddd;
-}
-
-.navigation-tabs li {
-  padding: 0 15px 10px 0px!important;
-
-}
-
-table {
-  margin: 20px 0;
-  width: 100%;
-  font-size: 85%;
-}
-
-table span {
-  font-size: 150%;
 }

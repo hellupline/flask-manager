@@ -7,47 +7,11 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>{{ NAME }}</title>
-        <style>
-            .dropdown-menu-link {
-                display: block;
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            }
-            .dropdown-menu-link li {
-                font-size: 11px;
-                color: #b7b7b7;
-            }
-            .dropdown-menu-link a {
-                display: block;
-                font-size: 12px;
-                margin: 0;
-                padding: 2px !important;
-            }
-            .dropdown-menu-link a.active {
-                color: #007095;
-                font-weight: bold;
-            }
-            .dropdown-menu-line {
-                margin: 5px 0 !important;
-            }
-            .button.margin {
-                margin: 0 10px 0 0;
-            }
-            .pagination span {
-                color: #b7b7b7;
-            }
-            label {
-                text-transform: capitalize;
-            }
-            .spacer {
-                display: block;
-                height: 30px;
-            }
-        </style>
+        <style></style>
         {% block css %}
             <link href="{{ url_for('.static', filename='css/foundation.css') }}" rel="stylesheet" />
             <link href="{{ url_for('.static', filename='css/normalize.css') }}" rel="stylesheet" />
+            <link href="{{ url_for('.static', filename='css/app.css') }}" rel="stylesheet" />
             <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" />
         {% endblock %}
     </head>
