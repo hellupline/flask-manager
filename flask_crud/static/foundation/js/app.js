@@ -1,1 +1,12 @@
-$(document).foundation();
+(function(){
+    'use strict';
+    $(document).foundation();
+
+    $(".input-select-link").on('click', function() {
+        var self = $(this);
+        var field = $('#'+self.data('field'));
+        var value = self.data('value');
+        field.val(value);
+        field[0].form.submit();
+    });
+}());
