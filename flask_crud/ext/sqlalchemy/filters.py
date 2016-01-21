@@ -31,11 +31,12 @@ class ColumnFilter(Filter):
         return set(chain.from_iterable(values))
 
     def get_form_field(self, key, query):
-        choices = [
-            (value, str(value).title())
-            for value in self.get_values(query)
-        ]
-        choices.insert(0, ('', ''))
+        choices = [('', 'All')]
+        for value in self.get_values(query):
+            title = str(value).capitalize()
+            if isinstance(value, bool):
+                value = str(int(value))
+            choices.append((value, title))
         return wtforms.SelectField(key.title(), choices=choices)
 
 
