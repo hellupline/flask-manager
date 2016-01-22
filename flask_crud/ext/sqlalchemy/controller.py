@@ -58,6 +58,16 @@ class SQLAlchemyController(Controller):
             return -getattr(self.model_class, name[1:])
         return getattr(self.model_class, name)
 
+    def _filter(self, query, filters):
+        join_tables = set()
+        for filter_, value in self.get_filters(filters):
+            if filter_.join_tables is not None:
+                join_tables |= set(filter_.join_tables)
+            query = filter_.filter(query, value)
+        if join_tables:
+            query = query.join(*join_tables)
+        return query
+
     def get_items(self, page=1, order_by=None, filters=None):
         """
         Fetch database for items matching.
@@ -81,8 +91,7 @@ class SQLAlchemyController(Controller):
         if order_by is not None:
             query = query.order_by(self._get_field(order_by))
         if filters is not None:
-            for filter_, value in self.get_filters(filters):
-                query = filter_.filter(query, value)
+            query = self._filter(query, filters)
         return query.offset(start).limit(end), self.count(query)
 
     def get_item(self, pk):
