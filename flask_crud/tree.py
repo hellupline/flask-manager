@@ -88,7 +88,8 @@ class Tree:
     def all_endpoints(self):
         for item in self.items:
             yield from item.all_endpoints()
-        yield self.endpoint.strip('.')
+        if self.endpoint is not None:
+            yield self.endpoint.strip('.')
     # }}} Menu interface
 
     # {{{ Blueprint interface

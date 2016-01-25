@@ -16,7 +16,7 @@ class RestrictedGroup(Group):
         except TypeError:
             return
         children = [self._filter(child, user_roles) for child in children]
-        if endpoint.strip('.') in user_roles:
+        if endpoint is None or endpoint.strip('.') in user_roles:
             return name, endpoint, list(filter(None.__ne__, children))
 
 

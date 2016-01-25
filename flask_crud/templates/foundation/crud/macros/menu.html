@@ -3,7 +3,13 @@
     <nav class="top-bar" data-topbar="">
         <ul class="title-area">
             <li class="name">
-                <h1><a href="{{ url_for(endpoint) }}">{{ name }}</a></h1>
+                <h1>
+                    {% if endpoint is not none %}
+                        <a href="{{ url_for(endpoint) }}">{{ name }}</a>
+                    {% else %}
+                        <a href="#">{{ name }}</a>
+                    {% endif %}
+                </h1>
             </li>
             <li class="toggle-topbar menu-icon">
                 <a href="#"><span>menu</span></a>
@@ -21,10 +27,14 @@
     </nav>
 {% endmacro %}
 
-{% macro _menu_tree(tree, divider=False) %}
+{% macro _menu_tree(tree, divider=false) %}
     {% for name, endpoint, children in tree %}
         <li class="{% if children %} has-dropdown not-click {% endif %} ">
-            <a href="{{ url_for(endpoint) }}">{{ name }}</a>
+            {% if endpoint is not none %}
+                <a href="{{ url_for(endpoint) }}">{{ name }}</a>
+            {% else %}
+                <a href="#">{{ name }}</a>
+            {% endif %}
             {% if children %}
                 <ul class="dropdown">
                     {{ _menu_tree(children) }}
