@@ -1,8 +1,8 @@
 from flask_login import current_user, login_required
-from flask_crud import Group
+from flask_crud import Index
 
 
-class RestrictedGroup(Group):
+class RestrictedIndex(Index):
     decorators = [login_required]
 
     def endpoints(self):
@@ -20,7 +20,7 @@ class RestrictedGroup(Group):
             return name, endpoint, list(filter(None.__ne__, children))
 
 
-class RestrictedMixin:
+class RestrictedCrudMixin:
     decorators = [login_required]
 
     def get_roles(self):
