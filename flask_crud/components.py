@@ -1,6 +1,6 @@
 from functools import partial
 from math import ceil
-from flask import request, url_for
+from flask import request, url_for, flash
 
 from flask_crud.views import Component, Roles
 
@@ -67,7 +67,7 @@ class List(Component):
             page, order_by, filters=request.args)
         filter_form = self.crud.controller.get_filter_form()(request.args)
         action_form = self.crud.controller.get_action_form()()
-        return self.context({
+        return {
             'filter_form': filter_form,
             'show_filter_form': self.crud.controller.filters is not None,
             'action_form': action_form,
@@ -79,11 +79,11 @@ class List(Component):
             'total': total,
             'page': page,
             'pages': ceil(total/self.crud.controller.per_page),
-        })
+        }
 
     def post(self):
         self.crud.controller.execute_action(self.get_form_data())
-        return self.get_success_url(), self.context({})
+        return self.get_success_url(), {}
 
 
 class Create(Component):
@@ -92,16 +92,22 @@ class Create(Component):
     template_name = ('crud/form.html', 'crud/create.html')
 
     def get(self):
-        form = self.get_form(self.get_form_data())
-        return self.context({'form': form})
+        form_data = self.get_form_data()
+        form = self.get_form(form_data)
+        return {'form': form}
 
     def post(self):
-        form = self.get_form(self.get_form_data())
+        form_data = self.get_form_data()
+        form = self.get_form(form_data)
         success_url = None
         if form.validate():
-            item = self.crud.controller.create_item(form)
-            success_url = self.get_success_url(self.get_form_data(), item)
-        return success_url, self.context({'form': form})
+            try:
+                item = self.crud.controller.create_item(form)
+            except Exception as e:
+                flash(e)
+            else:
+                success_url = self.get_success_url(form_data, item)
+        return success_url, {'form': form}
 
 
 class Read(Component):
@@ -111,7 +117,7 @@ class Read(Component):
 
     def get(self, pk):
         item = self.get_item(pk)
-        return self.context({'item': item})
+        return {'item': item}
 
 
 class Update(Component):
@@ -122,16 +128,21 @@ class Update(Component):
     def get(self, pk):
         item = self.get_item(pk)
         form = self.get_form(self.get_form_data(), obj=item)
-        return self.context({'item': item, 'form': form})
+        return {'item': item, 'form': form}
 
     def post(self, pk):
+        form_data = self.get_form_data()
         item = self.get_item(pk)
-        form = self.get_form(self.get_form_data(), obj=item)
+        form = self.get_form(form_data, obj=item)
         success_url = None
         if form.validate():
-            self.crud.controller.update_item(item, form)
-            success_url = self.get_success_url(self.get_form_data(), item)
-        return success_url, self.context({'item': item, 'form': form})
+            try:
+                self.crud.controller.update_item(item, form)
+            except Exception as e:
+                flash(e)
+            else:
+                success_url = self.get_success_url(self.get_form_data(), item)
+        return success_url, {'item': item, 'form': form}
 
 
 class Delete(Component):
@@ -141,9 +152,15 @@ class Delete(Component):
 
     def get(self, pk):
         item = self.get_item(pk)
-        return self.context({'item': item})
+        return {'item': item}
 
     def post(self, pk):
         item = self.get_item(pk)
-        self.crud.controller.delete_item(item)
-        return url_for(self.success_url), self.context()
+        success_url = None
+        try:
+            self.crud.controller.delete_item(item)
+        except Exception as e:
+            flash(e)
+        else:
+            success_url = url_for(self.success_url)
+        return success_url, {}

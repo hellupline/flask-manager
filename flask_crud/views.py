@@ -31,7 +31,7 @@ class View(views.View):
                 return redirect(return_url)
         elif request.method in ('GET', 'HEAD'):
             context = self.get(*args, **kwargs)
-        return self.render_response(context)
+        return self.render_response(self.context(context))
 
     def get(self, *args, **kwargs):
         """Handle the exibition of data.
@@ -58,24 +58,24 @@ class View(views.View):
         """
         raise MethodNotAllowed(valid_methods=['GET'])
 
-    def get_template_name(self):
-        """Return a tuple of template names for ``render_template``."""
-        return ('crud/{}.html'.format(self.view_name), ) + self.template_name
-
     def context(self, external_ctx=None):
-        """Called by ``get`` or ``post``, get the context for render_tamplate.
+        """Called by ``dispatch_request``, non request template context
 
         Args:
-            injected_context (dict): Vars for template.
+            external_ctx (dict): Context for template
 
         Returns:
-            (dict): The ``injected_context`` merged with a base context.
+            (dict): The base context merged with ``external_ctx``.
 
         """
         ctx = {}
         if external_ctx is not None:
             ctx.update(external_ctx)
         return ctx
+
+    def get_template_name(self):
+        """Return a tuple of template names for ``render_template``."""
+        return ('crud/{}.html'.format(self.view_name), ) + self.template_name
 
     def render_response(self, context):
         """Render the context to a response.
@@ -140,13 +140,14 @@ class Component(View):
                 '.{}'.format(roles[Roles.update.name][0]), pk=str(item.id))
         return url_for(self.success_url)
 
-    # Permissions
+    # {{{ Permissions
     def is_allowed(self):
         roles = self.crud.get_roles()
         allowed = roles.get(self.role.name, ())
         return self.view_name in allowed
+    # }}}
 
-    # View
+    # {{{ View
     def dispatch_request(self, *args, **kwargs):
         if not self.is_allowed():
             abort(401)
@@ -161,12 +162,12 @@ class Component(View):
         if external_ctx is not None:
             ctx.update(external_ctx)
         return super().context(ctx)
+    # }}}
 
-    # form convenience
+    # {{{ Convenience
     def get_form_data(self):
         return CombinedMultiDict([request.form, request.files])
 
-    # controller convenience
     def get_form(self, *args, **kwargs):
         return self.crud.form_class(*args, **kwargs)
 
@@ -175,3 +176,4 @@ class Component(View):
         if item is None:
             abort(404)
         return item
+    # }}}
