@@ -39,6 +39,10 @@ class SQLAlchemyCrud(crud.Crud):
     @cached_property
     def form_class(self):
         class Form(ModelForm):
+            @classmethod
+            def get_session(cls):
+                return self.db_session
+
             class Meta:
                 model = self.model
         return Form
