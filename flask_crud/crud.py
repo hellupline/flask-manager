@@ -208,6 +208,9 @@ class Crud(Tree):
     rules = {}
     controller = None
 
+    def __init__(self, name=None, url=None):
+        super().__init__(name=name, url=url)
+
     def all_endpoints(self):
         for component in self.components:
             yield self._component_name(component)
