@@ -5,6 +5,6 @@
 {% block content %}
     {% call Form.render_form(form) %}
         {{ rules(form) }}
-        {{ Form.buttons() }}
+        {{ Form.buttons(form, cancel_url=success_url) }}
     {% endcall %}
 {% endblock %}
