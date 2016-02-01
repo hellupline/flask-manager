@@ -60,10 +60,10 @@
 {# Body #}
 {% block content %}
     <div class="row">
-        {% if show_action_form %} {{ action_widget() }} {% endif %}
-        <div class="large-4 column {% if not show_action_form %}large-offset-2{% endif %}">
+        <div class="large-4 column">
             {{ Roles.buttons_create(roles) }}
         </div>
+        {% if show_action_form %} {{ action_widget() }} {% endif %}
         {% if show_filter_form %} {{ filter_widget() }} {% endif %}
     </div>
     <hr />
