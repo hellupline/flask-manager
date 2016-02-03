@@ -65,7 +65,10 @@ class CellField(Macro):
         super().__init__(**kwargs)
 
     def __call__(self, obj):
-        value = getattr(obj, self.field_name)
+        try:
+            value = getattr(obj, self.field_name)
+        except AttributeError:
+            value = obj[self.field_name]
         return super().__call__(obj, name=self.field_name, value=value)
 
 
