@@ -117,7 +117,7 @@ class Read(Component):
 
     def get(self, pk):
         item = self.get_item(pk)
-        return {'item': item}
+        return {'pk': pk, 'item': item}
 
 
 class Update(Component):
@@ -128,7 +128,7 @@ class Update(Component):
     def get(self, pk):
         item = self.get_item(pk)
         form = self.get_form(self.get_form_data(), obj=item)
-        return {'item': item, 'form': form}
+        return {'pk': pk, 'item': item, 'form': form}
 
     def post(self, pk):
         form_data = self.get_form_data()
@@ -142,7 +142,7 @@ class Update(Component):
                 flash(e)
             else:
                 success_url = self.get_success_url(self.get_form_data(), item)
-        return success_url, {'item': item, 'form': form}
+        return success_url, {'pk': pk, 'item': item, 'form': form}
 
 
 class Delete(Component):
@@ -152,7 +152,7 @@ class Delete(Component):
 
     def get(self, pk):
         item = self.get_item(pk)
-        return {'item': item}
+        return {'pk': pk, 'item': item}
 
     def post(self, pk):
         item = self.get_item(pk)
@@ -163,4 +163,4 @@ class Delete(Component):
             flash(e)
         else:
             success_url = url_for(self.success_url)
-        return success_url, {}
+        return success_url, {'pk': pk}
