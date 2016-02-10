@@ -17,8 +17,7 @@ class Filter:
 class Controller:
     per_page = 100
 
-    def __init__(self, model_class, filters=None, actions=None, per_page=None):
-        self.model_class = model_class
+    def __init__(self, filters=None, actions=None, per_page=None):
         self.filters = filters
         self.actions = actions
         if per_page is not None:
@@ -41,6 +40,7 @@ class Controller:
         if self.actions is not None:
             choices.extend(
                 (key, key.title()) for key, action in self.actions.items())
+
         class ActionsForm(wtforms.Form):
             ids = FakeSelectMultipleField('ids', coerce=int, choices=[])
             action = wtforms.fields.SelectField(choices=choices)
@@ -52,9 +52,7 @@ class Controller:
             self.actions[form.action.data](form.ids.data)
 
     def get_items(self, page=1, order_by=None, filters=None):
-        """
-        Return a paginated list of columns.
-        """
+        """Return a paginated list of columns."""
         raise NotImplementedError
 
     def get_item(self, pk):
@@ -65,10 +63,10 @@ class Controller:
         """Create a new entry in the storage."""
         raise NotImplementedError
 
-    def update_item(self, model, form):
+    def update_item(self, item, form):
         """Update a entry in storage."""
         raise NotImplementedError
 
-    def delete_item(self, model):
+    def delete_item(self, item):
         """Delete a new entry in storage."""
         raise NotImplementedError

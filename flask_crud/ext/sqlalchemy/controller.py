@@ -5,8 +5,20 @@ from sqlalchemy import func
 from flask_crud.controller import Controller
 
 
+@contextmanager
+def transaction(db_session):
+    try:
+        yield db_session
+        db_session.commit()
+    except Exception:
+        db_session.rollback()
+        db_session.close()
+        raise
+
+
 class SQLAlchemyController(Controller):
-    def __init__(self, db_session=None, *args, **kwargs):
+    def __init__(self, model_class, db_session=None, *args, **kwargs):
+        self.model_class = model_class
         if db_session is not None:
             self.db_session = db_session
         super().__init__(*args, **kwargs)
@@ -24,26 +36,16 @@ class SQLAlchemyController(Controller):
     def get_query(self):
         return self.db_session.query(self.model_class)
 
-    @contextmanager
-    def transaction(self):
-        try:
-            yield self.db_session
-            self.db_session.commit()
-        except Exception:
-            self.db_session.rollback()
-            self.db_session.close()
-            raise
-
     def new(self):
         return self.model_class()
 
     def save(self, model):
-        with self.transaction() as session:
+        with transaction() as session:
             session.add(model)
         return model
 
     def delete(self, model):
-        with self.transaction() as session:
+        with transaction() as session:
             session.delete(model)
 
     def count(self, query):
@@ -98,12 +100,12 @@ class SQLAlchemyController(Controller):
         return self.get_query().get(pk)
 
     def create_item(self, form):
-        model = self.new()
-        return self.update_item(model, form)
+        item = self.new()
+        return self.update_item(item, form)
 
-    def update_item(self, model, form):
-        form.populate_obj(model)
-        return self.save(model)
+    def update_item(self, item, form):
+        form.populate_obj(item)
+        return self.save(item)
 
-    def delete_item(self, model):
-        return self.delete(model)
+    def delete_item(self, item):
+        return self.delete(item)
