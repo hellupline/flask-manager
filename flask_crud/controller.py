@@ -3,7 +3,8 @@ import wtforms
 
 class FakeSelectMultipleField(wtforms.fields.SelectMultipleField):
     # prevent validation for value in choices
-    pre_validate = lambda *args: None
+    def pre_validate(self, *args, **kwargs):
+        return None
 
 
 class Filter:
