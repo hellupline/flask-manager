@@ -3,6 +3,9 @@
 {% import 'crud/macros/form.html' as Form %}
 
 {% block content %}
+    {% with messages = get_flashed_messages() %}
+        {{ messages }}
+    {% endwith %}
     {% call Form.render_form(form) %}
         {{ rules(form) }}
         {{ Form.buttons(form, cancel_url=success_url) }}

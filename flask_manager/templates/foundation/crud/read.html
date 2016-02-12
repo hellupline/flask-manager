@@ -3,6 +3,9 @@
 {% import 'crud/macros/data.html' as Data %}
 
 {% block content %}
+    {% with messages = get_flashed_messages() %}
+        {{ messages }}
+    {% endwith %}
     {% call Data.render_data(item) %}
         {{ rules(item) }}
     {% endcall %}
