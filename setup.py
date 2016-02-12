@@ -9,7 +9,7 @@ with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
 
 setup(
     name='flask-manager',
-    version='0.0.1',
+    version='0.0.1alpha',
     description='A CRUD manager for Flask',
     long_description=long_description,
     author='Renan Traba',
