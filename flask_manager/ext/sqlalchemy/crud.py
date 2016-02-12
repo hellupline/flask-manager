@@ -2,8 +2,8 @@ from cached_property import cached_property
 from wtforms_alchemy import ModelForm
 import sqlalchemy as sa
 
-from flask_crud import crud, rules as rules_
-from flask_crud.ext.sqlalchemy import controller as controller_
+from flask_manager import crud, rules as rules_
+from flask_manager.ext.sqlalchemy import controller as controller_
 
 
 def get_model_name(model_class):

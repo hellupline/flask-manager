@@ -2,7 +2,7 @@ from functools import partial
 from math import ceil
 from flask import request, url_for, flash
 
-from flask_crud.views import Component, Roles
+from flask_manager.views import Component, Roles
 
 
 """

@@ -3,7 +3,7 @@ from itertools import chain
 import wtforms
 from sqlalchemy import or_
 
-from flask_crud.controller import Filter
+from flask_manager.controller import Filter
 
 
 class SearchFilter(Filter):

@@ -12,7 +12,7 @@ Save in a hello.py:
 .. code:: python
 
     from flask import Flask
-    from flask_crud import crud, controller, rules as rules_
+    from flask_manager import crud, controller, rules as rules_
 
     all_items = {
         i: {'id': i, 'title': 'Title - {}'.format(i)}

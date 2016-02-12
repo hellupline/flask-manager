@@ -2,7 +2,7 @@ from contextlib import contextmanager
 import wtforms
 from sqlalchemy import func
 
-from flask_crud.controller import Controller
+from flask_manager.controller import Controller
 
 
 @contextmanager

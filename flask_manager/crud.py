@@ -2,9 +2,9 @@ from collections import defaultdict
 from cached_property import cached_property
 from flask import Blueprint
 
-from flask_crud.utils import concat_urls, slugify
-from flask_crud.views import LandingView, Roles
-from flask_crud.components import List, Create, Read, Update, Delete
+from flask_manager.utils import concat_urls, slugify
+from flask_manager.views import LandingView, Roles
+from flask_manager.components import List, Create, Read, Update, Delete
 
 
 class Tree:

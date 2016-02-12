@@ -1,5 +1,5 @@
 from flask_login import current_user, login_required
-from flask_crud import Index
+from flask_manager import Index
 
 
 class RestrictedIndex(Index):
