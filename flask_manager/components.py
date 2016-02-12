@@ -104,7 +104,7 @@ class Create(Component):
             try:
                 item = self.crud.controller.create_item(form)
             except Exception as e:
-                flash(e)
+                flash(str(e))
             else:
                 success_url = self.get_success_url(form_data, item)
         return success_url, {'form': form}
@@ -139,7 +139,7 @@ class Update(Component):
             try:
                 self.crud.controller.update_item(item, form)
             except Exception as e:
-                flash(e)
+                flash(str(e))
             else:
                 success_url = self.get_success_url(self.get_form_data(), item)
         return success_url, {'pk': pk, 'item': item, 'form': form}
@@ -160,7 +160,7 @@ class Delete(Component):
         try:
             self.crud.controller.delete_item(item)
         except Exception as e:
-            flash(e)
+            flash(str(e))
         else:
             success_url = url_for(self.success_url)
-        return success_url, {'pk': pk}
+        return success_url, {'pk': pk, 'item': item}
