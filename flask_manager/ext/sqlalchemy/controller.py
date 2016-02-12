@@ -40,12 +40,12 @@ class SQLAlchemyController(Controller):
         return self.model_class()
 
     def save(self, model):
-        with transaction() as session:
+        with transaction(self.db_session) as session:
             session.add(model)
         return model
 
     def delete(self, model):
-        with transaction() as session:
+        with transaction(self.db_session) as session:
             session.delete(model)
 
     def count(self, query):
