@@ -1,0 +1,12 @@
+{% macro render() %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div data-alert class="alert-box">
+                {% for message in messages %}
+                    <span>{{ message }}</span>
+                {% endfor %}
+                <a href="#" class="close">&times;</a>
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endmacro %}

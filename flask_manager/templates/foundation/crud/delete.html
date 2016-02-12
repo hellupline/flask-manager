@@ -1,12 +1,11 @@
-{% extends "crud/common.html" %}
+    {% extends "crud/common.html" %}
 
+{% import 'crud/macros/flashed.html' as Flashed %}
 {% import 'crud/macros/form.html' as Form %}
 {% import 'crud/macros/data.html' as Data %}
 
 {% block content %}
-    {% with messages = get_flashed_messages() %}
-        {{ messages }}
-    {% endwith %}
+    {{ Flashed.render() }}
     {% call Form.render_form() %}
         {% call Data.render_data(item) %}
             {{ rules(item) }}
