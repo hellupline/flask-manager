@@ -1,4 +1,4 @@
 include LICENSE
 include README.rst
-recursive-include flask_crud/templates *
-recursive-include flask_crud/static *
+recursive-include flask_manager/templates *
+recursive-include flask_manager/static *

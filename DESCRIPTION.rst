@@ -4,8 +4,7 @@ Flask-Manager
 A CRUD like manager for Flask.
 
 Is Flexible
------------
-
+```````````
 
 Save in a hello.py:
 
@@ -47,10 +46,10 @@ Save in a hello.py:
         # you may merge read/update to "form" if using the same columns
         rules = {
             'list': rules.ColumnSet(['title']),
-            'create': rules.ColumnSet(['title']),
-            'read': rules.ColumnSet(['title']),
-            'update': rules.ColumnSet(['title']),
-            'delete': rules.ColumnSet(['title']),
+            'create': rules.FormFieldSet(['title']),
+            'read': rules.DataFieldSet(['title']),
+            'update': rules.FormFieldSet(['title']),
+            'delete': rules.DataFieldSetWithConfirm(['title']),
         }
 
     if __name__ == '__main__':
@@ -60,6 +59,10 @@ Save in a hello.py:
         ])
         app.register_blueprint(admin.create_blueprint())
 
+
+Then execute:
+
 .. code:: bash
+
     $ pip install flask-manager
     $ python hello.py
