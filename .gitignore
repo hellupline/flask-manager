@@ -1,4 +1,6 @@
 __pycache__
 **.pyc
 **.swp
-flask_crud.egg-info/
+**.egg-info/
+
+dist/
