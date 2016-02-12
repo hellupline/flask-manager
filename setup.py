@@ -1,6 +1,6 @@
-from setuptools import setup, find_packages
 from codecs import open
 from os import path
+from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
 
@@ -8,34 +8,33 @@ with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='flask-crud',
-    version='0.1.0',
-    description='A Generic CRUD for Flask',
+    name='flask-manager',
+    version='0.0.1',
+    description='A CRUD manager for Flask',
     long_description=long_description,
-    url='https://gitlab.com/mucca/le_crud',
     author='Renan Traba',
     author_email='hellupline@gmail.com',
-    keywords='flask crud sqlalchemy',
+    url='https://github.com/hellupline/flask-crud',
+    download_url='https://github.com/hellupline/flask-manager/tarball/0.0.1',
+    keywords=['flask', 'crud', 'sqlalchemy', 'admin', 'manager'],
 
-    license='GPL3',
+    license='LGPL3',
     classifiers=[
         ('License :: OSI Approved :: '
-         'GNU General Public License v3 or later (GPLv3+)'),
+         'GNU Lesser General Public License v3 or later (LGPLv3+)'),
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Environment :: Web Environment',
         'Framework :: Flask',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 
-    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    packages=find_packages(exclude=['docs', 'tests*']),
     install_requires=[
-        'flask>=0.7',
+        'flask>=0.10',
         'wtforms',
         'wtforms-alchemy',
         'cached-property',
@@ -44,5 +43,6 @@ setup(
         'dev': ['ipython'],
         'test': ['coverage'],
     },
+    zip_safe=False,
     include_package_data=True,
 )
