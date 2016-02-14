@@ -1,7 +1,5 @@
 import re
 
-from jinja2 import contextfunction
-from flask import g
 
 first_cap_re = re.compile('(.)([A-Z][a-z]+)')
 all_cap_re = re.compile('([a-z0-9])([A-Z])')
