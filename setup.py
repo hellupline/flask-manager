@@ -34,10 +34,12 @@ setup(
 
     packages=find_packages(exclude=['docs', 'tests*']),
     install_requires=[
+        'cached-property',
         'flask>=0.10',
+        'jinja2',
+        'werkzeug',
         'wtforms',
         'wtforms-alchemy',
-        'cached-property',
     ],
     extras_require={
         'dev': ['ipython'],
