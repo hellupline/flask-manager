@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-import wtforms
 from sqlalchemy import func
 
 from flask_manager.controller import Controller
@@ -18,20 +17,12 @@ def transaction(db_session):
 
 class SQLAlchemyController(Controller):
     def __init__(self, model_class, db_session=None, *args, **kwargs):
-        self.model_class = model_class
+        super().__init__(*args, **kwargs)
+        for filter_ in self.filters.values():
+            filter_.db_session = db_session
         if db_session is not None:
             self.db_session = db_session
-        super().__init__(*args, **kwargs)
-
-    def get_filter_form(self):
-        if self.filters is not None:
-            body = {
-                key: filter_.get_form_field(key, self.get_query())
-                for key, filter_ in self.filters.items()
-            }
-        else:
-            body = {}
-        return type('FilterForm', (wtforms.Form,), body)
+        self.model_class = model_class
 
     def get_query(self):
         return self.db_session.query(self.model_class)

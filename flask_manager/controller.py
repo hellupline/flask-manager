@@ -8,39 +8,36 @@ class FakeSelectMultipleField(wtforms.fields.SelectMultipleField):
 
 
 class Filter:
-    def filter(self, query, value):
+    def get_form_field(self, query):
         raise NotImplementedError
 
-    def get_form_field(self, key, query):
+    def filter(self, items, value):
+        raise NotImplementedError
+
+
+class SearchFilter(Filter):
+    def get_form_field(self):
+        return wtforms.TextField()
+
+
+class ColumnFilter(Filter):
+    def get_form_field(self):
+        choices = [('', 'All'), *list(self.get_choices())]
+        return wtforms.SelectField(choices=choices)
+
+    def get_choices(self):
         raise NotImplementedError
 
 
 class Controller:
-    per_page = 100
+    def __init__(self, filters=None, actions=None, per_page=100):
+        self.filters = filters if filters is not None else {}
+        self.actions = actions if actions is not None else {}
+        self.per_page = per_page
 
-    def __init__(self, filters=None, actions=None, per_page=None):
-        self.filters = filters
-        self.actions = actions
-        if per_page is not None:
-            self.per_page = per_page
-
-    def get_filter_form(self):
-        raise NotImplementedError
-
-    def get_filters(self, params):
-        if not self.filters:
-            return []
-        return [
-            (self.filters[key], value)
-            for key, value in params.items()
-            if key in self.filters and value
-        ]
-
+    # {{{ Actions Interface
     def get_action_form(self):
-        choices = [('', '')]
-        if self.actions is not None:
-            choices.extend(
-                (key, key.title()) for key, action in self.actions.items())
+        choices = [('', ''), *[(key, key.title()) for key in self.actions]]
 
         class ActionsForm(wtforms.Form):
             ids = FakeSelectMultipleField('ids', coerce=int, choices=[])
@@ -49,9 +46,28 @@ class Controller:
 
     def execute_action(self, params):
         form = self.get_action_form()(params)
-        if form.validate():
-            self.actions[form.action.data](form.ids.data)
+        if not form.validate():
+            return False  # Raise Exception ?
+        self.actions[form.action.data](form.ids.data)
+    # }}}
 
+    # {{{ Filter Interface
+    def get_filter_form(self):
+        class FilterForm(wtforms.Form):
+            for key, filter_ in self.filters.items():
+                vars()[key] = filter_.get_form_field()
+                del key, filter_
+        return FilterForm
+
+    def get_filters(self, params):
+        return [
+            (self.filters[key], value)
+            for key, value in params.items()
+            if value and key in self.filters
+        ]
+    # }}}
+
+    # {{{ View Interface
     def get_items(self, page=1, order_by=None, filters=None):
         """Return a paginated list of columns."""
         raise NotImplementedError
@@ -71,3 +87,4 @@ class Controller:
     def delete_item(self, item):
         """Delete a new entry in storage."""
         raise NotImplementedError
+    # }}}
