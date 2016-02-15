@@ -50,7 +50,6 @@ class SQLAlchemyCrud(crud.Crud):
     @cached_property
     def display_rules(self):
         fields = get_columns(self.model)
-        getter = self.extra_display_rules.get
         return {
             **{
                 'list': display_rules_.ColumnSet(fields),
@@ -59,6 +58,10 @@ class SQLAlchemyCrud(crud.Crud):
                 'update': display_rules_.SimpleForm(),
                 'delete': display_rules_.DataFieldSetWithConfirm(fields),
             },
-            **{key: getter('form')for key in ('create', 'update')},
-            **self.extra_display_rules
+            **{
+                key: self.extra_display_rules['form']
+                for key in ('create', 'update')
+                if 'form' in self.extra_display_rules
+            },
+            **self.extra_display_rules,
         }
