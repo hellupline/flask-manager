@@ -155,7 +155,7 @@ class Component(View):
 
     def context(self, external_ctx=None):
         ctx = {
-            'rules': self.crud.rules[self.role.name],
+            'display_rules': self.crud.display_rules[self.role.name],
             'tree': self.crud.endpoints_tree(),
             'roles': self.crud.get_roles(),
             'success_url': self.success_url,

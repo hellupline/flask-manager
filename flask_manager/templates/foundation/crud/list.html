@@ -84,10 +84,10 @@
             {{ Flashed.render() }}
             {% call Form.render_form() %}
                 {{ hidden_form_fields(action_form, skip=['ids']) }}
-                {% call Table.render_table(rules.columns, url_generator=url_generator, current=order_by) %}
+                {% call Table.render_table(display_rules.columns, url_generator=url_generator, current=order_by) %}
                     {% for item in items %}
                         {% call Table.render_row(item, roles=roles) %}
-                            {{ rules(item) }}
+                            {{ display_rules(item) }}
                         {% endcall %}
                     {% endfor %}
                 {% endcall %}

@@ -6,7 +6,7 @@
 {% block content %}
     {{ Flashed.render() }}
     {% call Form.render_form(form) %}
-        {{ rules(form) }}
+        {{ display_rules(form) }}
         {{ Form.buttons(form, cancel_url=success_url) }}
     {% endcall %}
 {% endblock %}

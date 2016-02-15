@@ -205,7 +205,7 @@ class ViewNode(Tree):
 class Crud(Tree):
     components = (List, Create, Read, Update, Delete)
     decorators = ()
-    rules = {}
+    display_rules = {}
     controller = None
 
     def __init__(self, name=None, url=None):

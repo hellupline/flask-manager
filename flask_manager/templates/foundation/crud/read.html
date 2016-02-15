@@ -6,6 +6,6 @@
 {% block content %}
     {{ Flashed.render() }}
     {% call Data.render_data(item) %}
-        {{ rules(item) }}
+        {{ display_rules(item) }}
     {% endcall %}
 {% endblock %}

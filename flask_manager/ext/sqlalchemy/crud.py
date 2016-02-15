@@ -2,7 +2,7 @@ from cached_property import cached_property
 from wtforms_alchemy import ModelForm
 import sqlalchemy as sa
 
-from flask_manager import crud, rules as rules_
+from flask_manager import crud, display_rules as display_rules_
 from flask_manager.ext.sqlalchemy import controller as controller_
 
 
@@ -19,9 +19,9 @@ def get_columns(model_class):
 
 
 class SQLAlchemyCrud(crud.Crud):
+    extra_display_rules = {}
     db_session = None
     model = None
-    extra_rules = {}
     actions = None
     filters = None
 
@@ -48,18 +48,17 @@ class SQLAlchemyCrud(crud.Crud):
         return Form
 
     @cached_property
-    def rules(self):
-        model_columns = get_columns(self.model)
-
-        columns_rules = rules_.ColumnSet(model_columns)
-        data_rules = rules_.DataFieldSet(model_columns)
-        delete_rules = rules_.DataFieldSetWithConfirm(model_columns)
-
-        form_rules = self.extra_rules.get('form', rules_.SimpleForm())
+    def display_rules(self):
+        fields = get_columns(self.model)
+        getter = self.extra_display_rules.get
         return {
-            'list': self.extra_rules.get('list', columns_rules),
-            'create': self.extra_rules.get('create', form_rules),
-            'read': self.extra_rules.get('read', data_rules),
-            'update': self.extra_rules.get('update', form_rules),
-            'delete': self.extra_rules.get('delete', delete_rules),
+            **{
+                'list': display_rules_.ColumnSet(fields),
+                'create': display_rules_.SimpleForm(),
+                'read': display_rules_.DataFieldSet(fields),
+                'update': display_rules_.SimpleForm(),
+                'delete': display_rules_.DataFieldSetWithConfirm(fields),
+            },
+            **{key: getter('form')for key in ('create', 'update')},
+            **self.extra_display_rules
         }

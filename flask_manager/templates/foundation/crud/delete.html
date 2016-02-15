@@ -8,7 +8,7 @@
     {{ Flashed.render() }}
     {% call Form.render_form() %}
         {% call Data.render_data(item) %}
-            {{ rules(item) }}
+            {{ display_rules(item) }}
         {% endcall %}
         {{ Form.buttons(add_another=false, continue_editing=false, submit_text='Confirm', type='alert') }}
     {% endcall %}
