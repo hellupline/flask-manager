@@ -15,6 +15,7 @@ class Filter:
         raise NotImplementedError
 
 
+# pylint: disable=abstract-method
 class SearchFilter(Filter):
     def get_form_field(self):
         return wtforms.TextField()

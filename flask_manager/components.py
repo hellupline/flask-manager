@@ -1,58 +1,85 @@
 from functools import partial
 from math import ceil
-from flask import request, url_for, flash
+from enum import Enum
 
-from flask_manager.views import Component, Roles
+from flask import request, abort, url_for, flash
+from werkzeug.datastructures import CombinedMultiDict
+
+from flask_manager import views
 
 
-"""
-A SIMPLE CRUD STRUCTURE.
-LIST:
-    GET:
-        return a context ( items )
-    POST:
-        execute action
-        return a success_url and a context
-CREATE:
-    GET:
-        return a context ( form )
-    POST:
-        save obj
-        return a success_url and a context ( form, errors )
-READ:
-    GET:
-        receive a pk
-        fetch obj
-        return a context ( item )
-UPDATE:
-    GET:
-        receive a pk
-        fetch obj
-        return a context ( item, form )
-    POST:
-        receive a pk
-        fetch obj
-        update obj
-        return a success_url and a context ( item, form, errors )
-DELETE:
-    GET:
-        receive a pk
-        fetch obj
-        return a context ( item )
-    POST:
-        receive a pk
-        delete obj
-        return a success_url and a context
-"""
-"""
-Each Component have:
-    Permission, Template_name
-    Url, Name
+# pylint: disable=abstract-method
+class Component(views.View):
+    role = None
+    url = None
 
-Each Component receive:
-    Controller, Roles, Success_url ( for POST Method )
-    and a possible a form class ( Overwrite Display form class )
-"""
+    def __init__(self, crud, *args, **kwargs):
+        """
+        Args:
+            crud (Crud): ``Crud`` parent.
+        """
+        self.crud = crud
+        super().__init__(*args, **kwargs)
+
+    def get_success_url(self, params=None, item=None):
+        if params is None:
+            return url_for(self.success_url)
+
+        roles = self.crud.get_roles()
+        if '_add_another' in params:
+            return url_for(
+                '.{}'.format(roles[Roles.create.name][0]))
+        elif '_continue_editing' in params and item is not None:
+            return url_for(
+                '.{}'.format(roles[Roles.update.name][0]), pk=str(item.id))
+        return url_for(self.success_url)
+
+    # {{{ Permissions
+    def is_allowed(self):
+        roles = self.crud.get_roles()
+        allowed = roles.get(self.role.name, ())
+        return self.view_name in allowed
+    # }}}
+
+    # {{{ View
+    def dispatch_request(self, *args, **kwargs):
+        if not self.is_allowed():
+            abort(401)
+        return super().dispatch_request(*args, **kwargs)
+
+    def context(self, external_ctx=None):
+        ctx = {
+            'display_rules': self.crud.display_rules[self.role.name],
+            'tree': self.crud.endpoints_tree(),
+            'roles': self.crud.get_roles(),
+            'success_url': self.success_url,
+        }
+        if external_ctx is not None:
+            ctx.update(external_ctx)
+        return super().context(ctx)
+    # }}}
+
+    # {{{ Convenience
+    def get_form_data(self):
+        return CombinedMultiDict([request.form, request.files])
+
+    def get_form(self, *args, **kwargs):
+        return self.crud.form_class(*args, **kwargs)
+
+    def get_item(self, pk):
+        item = self.crud.controller.get_item(pk)
+        if item is None:
+            abort(404)
+        return item
+    # }}}
+
+
+class Roles(Enum):
+    list = 1
+    create = 2
+    read = 3
+    update = 4
+    delete = 5
 
 
 class List(Component):
@@ -103,7 +130,7 @@ class Create(Component):
         if form.validate():
             try:
                 item = self.crud.controller.create_item(form)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 flash(str(e))
             else:
                 success_url = self.get_success_url(form_data, item)
@@ -138,7 +165,7 @@ class Update(Component):
         if form.validate():
             try:
                 self.crud.controller.update_item(item, form)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 flash(str(e))
             else:
                 success_url = self.get_success_url(self.get_form_data(), item)
@@ -159,7 +186,7 @@ class Delete(Component):
         success_url = None
         try:
             self.crud.controller.delete_item(item)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             flash(str(e))
         else:
             success_url = url_for(self.success_url)

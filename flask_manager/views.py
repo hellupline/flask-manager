@@ -1,8 +1,5 @@
-from enum import Enum
-
 from werkzeug.exceptions import MethodNotAllowed
-from werkzeug.datastructures import CombinedMultiDict
-from flask import request, abort, redirect, url_for, render_template, views
+from flask import request, redirect, render_template, views
 
 
 class View(views.View):
@@ -104,77 +101,3 @@ class LandingView(View):
 
     def get(self):
         return self.context({'tree': self.parent.endpoints_tree()})
-
-
-class Roles(Enum):
-    list = 1
-    create = 2
-    read = 3
-    update = 4
-    delete = 5
-
-
-class Component(View):
-    """Role this component represent, enumerated in ``Roles``."""
-    role = None
-    url = None
-
-    def __init__(self, crud, *args, **kwargs):
-        """
-        Args:
-            crud (Crud): ``Crud`` parent.
-        """
-        self.crud = crud
-        super().__init__(*args, **kwargs)
-
-    def get_success_url(self, params=None, item=None):
-        if params is None:
-            return url_for(self.success_url)
-
-        roles = self.crud.get_roles()
-        if '_add_another' in params:
-            return url_for(
-                '.{}'.format(roles[Roles.create.name][0]))
-        elif '_continue_editing' in params and item is not None:
-            return url_for(
-                '.{}'.format(roles[Roles.update.name][0]), pk=str(item.id))
-        return url_for(self.success_url)
-
-    # {{{ Permissions
-    def is_allowed(self):
-        roles = self.crud.get_roles()
-        allowed = roles.get(self.role.name, ())
-        return self.view_name in allowed
-    # }}}
-
-    # {{{ View
-    def dispatch_request(self, *args, **kwargs):
-        if not self.is_allowed():
-            abort(401)
-        return super().dispatch_request(*args, **kwargs)
-
-    def context(self, external_ctx=None):
-        ctx = {
-            'display_rules': self.crud.display_rules[self.role.name],
-            'tree': self.crud.endpoints_tree(),
-            'roles': self.crud.get_roles(),
-            'success_url': self.success_url,
-        }
-        if external_ctx is not None:
-            ctx.update(external_ctx)
-        return super().context(ctx)
-    # }}}
-
-    # {{{ Convenience
-    def get_form_data(self):
-        return CombinedMultiDict([request.form, request.files])
-
-    def get_form(self, *args, **kwargs):
-        return self.crud.form_class(*args, **kwargs)
-
-    def get_item(self, pk):
-        item = self.crud.controller.get_item(pk)
-        if item is None:
-            abort(404)
-        return item
-    # }}}
