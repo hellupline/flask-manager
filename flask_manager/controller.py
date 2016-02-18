@@ -21,7 +21,7 @@ class SearchFilter(Filter):
         return wtforms.TextField()
 
 
-class ColumnFilter(Filter):
+class FieldFilter(Filter):
     def get_form_field(self):
         choices = [('', 'All'), *list(self.get_choices())]
         return wtforms.SelectField(choices=choices)

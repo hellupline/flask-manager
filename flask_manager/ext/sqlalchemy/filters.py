@@ -13,7 +13,7 @@ class SearchFilter(controller.SearchFilter):
         return query.filter(or_(*clauses))
 
 
-class ColumnFilter(controller.ColumnFilter):
+class FieldFilter(controller.FieldFilter):
     def __init__(self, column, join_tables=None):
         # I know its evil, and bad, but will inject session in
         # SQLAlchemyController.__ini__

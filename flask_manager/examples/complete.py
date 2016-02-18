@@ -46,7 +46,7 @@ class SearchFilter(controller_.SearchFilter):
         ]
 
 
-class FieldFilter(controller_.ColumnFilter):
+class FieldFilter(controller_.FieldFilter):
     def __init__(self, field, coerce=str):
         self.field = field
         self.coerce = coerce
