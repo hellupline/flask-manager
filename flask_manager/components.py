@@ -93,12 +93,12 @@ class List(Component):
         items, total = self.crud.controller.get_items(
             page, order_by, filters=request.args)
         filter_form = self.crud.controller.get_filter_form()(request.args)
-        action_form = self.crud.controller.get_action_form()()
+        action_form = self.crud.get_action_form()()
         return {
-            'filter_form': filter_form,
             'show_filter_form': self.crud.controller.filters is not None,
+            'show_action_form': self.crud.actions is not None,
+            'filter_form': filter_form,
             'action_form': action_form,
-            'show_action_form': self.crud.controller.actions is not None,
             'order_by': order_by,
             'url_generator': partial(
                 url_for, request.url_rule.endpoint, **request.args),
@@ -109,7 +109,7 @@ class List(Component):
         }
 
     def post(self):
-        self.crud.controller.execute_action(self.get_form_data())
+        self.crud.execute_action(self.get_form_data())
         return self.get_success_url(), {}
 
 

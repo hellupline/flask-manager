@@ -1,10 +1,17 @@
 from collections import defaultdict
 from cached_property import cached_property
 from flask import Blueprint
+import wtforms
 
 from flask_manager.utils import concat_urls, slugify
 from flask_manager.views import LandingView
 from flask_manager.components import List, Create, Read, Update, Delete, Roles
+
+
+class FakeSelectMultipleField(wtforms.fields.SelectMultipleField):
+    # prevent validation for value in choices
+    def pre_validate(self, *args, **kwargs):
+        return None
 
 
 class Tree:
@@ -206,6 +213,7 @@ class Crud(Tree):
     components = (List, Create, Read, Update, Delete)
     decorators = ()
     display_rules = {}
+    actions = {}
     controller = None
 
     def __init__(self, name=None, url=None):
@@ -223,6 +231,21 @@ class Crud(Tree):
         endpoint = '.{}'.format(self._main_component_name())
         for component in self.components:
             yield self._get_view(component, endpoint)
+
+    # {{{ Actions Interface
+    def get_action_form(self):
+        class ActionsForm(wtforms.Form):
+            action = wtforms.fields.SelectField(choices=[
+                (key, key.title()) for key in self.actions])
+            ids = FakeSelectMultipleField('ids')
+        return ActionsForm
+
+    def execute_action(self, params):
+        form = self.get_action_form()(params)
+        if not form.validate():
+            return False  # Raise Exception ?
+        self.actions[form.action.data](form.ids.data)
+    # }}}
 
     # {{{ Auth
     def get_roles(self):

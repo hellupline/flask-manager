@@ -1,12 +1,6 @@
 import wtforms
 
 
-class FakeSelectMultipleField(wtforms.fields.SelectMultipleField):
-    # prevent validation for value in choices
-    def pre_validate(self, *args, **kwargs):
-        return None
-
-
 class Filter:
     def get_form_field(self, query):
         raise NotImplementedError
@@ -31,26 +25,9 @@ class FieldFilter(Filter):
 
 
 class Controller:
-    def __init__(self, filters=None, actions=None, per_page=100):
+    def __init__(self, filters=None, per_page=100):
         self.filters = filters if filters is not None else {}
-        self.actions = actions if actions is not None else {}
         self.per_page = per_page
-
-    # {{{ Actions Interface
-    def get_action_form(self):
-        choices = [('', ''), *[(key, key.title()) for key in self.actions]]
-
-        class ActionsForm(wtforms.Form):
-            ids = FakeSelectMultipleField('ids', coerce=int, choices=[])
-            action = wtforms.fields.SelectField(choices=choices)
-        return ActionsForm
-
-    def execute_action(self, params):
-        form = self.get_action_form()(params)
-        if not form.validate():
-            return False  # Raise Exception ?
-        self.actions[form.action.data](form.ids.data)
-    # }}}
 
     # {{{ Filter Interface
     def get_filter_form(self):

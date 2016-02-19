@@ -22,7 +22,6 @@ class SQLAlchemyCrud(crud.Crud):
     extra_display_rules = {}
     db_session = None
     model = None
-    actions = None
     filters = None
 
     def __init__(self, *args, **kwargs):
@@ -32,8 +31,9 @@ class SQLAlchemyCrud(crud.Crud):
     @cached_property
     def controller(self):
         return controller_.SQLAlchemyController(
-            db_session=self.db_session, model_class=self.model,
-            filters=self.filters, actions=self.actions,
+            db_session=self.db_session,
+            model_class=self.model,
+            filters=self.filters,
         )
 
     @cached_property
