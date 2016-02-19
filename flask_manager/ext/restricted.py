@@ -6,6 +6,8 @@ class RestrictedIndex(Index):
     decorators = [login_required]
 
     def endpoints(self):
+        if current_user.is_superuser():
+            return super().endpoints()
         user_roles = current_user.get_roles()
         endpoints = super().endpoints()
         return self._filter(endpoints, user_roles)
@@ -24,6 +26,8 @@ class RestrictedCrudMixin:
     decorators = [login_required]
 
     def get_roles(self):
+        if current_user.is_superuser():
+            return super().get_roles()
         user_roles = current_user.get_roles()
         roles = super().get_roles()
         return {
