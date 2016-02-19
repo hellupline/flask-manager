@@ -1,13 +1,12 @@
-from wtforms import form as form_, fields as fields_
+from wtforms import form as form_, fields as fields_, validators
 from flask import Flask
 from flask_manager import (
     controller as controller_,
     crud as crud_,
+    components as components_,
     display_rules as display_rules_
 )
 
-
-# XXX Do Actions example
 
 FIELD_NAMES = ('integer', 'string', 'boolean')
 app = Flask(__name__)
@@ -60,7 +59,7 @@ class FieldFilter(controller_.FieldFilter):
 
     def get_choices(self):
         return [
-            (item[self.field], str(item[self.field]).title())
+            (item.get(self.field), str(item.get(self.field)).title())
             for item in data_storage.items.values()
         ]
 
@@ -94,18 +93,42 @@ class Form(form_.Form):
     boolean = fields_.BooleanField('Boolean')
 
 
+class Form2(form_.Form):
+    integer = fields_.IntegerField('Integer', validators=[
+        validators.Required()
+    ])
+    string = fields_.StringField('String', validators=[
+        validators.Required()
+    ])
+    boolean = fields_.BooleanField('Boolean')
+
+
+class UpdateCustonForm(components_.Update):
+    def get_form(self, *args, **kwargs):
+        return Form2(*args, **kwargs)
+
+
 class Crud(crud_.Crud):
+    components = (
+        components_.List,
+        components_.Create,
+        UpdateCustonForm,
+        components_.Delete,
+    )
     form_class = Form
     controller = Controller(filters={
         'search': SearchFilter(['string']),
         'string': FieldFilter('string'),
         'integer': FieldFilter('integer', coerce=int),
     })
+    actions = {
+        'print': print,
+    }
     display_rules = {
         'list': display_rules_.ColumnSet(FIELD_NAMES),
         'create': display_rules_.FormFieldSet(FIELD_NAMES),
         'read': display_rules_.DataFieldSet(FIELD_NAMES),
-        'update': display_rules_.FormFieldSet(FIELD_NAMES),
+        'update': display_rules_.SimpleForm(),
         'delete': display_rules_.DataFieldSetWithConfirm(FIELD_NAMES),
     }
 
