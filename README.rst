@@ -21,4 +21,4 @@ Examples
 
 Examples can be found in flask_manager/examples/, and you can run then with:
 
-    python -m flask_manager.examples.<example name>
+    python examples/<filename>
