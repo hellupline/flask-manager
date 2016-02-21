@@ -91,7 +91,7 @@ class List(Component):
         order_by = request.args.get('order_by')
         page = int(request.args.get('page', 1))
         items, total = self.crud.controller.get_items(
-            page, order_by, filters=request.args)
+            page=page, order_by=order_by, filters=request.args)
         filter_form = self.crud.controller.get_filter_form()(request.args)
         action_form = self.crud.get_action_form()()
         return {
