@@ -90,22 +90,33 @@ class List(Component):
     def get(self):
         order_by = request.args.get('order_by')
         page = int(request.args.get('page', 1))
+
+        filter_form = self.crud.controller.get_filter_form()
+        action_form = self.crud.get_action_form()
+        url_generator = partial(
+            url_for, request.url_rule.endpoint, **request.args)
+
         items, total = self.crud.controller.get_items(
             page=page, order_by=order_by, filters=request.args)
-        filter_form = self.crud.controller.get_filter_form()(request.args)
-        action_form = self.crud.get_action_form()()
+        if self.crud.controller.per_page == 0:
+            pages = 0
+        else:
+            pages = ceil(total/self.crud.controller.per_page)
         return {
-            'show_filter_form': self.crud.controller.filters is not None,
-            'show_action_form': self.crud.actions is not None,
-            'filter_form': filter_form,
-            'action_form': action_form,
-            'order_by': order_by,
-            'url_generator': partial(
-                url_for, request.url_rule.endpoint, **request.args),
+            'forms': {
+                'filter': {'show': bool(self.crud.controller.filters),
+                           'form': filter_form(request.args)},
+                'action': {'show': bool(self.crud.actions),
+                           'form': action_form()},
+            },
+            'pagination': {
+                'order_by': order_by,
+                'page': page,
+                'total': total,
+                'pages': pages,
+                'url_generator': url_generator,
+            },
             'items': items,
-            'total': total,
-            'page': page,
-            'pages': ceil(total/self.crud.controller.per_page),
         }
 
     def post(self):

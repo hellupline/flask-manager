@@ -37,23 +37,19 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro filter_widget() %}
-    <div class="large-5 large-offset-1 column">
-        {% if 'search' in filter_form %}
-            {{ filter_form.search(class='left', style='width: 300px; height: 33px;') }}
-        {% endif %}
-        {% call Utils.dropdown(name='Filter by', right=True) %}
-            {{ dropdown_form(filter_form, skip=['search']) }}
-        {% endcall %}
-    </div>
+{% macro filter_widget(form) %}
+    {% if 'search' in form %}
+        {{ form.search(class='left', style='width: 300px; height: 33px;') }}
+    {% endif %}
+    {% call Utils.dropdown(name='Filter by', right=True) %}
+        {{ dropdown_form(form, skip=['search']) }}
+    {% endcall %}
 {% endmacro %}
 
-{% macro action_widget() %}
-    <div class="large-2 column">
+{% macro action_widget(form) %}
         {% call Utils.dropdown(name='With selected') %}
-            {{ dropdown_form(action_form, skip=['ids']) }}
+            {{ dropdown_form(form, skip=['ids']) }}
         {% endcall %}
-    </div>
 {% endmacro %}
 
 
@@ -63,20 +59,24 @@
         <div class="large-4 column">
             {{ Roles.buttons_create(roles) }}
         </div>
-        {% if show_action_form %}
-            {{ action_widget() }}
-        {% endif %}
-        {% if show_filter_form %}
-            {% call Form.render_form(method='GET') %}
-                {{ filter_widget() }}
-                {{ hidden_form_fields(filter_form, skip=['search']) }}
-            {% endcall %}
-        {% endif %}
+        <div class="large-2 column">
+            {% if forms['action']['show'] %}
+                {{ action_widget(forms['action']['form']) }}
+            {% endif %}
+        </div>
+        <div class="large-5 large-offset-1 column">
+            {% if forms['filter']['show'] %}
+                {% call Form.render_form(method='GET') %}
+                    {{ hidden_form_fields(forms['filter']['form'], skip=['search']) }}
+                    {{ filter_widget(forms['filter']) }}
+                {% endcall %}
+            {% endif %}
+        </div>
     </div>
     <hr />
     <div class="row">
         <div class="large-11 column large-centered">
-            {{ Pagination.render(page, pages, total, url_generator) }}
+            {{ Pagination.render(page=pagination['page'], pages=pagination['pages'], total=pagination['total'], url_generator=pagination['url_generator']) }}
         </div>
     </div>
     <div class="row">
@@ -84,7 +84,7 @@
             {{ Flashed.render() }}
             {% call Form.render_form() %}
                 {{ hidden_form_fields(action_form, skip=['ids']) }}
-                {% call Table.render_table(display_rules.columns, url_generator=url_generator, current=order_by) %}
+                {% call Table.render_table(display_rules.columns, url_generator=pagination['url_generator'], current=pagination['order_by']) %}
                     {% for item in items %}
                         {% call Table.render_row(item, roles=roles) %}
                             {{ display_rules(item) }}
@@ -96,7 +96,7 @@
     </div>
     <div class="row">
         <div class="large-11 column large-centered">
-            {{ Pagination.render(page, pages, total, url_generator) }}
+            {{ Pagination.render(page=pagination['page'], pages=pagination['pages'], total=pagination['total'], url_generator=pagination['url_generator']) }}
         </div>
     </div>
 {% endblock %}
