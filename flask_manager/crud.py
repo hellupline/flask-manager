@@ -214,10 +214,8 @@ class Crud(Tree):
     decorators = ()
     display_rules = {}
     actions = {}
+    form_class = None
     controller = None
-
-    def __init__(self, name=None, url=None):
-        super().__init__(name=name, url=url)
 
     def all_endpoints(self):
         for component in self.components:

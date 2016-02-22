@@ -24,7 +24,11 @@ class SQLAlchemyCrud(crud.Crud):
     model = None
     filters = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, db_session=None, model=None, **kwargs):
+        if db_session is not None:
+            self.db_session = db_session
+        if model is not None:
+            self.model = model
         self.name = get_model_name(self.model)
         super().__init__(*args, **kwargs)
 

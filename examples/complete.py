@@ -9,7 +9,6 @@ from flask_manager import (
 
 
 FIELD_NAMES = ('integer', 'string', 'boolean')
-app = Flask(__name__)
 
 
 class MagicDict(dict):
@@ -146,6 +145,7 @@ def main():
             Crud(name='SubNode - 1'),
         ])
     ])
+    app = Flask(__name__)
     app.register_blueprint(tree.create_blueprint())
     app.config['SECRET_KEY'] = 'super-secret'
     app.run(debug=True)
