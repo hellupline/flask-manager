@@ -11,7 +11,12 @@
 {% macro page_widget(pagination) %}
     <div class="row">
         <div class="large-11 column large-centered">
-            {{ Pagination.render(page=pagination['page'], pages=pagination['pages'], total=pagination['total'], url_generator=pagination['url_generator']) }}
+            {{ Pagination.render(
+                page=pagination['page'],
+                pages=pagination['pages'],
+                total=pagination['total'],
+                url_generator=pagination['url_generator']
+            ) }}
         </div>
     </div>
 {% endmacro %}
@@ -20,8 +25,7 @@
     {% for value, name in field.choices %}
         <li>
             <a class="input-select-link {% if field.data == value %}active{% endif %}"
-                    data-field="{{ field.id }}"
-                    data-value="{{ value }}">
+                    data-field="{{ field.id }}" data-value="{{ value }}">
                 {{ name or 'All' }}
             </a>
         </li>
@@ -33,7 +37,9 @@
         {% if not loop.first %}
             <hr class="dropdown-menu-line" />
         {% endif %}
-        <strong>{{ field.name|title }}</strong>
+        <strong>
+            {{ field.name|title }}
+        </strong>
         <ul class="dropdown-menu-link">
             {{ select_as_links(field) }}
         </ul>
@@ -46,21 +52,27 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro filter_widget(form) %}
-    {% if 'search' in form %}
-        {{ form.search(class='left', style='width: 300px; height: 33px;') }}
-    {% endif %}
-    {% call Utils.dropdown(name='Filter by', right=True) %}
-        {{ dropdown_form(form, skip=['search']) }}
-    {% endcall %}
-{% endmacro %}
-
-{% macro action_widget(form) %}
+{% macro action_widget(form, show) %}
+    {% if show %}
         {% call Utils.dropdown(name='With selected') %}
             {{ dropdown_form(form, skip=['ids']) }}
         {% endcall %}
+    {% endif %}
 {% endmacro %}
 
+{% macro filter_widget(form, show) %}
+    {% if show %}
+        {% call Form.render_form(method='GET') %}
+            {{ hidden_form_fields(forms['filter']['form'], skip=['search']) }}
+            {% if 'search' in form %}
+                {{ form.search(class='left', style='width: 300px; height: 33px;') }}
+            {% endif %}
+            {% call Utils.dropdown(name='Filter by', right=True) %}
+                {{ dropdown_form(form, skip=['search']) }}
+            {% endcall %}
+        {% endcall %}
+    {% endif %}
+{% endmacro %}
 
 {# Body #}
 {% block content %}
@@ -69,17 +81,10 @@
             {{ Roles.buttons_create(roles) }}
         </div>
         <div class="large-2 column">
-            {% if forms['action']['show'] %}
-                {{ action_widget(forms['action']['form']) }}
-            {% endif %}
+            {{ action_widget(**forms['action']) }}
         </div>
         <div class="large-5 large-offset-1 column">
-            {% if forms['filter']['show'] %}
-                {% call Form.render_form(method='GET') %}
-                    {{ hidden_form_fields(forms['filter']['form'], skip=['search']) }}
-                    {{ filter_widget(forms['filter']['form']) }}
-                {% endcall %}
-            {% endif %}
+            {{ filter_widget(**forms['action']) }}
         </div>
     </div>
     <hr />
