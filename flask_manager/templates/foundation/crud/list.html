@@ -8,6 +8,14 @@
 {% import 'crud/macros/form.html' as Form %}
 
 {# Macros #}
+{% macro page_widget(pagination) %}
+    <div class="row">
+        <div class="large-11 column large-centered">
+            {{ Pagination.render(page=pagination['page'], pages=pagination['pages'], total=pagination['total'], url_generator=pagination['url_generator']) }}
+        </div>
+    </div>
+{% endmacro %}
+
 {% macro select_as_links(field) %}
     {% for value, name in field.choices %}
         <li>
@@ -26,7 +34,8 @@
             <hr class="dropdown-menu-line" />
         {% endif %}
         <strong>{{ field.name|title }}</strong>
-        <ul class="dropdown-menu-link"> {{ select_as_links(field) }}
+        <ul class="dropdown-menu-link">
+            {{ select_as_links(field) }}
         </ul>
     {% endfor %}
 {% endmacro %}
@@ -68,22 +77,18 @@
             {% if forms['filter']['show'] %}
                 {% call Form.render_form(method='GET') %}
                     {{ hidden_form_fields(forms['filter']['form'], skip=['search']) }}
-                    {{ filter_widget(forms['filter']) }}
+                    {{ filter_widget(forms['filter']['form']) }}
                 {% endcall %}
             {% endif %}
         </div>
     </div>
     <hr />
-    <div class="row">
-        <div class="large-11 column large-centered">
-            {{ Pagination.render(page=pagination['page'], pages=pagination['pages'], total=pagination['total'], url_generator=pagination['url_generator']) }}
-        </div>
-    </div>
+    {{ page_widget(pagination) }}
     <div class="row">
         <div class="large-12 column">
             {{ Flashed.render() }}
             {% call Form.render_form() %}
-                {{ hidden_form_fields(action_form, skip=['ids']) }}
+                {{ hidden_form_fields(forms['action']['form'], skip=['ids']) }}
                 {% call Table.render_table(display_rules.columns, url_generator=pagination['url_generator'], current=pagination['order_by']) %}
                     {% for item in items %}
                         {% call Table.render_row(item, roles=roles) %}
@@ -94,9 +99,5 @@
             {% endcall %}
         </div>
     </div>
-    <div class="row">
-        <div class="large-11 column large-centered">
-            {{ Pagination.render(page=pagination['page'], pages=pagination['pages'], total=pagination['total'], url_generator=pagination['url_generator']) }}
-        </div>
-    </div>
+    {{ page_widget(pagination) }}
 {% endblock %}
