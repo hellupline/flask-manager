@@ -72,7 +72,7 @@ class View(views.View):
 
     def get_template_name(self):
         """Return a tuple of template names for ``render_template``."""
-        return ('crud/{}.html'.format(self.view_name), ) + self.template_name
+        return ('crud/{}.html'.format(self.view_name), *self.template_name)
 
     def render_response(self, context):
         """Render the context to a response.

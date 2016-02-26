@@ -8,7 +8,7 @@ class SearchFilter(controller.SearchFilter):
         self.columns = columns
         self.join_tables = join_tables
 
-    def filter(self, query, value):
+    def filter(self, value, query):
         clauses = [column.contains(value) for column in self.columns]
         return query.filter(or_(*clauses))
 
@@ -21,7 +21,7 @@ class FieldFilter(controller.FieldFilter):
         self.column = column
         self.join_tables = join_tables
 
-    def filter(self, query, value):
+    def filter(self, value, query):
         return query.filter(self.column == value)
 
     def get_choices(self):

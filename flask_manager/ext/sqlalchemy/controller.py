@@ -1,7 +1,9 @@
 from contextlib import contextmanager
-from sqlalchemy import func
+from cached_property import cached_property
+from wtforms_alchemy import ModelForm
+import sqlalchemy as sa
 
-from flask_manager.controller import Controller
+from flask_manager import controller, display_rules as display_rules_
 
 
 @contextmanager
@@ -15,35 +17,85 @@ def transaction(db_session):
         raise
 
 
-class SQLAlchemyController(Controller):
-    def __init__(self, model_class, db_session=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for filter_ in self.filters.values():
-            filter_.db_session = db_session
+def get_model_name(model_class):
+    return sa.inspect(model_class).entity.__name__
+
+
+def get_columns(model_class):
+    columns = sa.inspect(model_class).columns
+    return [
+        key for key, column in columns.items()
+        if not (column.primary_key or column.foreign_keys)
+    ]
+
+
+class SQLAlchemyController(controller.Controller):
+    extra_display_rules = {}
+    db_session = None
+    model_class = None
+
+    def __init__(self, *args, db_session=None, model_class=None, **kwargs):
         if db_session is not None:
             self.db_session = db_session
-        self.model_class = model_class
+        if model_class is not None:
+            self.model_class = model_class
+        for filter_ in self.filters.values():
+            filter_.db_session = self.db_session
+        self.name = get_model_name(self.model_class)
+        super().__init__(*args, **kwargs)
 
+    # {{{ Generated from model_class
+    @cached_property
+    def form_class(self):
+        class Form(ModelForm):
+            @classmethod
+            def get_session(cls):
+                return self.db_session
+
+            class Meta:
+                model = self.model_class
+        return Form
+
+    @cached_property
+    def display_rules(self):
+        fields = get_columns(self.model_class)
+        return {
+            'list': display_rules_.ColumnSet(fields),
+            'create': display_rules_.SimpleForm(),
+            'read': display_rules_.DataFieldSet(fields),
+            'update': display_rules_.SimpleForm(),
+            'delete': display_rules_.DataFieldSetWithConfirm(fields),
+            **{
+                key: self.extra_display_rules['form']
+                for key in ('create', 'update')
+                if 'form' in self.extra_display_rules
+            },
+            **self.extra_display_rules,
+        }
+    # }}}
+
+    # {{{ Helpers
     def get_query(self):
         return self.db_session.query(self.model_class)
 
     def new(self):
+        # pylint: disable=not-callable
         return self.model_class()
 
-    def save(self, model):
+    def save(self, item):
         with transaction(self.db_session) as session:
-            session.add(model)
-        return model
+            session.add(item)
+        return item
 
-    def delete(self, model):
+    def delete(self, item):
         with transaction(self.db_session) as session:
-            session.delete(model)
+            session.delete(item)
 
     def count(self, query):
         # sqlalchemy query.count() uses a generic subquery count, which
         # is slow, this one only replace the selected columns with a
         # COUNT(*)
-        stmt = query.statement.with_only_columns([func.count()])
+        stmt = query.statement.with_only_columns([sa.func.count()])
         return self.db_session.execute(stmt).scalar()
 
     def _get_field(self, name):
@@ -56,11 +108,13 @@ class SQLAlchemyController(Controller):
         for filter_, value in self.get_filters(filters):
             if filter_.join_tables is not None:
                 join_tables |= set(filter_.join_tables)
-            query = filter_.filter(query, value)
+            query = filter_.filter(value, query)
         if join_tables:
             query = query.join(*join_tables)
         return query
+    # }}}
 
+    # {{{ Controller Interface
     def get_items(self, page=1, order_by=None, filters=None):
         """
         Fetch database for items matching.
@@ -100,3 +154,4 @@ class SQLAlchemyController(Controller):
 
     def delete_item(self, item):
         return self.delete(item)
+    # }}}

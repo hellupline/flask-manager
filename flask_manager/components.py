@@ -13,19 +13,19 @@ class Component(views.View):
     role = None
     url = None
 
-    def __init__(self, crud, *args, **kwargs):
+    def __init__(self, controller, *args, **kwargs):
         """
         Args:
-            crud (Crud): ``Crud`` parent.
+            controller (Controller): ``controller`` parent.
         """
-        self.crud = crud
+        self.controller = controller
         super().__init__(*args, **kwargs)
 
     def get_success_url(self, params=None, item=None):
         if params is None:
             return url_for(self.success_url)
 
-        roles = self.crud.get_roles()
+        roles = self.controller.get_roles()
         if '_add_another' in params:
             return url_for(
                 '.{}'.format(roles[Roles.create.name][0]))
@@ -36,7 +36,7 @@ class Component(views.View):
 
     # {{{ Permissions
     def is_allowed(self):
-        roles = self.crud.get_roles()
+        roles = self.controller.get_roles()
         allowed = roles.get(self.role.name, ())
         return self.view_name in allowed
     # }}}
@@ -49,9 +49,9 @@ class Component(views.View):
 
     def context(self, external_ctx=None):
         ctx = {
-            'display_rules': self.crud.display_rules.get(self.role.name),
-            'tree': self.crud.endpoints_tree(),
-            'roles': self.crud.get_roles(),
+            'display_rules': self.controller.display_rules.get(self.role.name),
+            'tree': self.controller.endpoints_tree(),
+            'roles': self.controller.get_roles(),
             'success_url': self.success_url,
         }
         if external_ctx is not None:
@@ -64,10 +64,10 @@ class Component(views.View):
         return CombinedMultiDict([request.form, request.files])
 
     def get_form(self, *args, **kwargs):
-        return self.crud.form_class(*args, **kwargs)
+        return self.controller.form_class(*args, **kwargs)
 
     def get_item(self, pk):
-        item = self.crud.controller.get_item(pk)
+        item = self.controller.get_item(pk)
         if item is None:
             abort(404)
         return item
@@ -91,22 +91,22 @@ class List(Component):
         order_by = request.args.get('order_by')
         page = int(request.args.get('page', 1))
 
-        filter_form = self.crud.controller.get_filter_form()
-        action_form = self.crud.get_action_form()
+        filter_form = self.controller.get_filter_form()
+        action_form = self.controller.get_action_form()
         url_generator = partial(
             url_for, request.url_rule.endpoint, **request.args)
 
-        items, total = self.crud.controller.get_items(
+        items, total = self.controller.get_items(
             page=page, order_by=order_by, filters=request.args)
-        if self.crud.controller.per_page == 0:
+        if self.controller.per_page == 0:
             pages = 0
         else:
-            pages = ceil(total/self.crud.controller.per_page)
+            pages = ceil(total/self.controller.per_page)
         return {
             'forms': {
-                'filter': {'show': bool(self.crud.controller.filters),
+                'filter': {'show': bool(self.controller.filters),
                            'form': filter_form(request.args)},
-                'action': {'show': bool(self.crud.actions),
+                'action': {'show': bool(self.controller.actions),
                            'form': action_form()},
             },
             'pagination': {
@@ -120,7 +120,7 @@ class List(Component):
         }
 
     def post(self):
-        self.crud.execute_action(self.get_form_data())
+        self.controller.execute_action(self.get_form_data())
         return self.get_success_url(), {}
 
 
@@ -140,7 +140,7 @@ class Create(Component):
         success_url = None
         if form.validate():
             try:
-                item = self.crud.controller.create_item(form)
+                item = self.controller.create_item(form)
             except Exception as e:  # pylint: disable=broad-except
                 flash(str(e))
             else:
@@ -175,7 +175,7 @@ class Update(Component):
         success_url = None
         if form.validate():
             try:
-                self.crud.controller.update_item(item, form)
+                self.controller.update_item(item, form)
             except Exception as e:  # pylint: disable=broad-except
                 flash(str(e))
             else:
@@ -196,7 +196,7 @@ class Delete(Component):
         item = self.get_item(pk)
         success_url = None
         try:
-            self.crud.controller.delete_item(item)
+            self.controller.delete_item(item)
         except Exception as e:  # pylint: disable=broad-except
             flash(str(e))
         else:
