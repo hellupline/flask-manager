@@ -9,8 +9,9 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_manager import crud as crud_
-from flask_manager.ext.sqlalchemy import crud as sa_crud
+
+from flask_manager import tree as tree_
+from flask_manager.ext.sqlalchemy import controller
 
 
 db = SQLAlchemy()
@@ -38,22 +39,22 @@ class FormB(ModelForm):
         model = ModelB
 
 
-class CrudA(sa_crud.SQLAlchemyCrud):
+class ControllerA(controller.SQLAlchemyController):
     db_session = db.session
-    model = ModelA
+    model_class = ModelA
 
 
-class CrudB(sa_crud.SQLAlchemyCrud):
+class ControllerB(controller.SQLAlchemyController):
     db_session = db.session
-    model = ModelB
+    model_class = ModelB
     form_class = FormB
 
 
 def main():
     # SQLAlchemyCrud support passing model, session through kwargs
-    tree = crud_.Index(name='Example', url='', items=[
-        CrudA(),
-        CrudB(),
+    tree = tree_.Index(name='Example', url='', items=[
+        ControllerA(),
+        ControllerB(),
     ])
     app = Flask(__name__)
 

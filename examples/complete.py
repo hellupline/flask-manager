@@ -2,7 +2,7 @@ from wtforms import form as form_, fields as fields_, validators
 from flask import Flask
 from flask_manager import (
     controller as controller_,
-    crud as crud_,
+    tree as tree_,
     components as components_,
     display_rules as display_rules_
 )
@@ -28,6 +28,27 @@ class DataStorage:
 
 
 data_storage = DataStorage()
+
+
+class Form(form_.Form):
+    integer = fields_.IntegerField('Integer')
+    string = fields_.StringField('String')
+    boolean = fields_.BooleanField('Boolean')
+
+
+class Form2(form_.Form):
+    integer = fields_.IntegerField('Integer', validators=[
+        validators.Required()
+    ])
+    string = fields_.StringField('String', validators=[
+        validators.Required()
+    ])
+    boolean = fields_.BooleanField('Boolean')
+
+
+class UpdateCustonForm(components_.Update):
+    def get_form(self, *args, **kwargs):
+        return Form2(*args, **kwargs)
 
 
 class SearchFilter(controller_.SearchFilter):
@@ -64,6 +85,29 @@ class FieldFilter(controller_.FieldFilter):
 
 
 class Controller(controller_.Controller):
+    components = (
+        components_.List,
+        components_.Create,
+        UpdateCustonForm,
+        components_.Delete,
+    )
+    form_class = Form
+    actions = {
+        'print': print,
+    }
+    filters = {
+        'search': SearchFilter(['string']),
+        'string': FieldFilter('string'),
+        'integer': FieldFilter('integer', coerce=int),
+    }
+    display_rules = {
+        'list': display_rules_.ColumnSet(FIELD_NAMES),
+        'create': display_rules_.FormFieldSet(FIELD_NAMES),
+        'read': display_rules_.DataFieldSet(FIELD_NAMES),
+        'update': display_rules_.SimpleForm(),
+        'delete': display_rules_.DataFieldSetWithConfirm(FIELD_NAMES),
+    }
+
     def get_items(self, page=1, order_by=None, filters=None):
         items = data_storage.items.values()
         for filter_, value in self.get_filters(filters):
@@ -86,52 +130,6 @@ class Controller(controller_.Controller):
         del data_storage.items[int(item.id)]
 
 
-class Form(form_.Form):
-    integer = fields_.IntegerField('Integer')
-    string = fields_.StringField('String')
-    boolean = fields_.BooleanField('Boolean')
-
-
-class Form2(form_.Form):
-    integer = fields_.IntegerField('Integer', validators=[
-        validators.Required()
-    ])
-    string = fields_.StringField('String', validators=[
-        validators.Required()
-    ])
-    boolean = fields_.BooleanField('Boolean')
-
-
-class UpdateCustonForm(components_.Update):
-    def get_form(self, *args, **kwargs):
-        return Form2(*args, **kwargs)
-
-
-class Crud(crud_.Crud):
-    components = (
-        components_.List,
-        components_.Create,
-        UpdateCustonForm,
-        components_.Delete,
-    )
-    form_class = Form
-    controller = Controller(filters={
-        'search': SearchFilter(['string']),
-        'string': FieldFilter('string'),
-        'integer': FieldFilter('integer', coerce=int),
-    })
-    actions = {
-        'print': print,
-    }
-    display_rules = {
-        'list': display_rules_.ColumnSet(FIELD_NAMES),
-        'create': display_rules_.FormFieldSet(FIELD_NAMES),
-        'read': display_rules_.DataFieldSet(FIELD_NAMES),
-        'update': display_rules_.SimpleForm(),
-        'delete': display_rules_.DataFieldSetWithConfirm(FIELD_NAMES),
-    }
-
-
 def main():
     for i in range(10):
         data_storage.insert(MagicDict(
@@ -140,9 +138,9 @@ def main():
         data_storage.insert(MagicDict(
             integer=i, string='other {}'.format(i), boolean=bool(i % 2)))
 
-    tree = crud_.Index('Example', url='', items=[
-        crud_.Tree('Node - 1', items=[
-            Crud(name='SubNode - 1'),
+    tree = tree_.Index('Example', url='', items=[
+        tree_.Tree('Node - 1', items=[
+            Controller(name='SubNode - 1'),
         ])
     ])
     app = Flask(__name__)

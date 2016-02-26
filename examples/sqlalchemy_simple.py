@@ -1,8 +1,9 @@
 import sqlalchemy as sa
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_manager import crud as crud_
-from flask_manager.ext.sqlalchemy import crud as sa_crud
+
+from flask_manager import tree as tree_
+from flask_manager.ext.sqlalchemy import controller
 
 
 db = SQLAlchemy()
@@ -14,17 +15,17 @@ class Model(db.Model):
     name = sa.Column(sa.String(255), nullable=False, index=True)
 
 
-class Crud(sa_crud.SQLAlchemyCrud):
+class Controller(controller.SQLAlchemyController):
     db_session = db.session
-    model = Model
+    model_class = Model
 
 
 def main():
     # SQLAlchemyCrud support passing model, session through kwargs
-    tree = crud_.Index(name='Example', url='', items=[
-        sa_crud.SQLAlchemyCrud(
-            name='Example', db_session=db.session, model=Model),
-        Crud(),
+    tree = tree_.Index(name='Example', url='', items=[
+        controller.SQLAlchemyController(
+            name='Example', db_session=db.session, model_class=Model),
+        Controller(),
     ])
     app = Flask(__name__)
 
