@@ -48,7 +48,7 @@
 
 {% macro hidden_form_fields(form, skip=()) %}
     {% for field in form if field.id not in skip %}
-        {{ field(style='display: none;') }}
+        {{ field(class='hidden', style='display: none;') }}
     {% endfor %}
 {% endmacro %}
 
