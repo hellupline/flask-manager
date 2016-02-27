@@ -49,6 +49,15 @@ class Controller(tree.Tree):
     per_page = 100
     form_class = None
 
+    def __init__(self, *args, **kwargs):
+        attribute_keys = (
+            'components', 'decorators', 'display_rules',
+            'actions', 'filters', 'per_page', 'form_class'
+        )
+        for key in filter(kwargs.__contains__, attribute_keys):
+            setattr(self, key, kwargs.pop(key))
+        super().__init__(*args, **kwargs)
+
     def all_endpoints(self):
         for component in self.components:
             yield self._component_name(component)
