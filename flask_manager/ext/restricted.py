@@ -1,8 +1,22 @@
 from flask_login import current_user, login_required
-from flask_manager import Index
+from flask_manager import tree, controller
 
 
-class RestrictedIndex(Index):
+class RestrictedControllerMixin:
+    decorators = [login_required]
+
+    def get_roles(self):
+        if current_user.is_superuser():
+            return super().get_roles()
+        user_roles = current_user.get_roles()
+        roles = super().get_roles()
+        return {
+            key: list(set(values) & set(user_roles))
+            for key, values in roles.items()
+        }
+
+
+class RestrictedIndex(tree.Index):
     decorators = [login_required]
 
     def endpoints(self):
@@ -20,17 +34,3 @@ class RestrictedIndex(Index):
         children = [self._filter(child, user_roles) for child in children]
         if endpoint is None or endpoint.strip('.') in user_roles:
             return name, endpoint, list(filter(None.__ne__, children))
-
-
-class RestrictedCrudMixin:
-    decorators = [login_required]
-
-    def get_roles(self):
-        if current_user.is_superuser():
-            return super().get_roles()
-        user_roles = current_user.get_roles()
-        roles = super().get_roles()
-        return {
-            key: list(set(values) & set(user_roles))
-            for key, values in roles.items()
-        }
