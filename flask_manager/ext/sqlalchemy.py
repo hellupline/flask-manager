@@ -70,9 +70,12 @@ class SQLAlchemyController(controller.Controller):
             self.db_session = db_session
         if model_class is not None:
             self.model_class = model_class
+
+        if self.name is None:
+            self.name = get_model_name(self.model_class)
+
         for filter_ in self.filters.values():
             filter_.db_session = self.db_session
-        self.name = get_model_name(self.model_class)
         super().__init__(*args, **kwargs)
 
     # {{{ Generated from model_class
