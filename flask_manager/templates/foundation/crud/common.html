@@ -2,4 +2,9 @@
 {% import 'crud/macros/menu.html' as Menu %}
 
 {# Body #}
-{% block menu %} {{ Menu.menu_tree(tree) }} {% endblock menu %}
+{% block menu %}
+    {% call Menu.menu_tree(tree) %}
+        {% block menu_left %}
+        {% endblock %}
+    {% endcall %}
+{% endblock %}
