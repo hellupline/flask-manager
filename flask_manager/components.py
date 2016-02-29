@@ -95,6 +95,8 @@ class List(Component):
         action_form = self.controller.get_action_form()
         url_generator = partial(
             url_for, request.url_rule.endpoint, **request.args)
+        roles = self.controller.get_roles()
+        has_roles = bool(roles['read'] or roles['update'] or roles['delete'])
 
         items, total = self.controller.get_items(
             page=page, order_by=order_by, filters=request.args)
@@ -109,6 +111,7 @@ class List(Component):
                 'action': {'show': bool(self.controller.actions),
                            'form': action_form()},
             },
+            'has_roles': has_roles,
             'pagination': {
                 'order_by': order_by,
                 'page': page,
