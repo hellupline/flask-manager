@@ -11,7 +11,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 from flask_manager import tree as tree_
-from flask_manager.ext.sqlalchemy import controller
+from flask_manager.ext import sqlalchemy
 
 
 db = SQLAlchemy()
@@ -39,12 +39,12 @@ class FormB(ModelForm):
         model = ModelB
 
 
-class ControllerA(controller.SQLAlchemyController):
+class ControllerA(sqlalchemy.SQLAlchemyController):
     db_session = db.session
     model_class = ModelA
 
 
-class ControllerB(controller.SQLAlchemyController):
+class ControllerB(sqlalchemy.SQLAlchemyController):
     db_session = db.session
     model_class = ModelB
     form_class = FormB

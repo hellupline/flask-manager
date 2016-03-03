@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 from flask_manager import tree as tree_
-from flask_manager.ext.sqlalchemy import controller
+from flask_manager.ext import sqlalchemy
 
 
 db = SQLAlchemy()
@@ -15,7 +15,7 @@ class Model(db.Model):
     name = sa.Column(sa.String(255), nullable=False, index=True)
 
 
-class Controller(controller.SQLAlchemyController):
+class Controller(sqlalchemy.SQLAlchemyController):
     db_session = db.session
     model_class = Model
 
@@ -23,7 +23,7 @@ class Controller(controller.SQLAlchemyController):
 def main():
     # SQLAlchemyCrud support passing model, session through kwargs
     tree = tree_.Index(name='Example', url='', items=[
-        controller.SQLAlchemyController(
+        sqlalchemy.SQLAlchemyController(
             name='Example', db_session=db.session, model_class=Model),
         Controller(),
     ])
