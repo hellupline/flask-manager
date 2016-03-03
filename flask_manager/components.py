@@ -96,7 +96,11 @@ class List(Component):
         url_generator = partial(
             url_for, request.url_rule.endpoint, **request.args)
         roles = self.controller.get_roles()
-        has_roles = bool(roles['read'] or roles['update'] or roles['delete'])
+        has_roles = bool(
+            roles.get('read') or
+            roles.get('update') or
+            roles.get('delete')
+        )
 
         items, total = self.controller.get_items(
             page=page, order_by=order_by, filters=request.args)
