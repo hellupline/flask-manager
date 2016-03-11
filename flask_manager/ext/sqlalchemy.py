@@ -167,7 +167,7 @@ class SQLAlchemyController(controller.Controller):
                 items, sliced by page*self.per_page
                 total items without slice
         """
-        start, (page-1)*self.per_page
+        start = (page-1)*self.per_page
         query = self.get_query()
         if order_by is not None:
             query = query.order_by(self._get_field(order_by))
