@@ -1,13 +1,16 @@
 from flask_login import current_user, login_required
-from flask_manager import tree, controller
+from flask_manager import tree
 
 
 class RestrictedControllerMixin:
     decorators = [login_required]
 
     def get_roles(self):
-        if current_user.is_superuser():
-            return super().get_roles()
+        try:
+            if current_user.is_superuser():
+                return super().get_roles()
+        except AttributeError:
+            pass
         user_roles = current_user.get_roles()
         roles = super().get_roles()
         return {
