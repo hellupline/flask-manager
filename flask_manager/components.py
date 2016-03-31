@@ -1,8 +1,9 @@
 from functools import partial
 from math import ceil
 from enum import Enum
+import traceback
 
-from flask import request, abort, url_for, flash
+from flask import request, abort, url_for, flash, current_app
 from werkzeug.datastructures import CombinedMultiDict
 
 from flask_manager import views
@@ -149,6 +150,7 @@ class Create(Component):
             try:
                 item = self.controller.create_item(form)
             except Exception as e:  # pylint: disable=broad-except
+                current_app.logger.error(traceback.format_exc())
                 flash(str(e))
             else:
                 success_url = self.get_success_url(form_data, item)
@@ -184,6 +186,7 @@ class Update(Component):
             try:
                 self.controller.update_item(item, form)
             except Exception as e:  # pylint: disable=broad-except
+                current_app.logger.error(traceback.format_exc())
                 flash(str(e))
             else:
                 success_url = self.get_success_url(self.get_form_data(), item)
@@ -205,6 +208,7 @@ class Delete(Component):
         try:
             self.controller.delete_item(item)
         except Exception as e:  # pylint: disable=broad-except
+            current_app.logger.error(traceback.format_exc())
             flash(str(e))
         else:
             success_url = url_for(self.success_url)
