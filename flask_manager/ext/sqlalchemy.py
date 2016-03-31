@@ -44,7 +44,6 @@ def transaction(db_session):
         db_session.commit()
     except Exception:
         db_session.rollback()
-        db_session.close()
         raise
 
 
