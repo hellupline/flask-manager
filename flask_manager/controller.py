@@ -83,7 +83,7 @@ class Controller(tree.Tree):
         form = self.get_action_form()(params)
         if not form.validate():
             return False  # Raise Exception ?
-        self.actions[form.action.data](form.ids.data)
+        self.actions[form.action.data](self, form.ids.data)
     # }}}
 
     # {{{ Filter Interface
