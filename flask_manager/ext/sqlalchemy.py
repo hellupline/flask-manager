@@ -7,6 +7,15 @@ import sqlalchemy as sa
 from flask_manager import controller, display_rules as display_rules_
 
 
+def unique(items):
+    done = set()
+    for item in items:
+        if item in done:
+            continue
+        done.add(item)
+        yield item
+
+
 class SearchFilter(controller.SearchFilter):
     def __init__(self, columns, join_tables=None):
         self.columns = columns
@@ -137,13 +146,13 @@ class SQLAlchemyController(controller.Controller):
         return getattr(self.model_class, name)
 
     def _filter(self, query, filters):
-        join_tables = set()
+        join_tables = []
         for filter_, value in self.get_filters(filters):
             if filter_.join_tables is not None:
-                join_tables |= set(filter_.join_tables)
+                join_tables.extend(filter_.join_tables)
             query = filter_.filter(value, query)
         if join_tables:
-            query = query.join(*join_tables)
+            query = query.join(*list(unique(join_tables)))
         return query
     # }}}
 
