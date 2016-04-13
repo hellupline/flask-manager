@@ -166,7 +166,6 @@ class Index(Tree):
             static_folder=static_folder,
             static_url_path=static_url_path,
         )
-        blueprint.add_app_template_global('generate_key', utils.generate_key)
         self.set_urls(blueprint)
         return blueprint
 

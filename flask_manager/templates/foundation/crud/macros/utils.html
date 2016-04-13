@@ -1,5 +1,5 @@
 {% macro dropdown(name, right=false) %}
-    {% set key=generate_key() %}
+    {% set key=_get_key() %}
     <a class="button tiny radius {% if right %}right{% endif %}" data-dropdown="panel-{{ key }}"
             aria-controls="panel-{{ key }}"
             aria-expanded="false">
@@ -22,7 +22,7 @@
 {% endmacro %}
 
 {% macro foldable(__, text, expanded=true) %}
-    {% set key=generate_key() %}
+    {% set key=_get_key() %}
     <ul class="accordion" role="tablist" data-accordion data-allow-all-closed="true">
         <li class="accordion-navigation">
             <a href="#panel-{{ key }}" id="panel-{{ key }}-header" role="tab">
@@ -34,3 +34,9 @@
         </li>
     </ul>
 {% endmacro %}
+
+{% macro _get_key(size=10, src='abcdefghijklmnopqrstuvwxyz') -%}
+    {%- for i in range(size) -%}
+        {{ src|random }}
+    {%- endfor -%}
+{%- endmacro %}
