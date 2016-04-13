@@ -1,4 +1,6 @@
 import re
+import random
+import string
 
 
 first_cap_re = re.compile('(.)([A-Z][a-z]+)')
@@ -25,3 +27,7 @@ def slugify(value):
     s1 = first_cap_re.sub(r'\1_\2', value)
     s2 = all_cap_re.sub(r'\1_\2', s1)
     return s2.lower().replace(' _', '_').replace(' ', '_')
+
+
+def generate_key(size=10):
+    return ''.join(random.sample(string.ascii_letters, size))
