@@ -147,11 +147,16 @@ class Root(Tree):
         return view
 
     def _get_view(self):
-        url = utils.concat_urls(self.absolute_url)
         name = self._view_name()
-        view = self.view_class.as_view(
-            name, parent=self, view_name=name)
-        return url, name, self._decorate_view(view)
+        view = self._decorate_view(self.view_class.as_view(
+            name, parent=self,
+            view_name=name,
+        ))
+        return {
+            'rule': utils.concat_urls(self.absolute_url),
+            'endpoint': name,
+            'view_func': view,
+        }
     # }}}
 
     # {{{ Blueprint
@@ -170,13 +175,11 @@ class Root(Tree):
         return blueprint
 
     def set_urls(self, blueprint):
-        # remove parent url
+        # remove base url
         absolute_url_len = len(utils.concat_urls(self.absolute_url))
-        for url, name, view in self.get_nodes():
+        for url_rule in self.get_nodes():
+            url = url_rule.pop('rule')
             url = url[absolute_url_len:]
-            blueprint.add_url_rule(
-                url, name.lower(), view,
-                methods=['GET', 'POST']
-            )
+            blueprint.add_url_rule(url, **url_rule, methods=['GET', 'POST'])
         return blueprint
     # }}}

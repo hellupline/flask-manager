@@ -69,7 +69,7 @@ class Controller(tree.Tree):
     def get_nodes(self):
         endpoint = '.{}'.format(self._main_component_name())
         for component in self.components:
-            yield self._get_view(component, endpoint)
+            yield from self._get_view(component, endpoint)
 
     # {{{ Actions Interface
     def get_action_form(self):
@@ -131,11 +131,19 @@ class Controller(tree.Tree):
         return view
 
     def _get_view(self, component, endpoint):
-        url = utils.concat_urls(self.absolute_url, component.url)
         name = self._component_name(component)
-        view = component.as_view(
-            name, controller=self, view_name=name, success_url=endpoint)
-        return url, name, self._decorate_view(view)
+        view = self._decorate_view(component.as_view(
+            name, controller=self,
+            view_name=name,
+            success_url=endpoint
+        ))
+        for url, defaults in component.urls:
+            yield {
+                'rule': utils.concat_urls(self.absolute_url, url),
+                'endpoint': name,
+                'view_func': view,
+                'defaults': defaults,
+            }
     # }}}
 
     # {{{ Controller Interface
@@ -173,6 +181,8 @@ class ViewNode(tree.Tree):
         return '.{}'.format(self.absolute_name)
 
     def get_nodes(self):
-        url = utils.concat_urls(self.absolute_url)
-        name = self.absolute_name
-        yield url, name, self.view_func
+        yield {
+            'rule': utils.concat_urls(self.absolute_url),
+            'endpoint': self.absolute_name,
+            'view_func': self.view_func,
+        }

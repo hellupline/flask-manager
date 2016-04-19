@@ -18,7 +18,7 @@ class View(views.View):
             self.success_url = success_url
         self.view_name = view_name
 
-    def dispatch_request(self, *args, **kwargs):
+    def dispatch_request(self, render='html', *args, **kwargs):
         """Dispatch the request.
         Its the actual ``view`` flask will use.
         """

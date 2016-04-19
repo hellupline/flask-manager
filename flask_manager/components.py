@@ -12,7 +12,7 @@ from flask_manager import views
 # pylint: disable=abstract-method
 class Component(views.View):
     role = None
-    url = None
+    urls = None
 
     def __init__(self, controller, *args, **kwargs):
         """
@@ -22,6 +22,7 @@ class Component(views.View):
         self.controller = controller
         super().__init__(*args, **kwargs)
 
+    # {{{ Components
     def get_success_url(self, params=None, item=None):
         if params is None:
             return url_for(self.success_url)
@@ -32,19 +33,13 @@ class Component(views.View):
         elif '_add_another' in params:
             return url_for('.{}'.format(name))
         return url_for(self.success_url)
-
-    # {{{ Permissions
-    def is_allowed(self):
-        roles = self.controller.get_roles()
-        allowed = roles.get(self.role.name, ())
-        return self.view_name in allowed
     # }}}
 
     # {{{ View
-    def dispatch_request(self, *args, **kwargs):
+    def dispatch_request(self, render='html', *args, **kwargs):
         if not self.is_allowed():
             abort(401)
-        return super().dispatch_request(*args, **kwargs)
+        return super().dispatch_request(render, *args, **kwargs)
 
     def context(self, external_ctx=None):
         return super().context({
@@ -54,6 +49,13 @@ class Component(views.View):
             'success_url': self.success_url,
             **(external_ctx or {})
         })
+    # }}}
+
+    # {{{ Permissions
+    def is_allowed(self):
+        roles = self.controller.get_roles()
+        allowed = roles.get(self.role.name, ())
+        return self.view_name in allowed
     # }}}
 
     # {{{ Convenience
@@ -81,7 +83,10 @@ class Roles(Enum):
 
 class Index(Component):
     role = Roles.index
-    url = 'index'
+    urls = (
+        ('index.<any(html,json,tsv):render>', {}),
+        ('index', {'render': 'html'})
+    )
     template_name = ('crud/index.html', )
 
     def get(self):
@@ -130,7 +135,7 @@ class Index(Component):
 
 class Create(Component):
     role = Roles.create
-    url = 'create'
+    urls = (('create', {}),)
     template_name = ('crud/form.html', 'crud/create.html')
 
     def get(self):
@@ -155,7 +160,7 @@ class Create(Component):
 
 class Read(Component):
     role = Roles.read
-    url = 'read/<pk>'
+    urls = (('read/<pk>', {}),)
     template_name = ('crud/read.html', )
 
     def get(self, pk):
@@ -165,7 +170,7 @@ class Read(Component):
 
 class Update(Component):
     role = Roles.update
-    url = 'update/<pk>'
+    urls = (('update/<pk>', {}),)
     template_name = ('crud/form.html', 'crud/update.html')
 
     def get(self, pk):
@@ -191,7 +196,7 @@ class Update(Component):
 
 class Delete(Component):
     role = Roles.delete
-    url = 'delete/<pk>'
+    urls = (('delete/<pk>', {}),)
     template_name = ('crud/delete.html', 'crud/read.html')
 
     def get(self, pk):
