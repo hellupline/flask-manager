@@ -17,7 +17,7 @@ def concat_urls(*urls):
     joined_urls = '/'.join(normalized_urls)
     if not joined_urls:
         return '/'
-    return '/{}/'.format(joined_urls)
+    return '/{}'.format(joined_urls)
 
 
 def slugify(value):

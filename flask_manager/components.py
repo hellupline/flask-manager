@@ -135,7 +135,10 @@ class Index(Component):
 
 class Create(Component):
     role = Roles.create
-    urls = (('create', {}),)
+    urls = (
+        ('create.<any(html,json,tsv):render>', {}),
+        ('create', {'render': 'html'}),
+    )
     template_name = ('crud/form.html', 'crud/create.html')
 
     def get(self):
@@ -160,7 +163,10 @@ class Create(Component):
 
 class Read(Component):
     role = Roles.read
-    urls = (('read/<pk>', {}),)
+    urls = (
+        ('read/<pk>.<any(html,json,tsv):render>', {}),
+        ('read/<pk>', {'render': 'html'}),
+    )
     template_name = ('crud/read.html', )
 
     def get(self, pk):
@@ -170,7 +176,10 @@ class Read(Component):
 
 class Update(Component):
     role = Roles.update
-    urls = (('update/<pk>', {}),)
+    urls = (
+        ('update/<pk>.<any(html,json,tsv):render>', {}),
+        ('update/<pk>', {'render': 'html'}),
+    )
     template_name = ('crud/form.html', 'crud/update.html')
 
     def get(self, pk):
@@ -196,7 +205,10 @@ class Update(Component):
 
 class Delete(Component):
     role = Roles.delete
-    urls = (('delete/<pk>', {}),)
+    urls = (
+        ('delete/<pk>.<any(html,json,tsv):render>', {}),
+        ('delete/<pk>', {'render': 'html'}),
+    )
     template_name = ('crud/delete.html', 'crud/read.html')
 
     def get(self, pk):
