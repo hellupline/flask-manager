@@ -36,7 +36,7 @@ class FieldFilter(Filter):
 
 class Controller(tree.Tree):
     components = (
-        components.List,
+        components.Index,
         components.Create,
         components.Read,
         components.Update,
@@ -115,7 +115,7 @@ class Controller(tree.Tree):
     def _main_component_name(self):
         # warn if no components.List Component, use a components.Create ?
         for component in self.components:
-            if component.role is components.Roles.list:
+            if component.role is components.Roles.index:
                 return self._component_name(component)
 
     def _component_name(self, component):

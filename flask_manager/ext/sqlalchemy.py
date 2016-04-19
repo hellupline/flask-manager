@@ -102,7 +102,7 @@ class SQLAlchemyController(controller.Controller):
     def display_rules(self):
         fields = get_columns(self.model_class)
         return {
-            'list': display_rules_.ColumnSet(fields),
+            'index': display_rules_.ColumnSet(fields),
             'create': display_rules_.SimpleForm(),
             'read': display_rules_.DataFieldSet(fields),
             'update': display_rules_.SimpleForm(),

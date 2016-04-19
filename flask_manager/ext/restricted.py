@@ -19,7 +19,7 @@ class RestrictedControllerMixin:
         }
 
 
-class RestrictedIndex(tree.Index):
+class RestrictedRoot(tree.Root):
     decorators = [login_required]
 
     def endpoints(self):

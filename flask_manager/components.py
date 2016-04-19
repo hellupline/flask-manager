@@ -76,17 +76,17 @@ class Component(views.View):
 
 
 class Roles(Enum):
-    list = 1
+    index = 1
     create = 2
     read = 3
     update = 4
     delete = 5
 
 
-class List(Component):
-    role = Roles.list
-    url = ''
-    template_name = ('crud/list.html', )
+class Index(Component):
+    role = Roles.index
+    url = 'index'
+    template_name = ('crud/index.html', )
 
     def get(self):
         order_by = request.args.get('order_by')

@@ -123,7 +123,7 @@ class Tree:
     # }}} Blueprint interface
 
 
-class Index(Tree):
+class Root(Tree):
     view_class = views.LandingView
     decorators = ()
 
