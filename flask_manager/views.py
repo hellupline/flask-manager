@@ -65,10 +65,7 @@ class View(views.View):
             (dict): The base context merged with ``external_ctx``.
 
         """
-        ctx = {}
-        if external_ctx is not None:
-            ctx.update(external_ctx)
-        return ctx
+        return {**(external_ctx or None)}
 
     def get_template_name(self):
         """Return a tuple of template names for ``render_template``."""

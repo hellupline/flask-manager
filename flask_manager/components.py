@@ -25,14 +25,12 @@ class Component(views.View):
     def get_success_url(self, params=None, item=None):
         if params is None:
             return url_for(self.success_url)
-
         roles = self.controller.get_roles()
-        if '_add_another' in params:
-            return url_for(
-                '.{}'.format(roles[Roles.create.name][0]))
-        elif '_continue_editing' in params and item is not None:
-            return url_for(
-                '.{}'.format(roles[Roles.update.name][0]), pk=str(item.id))
+        name = roles[Roles.create.name][0]
+        if '_continue_editing' in params and item is not None:
+            return url_for('.{}'.format(name), pk=str(item.id))
+        elif '_add_another' in params:
+            return url_for('.{}'.format(name))
         return url_for(self.success_url)
 
     # {{{ Permissions
@@ -49,29 +47,27 @@ class Component(views.View):
         return super().dispatch_request(*args, **kwargs)
 
     def context(self, external_ctx=None):
-        ctx = {
+        return super().context({
             'display_rules': self.controller.display_rules.get(self.role.name),
             'tree': self.controller.endpoints_tree(),
             'roles': self.controller.get_roles(),
             'success_url': self.success_url,
-        }
-        if external_ctx is not None:
-            ctx.update(external_ctx)
-        return super().context(ctx)
+            **(external_ctx or {})
+        })
     # }}}
 
     # {{{ Convenience
-    def get_form_data(self):
-        return CombinedMultiDict([request.form, request.files])
-
-    def get_form(self, *args, **kwargs):
-        return self.controller.form_class(*args, **kwargs)
-
     def get_item(self, pk):
         item = self.controller.get_item(pk)
         if item is None:
             abort(404)
         return item
+
+    def get_form_data(self):
+        return CombinedMultiDict([request.form, request.files])
+
+    def get_form(self, *args, **kwargs):
+        return self.controller.form_class(*args, **kwargs)
     # }}}
 
 
@@ -134,7 +130,7 @@ class Index(Component):
 
 class Create(Component):
     role = Roles.create
-    url = 'create/'
+    url = 'create'
     template_name = ('crud/form.html', 'crud/create.html')
 
     def get(self):
@@ -159,7 +155,7 @@ class Create(Component):
 
 class Read(Component):
     role = Roles.read
-    url = 'read/<pk>/'
+    url = 'read/<pk>'
     template_name = ('crud/read.html', )
 
     def get(self, pk):
@@ -169,7 +165,7 @@ class Read(Component):
 
 class Update(Component):
     role = Roles.update
-    url = 'update/<pk>/'
+    url = 'update/<pk>'
     template_name = ('crud/form.html', 'crud/update.html')
 
     def get(self, pk):
@@ -195,7 +191,7 @@ class Update(Component):
 
 class Delete(Component):
     role = Roles.delete
-    url = 'delete/<pk>/'
+    url = 'delete/<pk>'
     template_name = ('crud/delete.html', 'crud/read.html')
 
     def get(self, pk):
