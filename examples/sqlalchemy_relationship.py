@@ -52,7 +52,7 @@ class ControllerB(sqlalchemy.SQLAlchemyController):
 
 def main():
     # SQLAlchemyCrud support passing model, session through kwargs
-    tree = tree_.Index(name='Example', url='', items=[
+    tree = tree_.Root(name='Example', url='', items=[
         ControllerA(),
         ControllerB(),
     ])

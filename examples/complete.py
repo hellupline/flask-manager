@@ -86,7 +86,7 @@ class FieldFilter(controller_.FieldFilter):
 
 class Controller(controller_.Controller):
     components = (
-        components_.List,
+        components_.Index,
         components_.Create,
         UpdateCustonForm,
         components_.Delete,
@@ -138,7 +138,7 @@ def main():
         data_storage.insert(MagicDict(
             integer=i, string='other {}'.format(i), boolean=bool(i % 2)))
 
-    tree = tree_.Index('Example', url='', items=[
+    tree = tree_.Root('Example', url='', items=[
         tree_.Tree('Node - 1', items=[
             Controller(name='SubNode - 1'),
         ])

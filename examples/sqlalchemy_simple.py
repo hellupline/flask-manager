@@ -22,7 +22,7 @@ class Controller(sqlalchemy.SQLAlchemyController):
 
 def main():
     # SQLAlchemyCrud support passing model, session through kwargs
-    tree = tree_.Index(name='Example', url='', items=[
+    tree = tree_.Root(name='Example', url='', items=[
         sqlalchemy.SQLAlchemyController(
             name='Example', db_session=db.session, model_class=Model),
         Controller(),
