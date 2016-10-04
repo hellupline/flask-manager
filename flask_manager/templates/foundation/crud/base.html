@@ -30,7 +30,9 @@
             <script src="{{ url_for('.static', filename='js/select2.min.js') }}" type="text/javascript"></script>
             <script src="{{ url_for('.static', filename='js/app.js') }}" type="text/javascript"></script>
             <script type="text/javascript">
-                $('select').not('.hidden').select2();
+                $('select').not('.hidden').select2({
+                    width: '100%',
+                });
             </script>
         {% endblock %}
         {% block tail %}{% endblock %}
