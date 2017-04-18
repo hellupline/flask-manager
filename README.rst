@@ -9,7 +9,7 @@ Installation
 
 You can install using pip from Github:
 
-    pip install https://github.com/hellupline/flask-manager.git
+    pip install git+https://github.com/hellupline/flask-manager.git
 
 You can install using setuptools:
 
